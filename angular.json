@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "pnpm",
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -25,7 +26,10 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles/styles.css",
+              "node_modules/filepond/dist/filepond.min.css",
+              "node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css",
+              "node_modules/notyf/notyf.min.css"
             ],
             "server": "src/main.server.ts",
             "outputMode": "server",
@@ -38,13 +42,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
+                  "maximumWarning": "1MB",
                   "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "1MB"
                 }
               ],
               "outputHashing": "all"
@@ -52,7 +56,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
