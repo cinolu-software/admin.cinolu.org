@@ -1,26 +1,22 @@
-<div class="ui-multi-select-wrapper">
+<div class="ui-select-wrapper" [class.ui-select-disabled]="disabled()">
   @if (label()) {
-  <label [for]="id()" class="ui-multi-select-label">
+  <p class="ui-select-label">
     {{ label() }}
-  </label>
+  </p>
   }
-  <div
-    [class]="selectClasses()"
-    class="ui-multi-select-trigger"
-    [class.ui-multi-select-trigger-disabled]="disabled()"
-    (click)="toggleDropdown()"
-    (keyup.enter)="toggleDropdown()"
-    (keyup.space)="toggleDropdown()"
-    [id]="id()"
-    [tabindex]="disabled() ? -1 : 0"
-    role="button"
-    [attr.aria-expanded]="isOpen()"
-    [attr.aria-haspopup]="'listbox'">
-    <div class="ui-multi-select-content">
+  <div class="ui-select-container">
+    <div
+      [class]="selectClasses()"
+      class="ui-select ui-multi-select-trigger"
+      (click)="toggleDropdown()"
+      (keyup.enter)="toggleDropdown()"
+      (keyup.space)="toggleDropdown()"
+      [id]="id()"
+      [tabindex]="disabled() ? -1 : 0">
       @if (value.length === 0) {
       <span class="ui-multi-select-placeholder">{{ placeholder() }}</span>
       } @else { @if (display() === 'comma') {
-      <span class="ui-multi-select-value-comma">{{ selectedLabels().join(', ') }}</span>
+      <span class="ui-multi-select-value-comma">{{ displayText() }}</span>
       } @else {
       <div class="ui-multi-select-chips">
         @for (label of selectedLabels(); track label) {
@@ -49,42 +45,36 @@
         }
       </div>
       } }
+      <div class="ui-select-icon">
+        <i-lucide [img]="icons.ChevronDown" class="size-4.5" [class.rotate-180]="isOpen()" />
+      </div>
     </div>
 
-    <svg
-      class="ui-multi-select-icon"
-      [class.rotate-180]="isOpen()"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-    </svg>
-  </div>
-
-  @if (isOpen()) {
-  <div class="ui-multi-select-panel">
-    @for (option of normalizedOptions(); track option.value) {
-    <div
-      class="ui-multi-select-option"
-      [class.ui-multi-select-option-selected]="isSelected(option.value)"
-      [class.ui-multi-select-option-disabled]="option.disabled"
-      (click)="!option.disabled && toggleOption(option.value)"
-      (keyup.enter)="!option.disabled && toggleOption(option.value)"
-      (keyup.space)="!option.disabled && toggleOption(option.value)"
-      [tabindex]="option.disabled ? -1 : 0"
-      role="option"
-      [attr.aria-selected]="isSelected(option.value)">
-      <input
-        type="checkbox"
-        [checked]="isSelected(option.value)"
-        [disabled]="option.disabled"
-        class="ui-multi-select-checkbox"
-        (click)="$event.stopPropagation()" />
-      <span class="ui-multi-select-option-label">{{ option.label }}</span>
+    @if (isOpen()) {
+    <div class="ui-multi-select-panel" [id]="id() + '-listbox'" role="listbox">
+      @for (option of normalizedOptions(); track option.value) {
+      <div
+        class="ui-multi-select-option"
+        [class.ui-multi-select-option-selected]="isSelected(option.value)"
+        [class.ui-multi-select-option-disabled]="option.disabled"
+        (click)="!option.disabled && toggleOption(option.value)"
+        (keyup.enter)="!option.disabled && toggleOption(option.value)"
+        (keyup.space)="!option.disabled && toggleOption(option.value)"
+        [tabindex]="option.disabled ? -1 : 0"
+        role="option"
+        [attr.aria-selected]="isSelected(option.value)">
+        <app-ui-checkbox
+          [id]="getCheckboxId(option.value)"
+          [(ngModel)]="checkboxValues[getCheckboxId(option.value)]"
+          [disabled]="option.disabled || disabled()"
+          (ngModelChange)="onCheckboxChange(option.value, $event)"
+          (click)="$event.stopPropagation()" />
+        <span class="ui-multi-select-option-label">{{ option.label }}</span>
+      </div>
+      } @if (options().length === 0) {
+      <div class="ui-multi-select-empty">No options available</div>
+      }
     </div>
-    } @if (options().length === 0) {
-    <div class="ui-multi-select-empty">No options available</div>
     }
   </div>
-  }
 </div>
