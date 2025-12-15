@@ -1,8 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, User, Phone, FileText, SquarePen, Camera, Calendar, MapPin } from 'lucide-angular';
+import { LucideAngularModule, User, Pen } from 'lucide-angular';
 import { AuthStore } from '@core/auth';
-import { environment } from '@env/environment';
 import { UiTabs } from '@ui';
 import { AccountOverview } from '@features/account/components/account-overview/account-overview';
 import { AccountUpdate } from '@features/account/components/account-update/account-update';
@@ -14,21 +13,11 @@ import { AccountUpdate } from '@features/account/components/account-update/accou
 })
 export class AccountPage implements OnInit {
   store = inject(AuthStore);
-  url = environment.apiUrl + 'users/image-profile';
   activeTab = signal<string>('overview');
   tabs = [
     { label: 'Mon compte', name: 'overview', icon: User },
-    { label: 'Mettre à jour', name: 'update', icon: SquarePen }
+    { label: 'Mettre à jour', name: 'update', icon: Pen }
   ];
-  icons = {
-    user: User,
-    phone: Phone,
-    fileText: FileText,
-    edit: SquarePen,
-    camera: Camera,
-    calendar: Calendar,
-    mapPin: MapPin
-  };
 
   ngOnInit(): void {
     this.store.user();
