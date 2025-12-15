@@ -99,11 +99,11 @@ export class ListProjects {
     this.store.publish(id);
   }
 
-  highlightProject(id: string): void {
+  onShowcase(id: string): void {
     this.store.showcase(id);
   }
 
-  resetFilters(): void {
+  onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.set({ page: null, q: null, filter: null });
   }
