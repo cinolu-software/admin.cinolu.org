@@ -17,14 +17,18 @@
       [id]="'program_id'"
       label="Programme associé"
       [filter]="true"
-      [options]="programOptions()"
+      [optionLabel]="'name'"
+      [optionValue]="'id'"
+      [options]="programsStore.allSubprograms()"
       formControlName="program"
       placeholder="Sélectionner un programme"
       class="w-full" />
     <app-ui-select
       [id]="'project_manager_id'"
       label="Chef de projet"
-      [options]="staffOptions()"
+      [optionLabel]="'name'"
+      [optionValue]="'id'"
+      [options]="usersStore.staff()"
       [filter]="true"
       formControlName="project_manager"
       placeholder="Sélectionner un chef de projet"
@@ -32,7 +36,9 @@
     <app-ui-multi-select
       [id]="'categories_ids'"
       label="Catégories"
-      [options]="categoryOptions()"
+      [optionLabel]="'name'"
+      [optionValue]="'id'"
+      [options]="categoriesStore.allCategories()"
       formControlName="categories"
       placeholder="Choisir une ou plusieurs catégories" />
     <app-ui-datepicker [id]="'started_at'" label="Date de début" formControlName="started_at" class="w-full" />

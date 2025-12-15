@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 import { IProject } from '@shared/models';
@@ -22,12 +22,6 @@ export class ProjectUpdateForm {
   usersStore = inject(UsersStore);
   updateProjectStore = inject(ProjectsStore);
   form = this.#initForm();
-
-  programOptions = computed(() => this.programsStore.allSubprograms().map((p) => ({ label: p.name, value: p.id })));
-
-  staffOptions = computed(() => this.usersStore.staff().map((u) => ({ label: u.name, value: u.id })));
-
-  categoryOptions = computed(() => this.categoriesStore.allCategories().map((c) => ({ label: c.name, value: c.id })));
 
   constructor() {
     effect(() => {
