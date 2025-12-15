@@ -14,7 +14,15 @@
         <div class="search-input-icon">
           <i-lucide [name]="icons.Search" class="search-input-icon-svg" />
         </div>
-        <input type="text" formControlName="q" placeholder="Rechercher une catégorie..." class="search-input" />
+        <label for="project-category-search-input" class="sr-only">Rechercher une catégorie</label>
+        <input
+          type="text"
+          id="project-category-search-input"
+          name="q"
+          formControlName="q"
+          placeholder="Rechercher une catégorie..."
+          class="search-input"
+          autocomplete="off" />
       </div>
     </form>
   </div>
@@ -33,12 +41,11 @@
             {{ formMode() === 'edit' ? 'Modifier la catégorie' : 'Ajouter une catégorie' }}
           </h6>
         </div>
-        <div class="space-y-2">
-          <app-ui-input
-            label="Nom de la catégorie"
-            formControlName="name"
-            placeholder="Ex: Infrastructure, Éducation, Santé..." />
-        </div>
+        <app-ui-input
+          [id]="'project-category-name'"
+          label="Nom de la catégorie"
+          formControlName="name"
+          placeholder="Ex: Infrastructure, Éducation, Santé..." />
         <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
           <app-ui-button type="button" size="small" variant="secondary" [outlined]="true" (clicked)="onCancelForm()">
             Annuler
