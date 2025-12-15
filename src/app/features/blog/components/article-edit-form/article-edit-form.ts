@@ -1,23 +1,7 @@
 import { Component, effect, inject, input, computed } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  UiButton,
-  UiInput,
-  UiTextarea,
-  UiMultiSelect,
-  UiDatepicker,
-  UiTextEditor
-} from '@shared/ui';
-import {
-  Calendar,
-  Check,
-  FileText,
-  Info,
-  List,
-  PenLine,
-  Tag,
-  LucideAngularModule
-} from 'lucide-angular';
+import { UiButton, UiInput, UiTextarea, UiMultiSelect, UiDatepicker, UiTextEditor } from '@shared/ui';
+import { Calendar, Check, FileText, Info, List, PenLine, Tag, LucideAngularModule } from 'lucide-angular';
 import { IArticle } from '@shared/models';
 import { ArticlesStore } from '../../store/articles.store';
 import { TagsStore } from '../../store/tag.store';
@@ -53,9 +37,7 @@ export class ArticleEditFormComponent {
     check: Check
   };
 
-  tagOptions = computed(() =>
-    this.tagsStore.allTags().map((tag) => ({ label: tag.name, value: tag.id }))
-  );
+  tagOptions = computed(() => this.tagsStore.allTags().map((tag) => ({ label: tag.name, value: tag.id })));
 
   #initForm(): FormGroup {
     return this.#fb.group({
@@ -72,7 +54,7 @@ export class ArticleEditFormComponent {
     effect(() => {
       this.#patchForm(this.article());
     });
-    this.tagsStore.loadUpaginatedTags();
+    this.tagsStore.loadUpaginated();
   }
 
   #patchForm(article: IArticle): void {
@@ -84,6 +66,6 @@ export class ArticleEditFormComponent {
   }
 
   onSubmit(): void {
-    if (this.form.valid) this.updateStore.updateArticle(this.form.value);
+    if (this.form.valid) this.updateStore.update(this.form.value);
   }
 }

@@ -10,7 +10,7 @@
           <i-lucide [name]="icons.Download" class="size-4" />
           Télécharger CSV
         </app-ui-button>
-        <a class="ui-button ui-button-small ui-button-primary" [routerLink]="'/users/add'"> Nouvel utilisateur </a>
+        <a [routerLink]="'/users/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel utilisateur </a>
       </div>
     </div>
     <form [formGroup]="searchForm" class="search-input-wrapper">
@@ -18,7 +18,15 @@
         <div class="search-input-icon">
           <i-lucide [name]="icons.Search" class="search-input-icon-svg" />
         </div>
-        <input type="text" formControlName="q" placeholder="Rechercher" class="search-input" />
+        <label for="user-search-input" class="sr-only">Rechercher un utilisateur</label>
+        <input
+          type="text"
+          id="user-search-input"
+          name="q"
+          formControlName="q"
+          placeholder="Rechercher un utilisateur..."
+          class="search-input"
+          autocomplete="off" />
       </div>
     </form>
   </div>

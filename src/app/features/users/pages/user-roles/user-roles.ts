@@ -91,7 +91,7 @@ export class UserRoles {
 
   updateRouteAndRoles(): void {
     this.updateRoute();
-    this.store.loadRoles(this.queryParams());
+    this.store.loadAll(this.queryParams());
   }
 
   onToggleForm(role: IRole | null = null): void {
@@ -119,13 +119,13 @@ export class UserRoles {
     if (this.roleForm.invalid) return;
     const { id, name } = this.roleForm.value;
     if (this.formMode() === 'edit' && id) {
-      this.store.updateRole({
+      this.store.update({
         payload: { id, name },
         onSuccess: () => this.onCancelForm()
       });
       return;
     }
-    this.store.addRole({
+    this.store.create({
       payload: { name },
       onSuccess: () => this.onCancelForm()
     });
@@ -138,7 +138,7 @@ export class UserRoles {
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
       accept: () => {
-        this.store.deleteRole(roleId);
+        this.store.delete(roleId);
       }
     });
   }

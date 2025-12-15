@@ -23,7 +23,7 @@ export const TagsStore = signalStore(
     _toast: inject(ToastrService)
   })),
   withMethods(({ _http, _toast, ...store }) => ({
-    loadUpaginatedTags: rxMethod<void>(
+    loadUpaginated: rxMethod<void>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         exhaustMap(() => {
@@ -39,7 +39,7 @@ export const TagsStore = signalStore(
         })
       )
     ),
-    loadTags: rxMethod<FilterArticlesTagsDto>(
+    loadAll: rxMethod<FilterArticlesTagsDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {

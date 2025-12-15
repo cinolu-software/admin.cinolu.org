@@ -14,26 +14,18 @@ interface IUsersStore {
   isLoading: boolean;
   users: [IUser[], number];
   user: IUser | null;
-  // Unpaginated staff list for selectors
-  isLoadingStaff: boolean;
   staff: IUser[];
 }
 
 export const UsersStore = signalStore(
-  withState<IUsersStore>({
-    isLoading: false,
-    users: [[], 0],
-    user: null,
-    isLoadingStaff: false,
-    staff: []
-  }),
+  withState<IUsersStore>({ isLoading: false, users: [[], 0], user: null, staff: [] }),
   withProps(() => ({
     _http: inject(HttpClient),
     _toast: inject(ToastrService),
     _router: inject(Router)
   })),
   withMethods(({ _http, _toast, _router, ...store }) => ({
-    loadUsers: rxMethod<FilterUsersDto>(
+    loadAll: rxMethod<FilterUsersDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {
@@ -50,7 +42,6 @@ export const UsersStore = signalStore(
         })
       )
     ),
-    // Unpaginated staff for selects
     loadStaff: rxMethod<void>(
       pipe(
         tap(() => patchState(store, { isLoadingStaff: true } as Partial<IUsersStore>)),
@@ -67,7 +58,7 @@ export const UsersStore = signalStore(
         )
       )
     ),
-    loadUser: rxMethod<string>(
+    loadOne: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((email) =>
@@ -83,7 +74,7 @@ export const UsersStore = signalStore(
         )
       )
     ),
-    addUser: rxMethod<UserDto>(
+    create: rxMethod<UserDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((dto) =>
@@ -102,7 +93,7 @@ export const UsersStore = signalStore(
         )
       )
     ),
-    updateUser: rxMethod<UserDto>(
+    update: rxMethod<UserDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((userData) =>
@@ -121,7 +112,7 @@ export const UsersStore = signalStore(
         )
       )
     ),
-    deleteUser: rxMethod<string>(
+    delete: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((userId) =>
@@ -141,8 +132,7 @@ export const UsersStore = signalStore(
         )
       )
     ),
-    // CSV download
-    downloadUsers: rxMethod<FilterUsersDto>(
+    download: rxMethod<FilterUsersDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {

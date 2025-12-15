@@ -86,11 +86,11 @@ export class ListUsers {
 
   updateRouteAndUsers(): void {
     this.updateRoute();
-    this.store.loadUsers(this.queryParams());
+    this.store.loadAll(this.queryParams());
   }
 
   onDownloadUsers(): void {
-    this.store.downloadUsers(this.queryParams());
+    this.store.download(this.queryParams());
   }
 
   onDelete(userId: string): void {
@@ -100,7 +100,7 @@ export class ListUsers {
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
       accept: () => {
-        this.store.deleteUser(userId);
+        this.store.delete(userId);
       }
     });
   }

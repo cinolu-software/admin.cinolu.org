@@ -1,24 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  Calendar,
-  Check,
-  FileText,
-  Info,
-  List,
-  PenLine,
-  Tag,
-  LucideAngularModule
-} from 'lucide-angular';
-import {
-  UiButton,
-  UiInput,
-  UiTextarea,
-  UiMultiSelect,
-  UiDatepicker,
-  UiTextEditor
-} from '@shared/ui';
+import { Calendar, Check, FileText, Info, List, PenLine, Tag, LucideAngularModule } from 'lucide-angular';
+import { UiButton, UiInput, UiTextarea, UiMultiSelect, UiDatepicker, UiTextEditor } from '@shared/ui';
 import { ArticlesStore } from '../../store/articles.store';
 import { TagsStore } from '../../store/tag.store';
 
@@ -53,9 +37,7 @@ export class AddArticle {
     check: Check
   };
 
-  tagOptions = computed(() =>
-    this.tagsStore.allTags().map((tag) => ({ label: tag.name, value: tag.id }))
-  );
+  tagOptions = computed(() => this.tagsStore.allTags().map((tag) => ({ label: tag.name, value: tag.id })));
 
   constructor() {
     this.form = this.#fb.group({
@@ -65,11 +47,11 @@ export class AddArticle {
       summary: ['', Validators.required],
       tags: [[], Validators.required]
     });
-    this.tagsStore.loadUpaginatedTags();
+    this.tagsStore.loadUpaginated();
   }
 
   onAddArticle(): void {
     if (!this.form.valid) return;
-    this.store.addArticle(this.form.value);
+    this.store.create(this.form.value);
   }
 }

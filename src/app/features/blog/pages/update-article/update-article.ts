@@ -24,7 +24,7 @@ export class UpdateArticle implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.store.loadArticle(this.#slug);
+    this.store.loadOne(this.#slug);
     this.store.loadGallery(this.#slug);
   }
 
@@ -37,7 +37,7 @@ export class UpdateArticle implements OnInit {
   }
 
   onCoverUploaded(): void {
-    this.store.loadArticle(this.#slug);
+    this.store.loadOne(this.#slug);
   }
 
   onDeleteImage(imgId: string): void {

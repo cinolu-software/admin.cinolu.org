@@ -22,7 +22,7 @@ export const RolesStore = signalStore(
     _toast: inject(ToastrService)
   })),
   withMethods(({ _http, _toast, ...store }) => ({
-    loadRoles: rxMethod<FilterRolesDto>(
+    loadAll: rxMethod<FilterRolesDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {
@@ -39,7 +39,7 @@ export const RolesStore = signalStore(
         })
       )
     ),
-    loadAllRoles: rxMethod<void>(
+    loadUnpaginated: rxMethod<void>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(() =>
@@ -55,7 +55,7 @@ export const RolesStore = signalStore(
         )
       )
     ),
-    addRole: rxMethod<{ payload: { name: string }; onSuccess: () => void }>(
+    create: rxMethod<{ payload: { name: string }; onSuccess: () => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ payload, onSuccess }) =>
@@ -79,7 +79,7 @@ export const RolesStore = signalStore(
         )
       )
     ),
-    updateRole: rxMethod<{ payload: RoleDto; onSuccess: () => void }>(
+    update: rxMethod<{ payload: RoleDto; onSuccess: () => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ payload, onSuccess }) =>
@@ -105,7 +105,7 @@ export const RolesStore = signalStore(
         )
       )
     ),
-    deleteRole: rxMethod<string>(
+    delete: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>

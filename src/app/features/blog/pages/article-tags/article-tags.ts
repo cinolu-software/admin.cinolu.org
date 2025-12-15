@@ -57,7 +57,7 @@ export class ArticleTags {
     });
 
     effect(() => {
-      this.store.loadTags(this.queryParams());
+      this.store.loadAll(this.queryParams());
     });
     const searchValue = this.searchForm.get('q');
     searchValue?.valueChanges
@@ -85,7 +85,7 @@ export class ArticleTags {
     this.#router.navigate(['/blog/tags'], { queryParams });
   }
 
-  resetFilters(): void {
+  onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.update((qp) => ({
       ...qp,
@@ -95,14 +95,14 @@ export class ArticleTags {
     this.updateRoute();
   }
 
-  onDelete(tagId: string): void {
+  onDelete(id: string): void {
     this.#confirmationService.confirm({
       header: 'Confirmation',
       message: 'Êtes-vous sûr de vouloir supprimer ce tag ?',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
       accept: () => {
-        this.store.delete({ id: tagId });
+        this.store.delete({ id });
       }
     });
   }

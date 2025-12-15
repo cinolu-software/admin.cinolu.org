@@ -5,7 +5,6 @@ import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FilterArticlesTagsDto } from '../dto/filter-tags.dto';
-import { FilterArticlesDto } from '../dto/filter-articles.dto';
 import { buildQueryParams } from '@shared/helpers';
 import { IArticle, IImage } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
@@ -33,7 +32,7 @@ export const ArticlesStore = signalStore(
     _toast: inject(ToastrService)
   })),
   withMethods(({ _http, _router, _toast, ...store }) => ({
-    loadArticles: rxMethod<FilterArticlesTagsDto>(
+    loadAll: rxMethod<FilterArticlesTagsDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {
@@ -50,28 +49,7 @@ export const ArticlesStore = signalStore(
         })
       )
     ),
-    // Published-only list
-    loadPublishedArticles: rxMethod<FilterArticlesDto>(
-      pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap((queryParams) => {
-          const params = buildQueryParams(queryParams);
-          return _http
-            .get<{ data: [IArticle[], number] }>('articles/find-published', { params })
-            .pipe(
-              map(({ data }) => {
-                patchState(store, { isLoading: false, articles: data });
-              }),
-              catchError(() => {
-                patchState(store, { isLoading: false, articles: [[], 0] });
-                return of(null);
-              })
-            );
-        })
-      )
-    ),
-    // Single article
-    loadArticle: rxMethod<string>(
+    loadOne: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
@@ -87,9 +65,7 @@ export const ArticlesStore = signalStore(
         )
       )
     ),
-
-    // Create / Update / Delete
-    addArticle: rxMethod<ArticleDto>(
+    create: rxMethod<ArticleDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) =>
@@ -108,7 +84,7 @@ export const ArticlesStore = signalStore(
         )
       )
     ),
-    updateArticle: rxMethod<ArticleDto>(
+    update: rxMethod<ArticleDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) =>
@@ -129,7 +105,7 @@ export const ArticlesStore = signalStore(
         )
       )
     ),
-    deleteArticle: rxMethod<string>(
+    delete: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
@@ -149,8 +125,7 @@ export const ArticlesStore = signalStore(
         )
       )
     ),
-
-    highlight: rxMethod<string>(
+    showcase: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
@@ -159,9 +134,7 @@ export const ArticlesStore = signalStore(
               const [list, count] = store.articles();
               const updated = list.map((a) => (a.id === data.id ? data : a));
               _toast.showSuccess(
-                data.is_highlighted
-                  ? "L'article a été mis en avant"
-                  : "L'article n'est plus mis en avant"
+                data.is_highlighted ? "L'article a été mis en avant" : "L'article n'est plus mis en avant"
               );
               patchState(store, { isLoading: false, articles: [updated, count], article: data });
             }),
@@ -174,8 +147,6 @@ export const ArticlesStore = signalStore(
         )
       )
     ),
-
-    // Gallery
     loadGallery: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
@@ -211,18 +182,6 @@ export const ArticlesStore = signalStore(
           )
         )
       )
-    ),
-
-    // Local list helpers
-    updateArticleInList: (article: IArticle): void => {
-      const [articles, count] = store.articles();
-      const updated = articles.map((e) => (e.id === article.id ? article : e));
-      patchState(store, { articles: [updated, count] });
-    },
-    deleteArticleFromList: (id: string): void => {
-      const [articles, count] = store.articles();
-      const filtered = articles.filter((article) => article.id !== id);
-      patchState(store, { articles: [filtered, Math.max(0, count - 1)] });
-    }
+    )
   }))
 );

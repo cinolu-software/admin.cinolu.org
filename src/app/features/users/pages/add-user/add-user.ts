@@ -37,10 +37,10 @@ export class AddUserComponent {
       birth_date: ['', Validators.required],
       roles: [[], Validators.required]
     });
-    this.rolesStore.loadAllRoles();
+    this.rolesStore.loadUnpaginated();
   }
 
   onAddUser(): void {
-    this.store.addUser(this.addUserForm.value);
+    this.store.create(this.addUserForm.value);
   }
 }

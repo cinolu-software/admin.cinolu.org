@@ -66,8 +66,8 @@ export class UpdateUser {
       roles: [[], Validators.required]
     });
     const email = this.#route.snapshot.params['email'];
-    if (email) this.store.loadUser(email);
-    this.rolesStore.loadAllRoles();
+    if (email) this.store.loadOne(email);
+    this.rolesStore.loadUnpaginated();
     effect(() => {
       const user = this.store.user();
       if (!user) return;
@@ -80,7 +80,7 @@ export class UpdateUser {
   }
 
   onUpdateUser(): void {
-    this.store.updateUser(this.updateUserForm.value);
+    this.store.update(this.updateUserForm.value);
   }
 
   onGoBack(): void {

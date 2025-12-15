@@ -62,7 +62,7 @@ export class ListArticles {
     });
 
     effect(() => {
-      this.store.loadArticles(this.queryParams());
+      this.store.loadAll(this.queryParams());
     });
 
     this.searchForm
@@ -100,11 +100,11 @@ export class ListArticles {
     this.#router.navigate(['/blog/articles'], { queryParams });
   }
 
-  showcaseArticle(articleId: string): void {
-    this.store.highlight(articleId);
+  onShowcase(articleId: string): void {
+    this.store.showcase(articleId);
   }
 
-  resetFilters(): void {
+  onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.update((qp) => ({
       ...qp,
@@ -122,7 +122,7 @@ export class ListArticles {
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
       accept: () => {
-        this.store.deleteArticle(articleId);
+        this.store.delete(articleId);
       }
     });
   }
