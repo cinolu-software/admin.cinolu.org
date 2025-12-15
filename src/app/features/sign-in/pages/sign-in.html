@@ -3,13 +3,7 @@
   <div class="w-full max-w-md">
     <div class="mb-8 flex flex-col items-center justify-center gap-3">
       <div class="flex items-center gap-3">
-        <img
-          ngSrc="/images/logo/logo-g.png"
-          width="40"
-          height="50"
-          alt="Company Logo"
-          decoding="async"
-          fetchpriority="high" />
+        <img ngSrc="/images/logo/logo-g.png" width="40" height="50" alt="Company Logo" />
         <span class="font-bold text-2xl text-gray-900">Se connecter</span>
       </div>
       <div class="flex items-center gap-2 text-primary-600 font-medium text-sm">
@@ -17,22 +11,19 @@
         <span>Connectez-vous à votre espace d'administration</span>
       </div>
     </div>
-    <div
-      class="bg-white rounded-2xl shadow-xl shadow-gray-900/5 border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-xl shadow-gray-900/5 border border-gray-100 overflow-hidden">
       <div class="p-8 sm:p-10">
         <form [formGroup]="form" class="flex flex-col gap-5" (ngSubmit)="onSignIn()" novalidate>
           <ui-input
+            [id]="'email'"
             label="Adresse email"
-            id="signin-email"
-            name="email"
             type="email"
             formControlName="email"
             placeholder="votre@email.com"
             [invalid]="(form.get('email')?.invalid && form.get('email')?.touched) || false" />
           <ui-password
             label="Mot de passe"
-            id="signin-password"
-            name="password"
+            [id]="'password'"
             formControlName="password"
             placeholder="••••••••"
             [invalid]="(form.get('password')?.invalid && form.get('password')?.touched) || false" />

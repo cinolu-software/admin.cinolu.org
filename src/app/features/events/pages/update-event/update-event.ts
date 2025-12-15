@@ -3,13 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ChartColumn, SquarePen, Images } from 'lucide-angular';
 import { UiTabs, MetricsTableComponent } from '@shared/ui';
-import {
-  MetricsMap,
-  totalMetrics,
-  achievementPercentage,
-  metricsMap,
-  metricsMapToDto
-} from '@shared/helpers';
+import { MetricsMap, totalMetrics, achievementRate, metricsMap, metricsMapToDto } from '@shared/helpers';
 import { IEvent } from '@shared/models';
 import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { EventsStore } from '../../store/events.store';
@@ -49,9 +43,7 @@ export class UpdateEvent implements OnInit {
   ];
   totalTargeted = computed(() => totalMetrics(this.metricsMap, 'target'));
   totalAchieved = computed(() => totalMetrics(this.metricsMap, 'achieved'));
-  achievementPercentage = computed(() =>
-    achievementPercentage(this.totalTargeted(), this.totalAchieved())
-  );
+  achievementPercentage = computed(() => achievementRate(this.totalTargeted(), this.totalAchieved()));
 
   constructor() {
     this.#watchEventChanges();

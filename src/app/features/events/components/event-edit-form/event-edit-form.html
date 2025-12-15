@@ -3,130 +3,75 @@
     <div class="mb-8">
       <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Informations essentielles</h6>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="flex flex-col gap-2">
-          <label for="name" class="text-sm font-semibold text-gray-700">
-            Titre de l'événement<span class="text-red-500 ml-1">*</span>
-          </label>
-          <input
-            ui-input
-            id="name"
-            formControlName="name"
-            class="w-full"
-            placeholder="Ex: Atelier de formation entrepreneuriale" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="place" class="text-sm font-semibold text-gray-700">Lieu de l'événement</label>
-          <ui-input id="place" formControlName="place" class="w-full" placeholder="Ex: Kinshasa, RDC" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="duration_hours" class="text-sm font-semibold text-gray-700">Durée estimée (en heures)</label>
-          <input
-            ui-input
-            id="duration_hours"
-            type="number"
-            formControlName="duration_hours"
-            class="w-full"
-            placeholder="Ex: 8" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="program" class="text-sm font-semibold text-gray-700">
-            Programme associé<span class="text-red-500 ml-1">*</span>
-          </label>
-          <ui-select
-            [filter]="true"
-            inputId="program"
-            [optionValue]="'id'"
-            [optionLabel]="'name'"
-            [options]="programsStore.unpaginatedSubprograms()"
-            formControlName="program"
-            placeholder="Sélectionner un programme"
-            class="w-full" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="event_manager" class="text-sm font-semibold text-gray-700"> Responsable de l'événement </label>
-          <ui-select
-            inputId="event_manager"
-            [optionValue]="'id'"
-            [optionLabel]="'name'"
-            [options]="usersStore.staff()"
-            [filter]="true"
-            formControlName="event_manager"
-            placeholder="Sélectionner un responsable"
-            class="w-full" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="categories" class="text-sm font-semibold text-gray-700">
-            Catégories<span class="text-red-500 ml-1">*</span>
-          </label>
-          <ui-multi-select
-            [inputId]="'categories'"
-            [autocomplete]="'off'"
-            [showHeader]="false"
-            [optionLabel]="'name'"
-            [options]="categoriesStore.allCategories()"
-            [optionValue]="'id'"
-            formControlName="categories"
-            placeholder="Choisir une ou plusieurs catégories"
-            class="w-full" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="started_at" class="text-sm font-semibold text-gray-700">
-            Date de début<span class="text-red-500 ml-1">*</span>
-          </label>
-          <ui-datepicker formControlName="started_at" class="w-full" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="ended_at" class="text-sm font-semibold text-gray-700">
-            Date de fin<span class="text-red-500 ml-1">*</span>
-          </label>
-          <ui-datepicker formControlName="ended_at" class="w-full" />
-        </div>
+        <ui-input
+          label="Titre de l'événement"
+          id="name"
+          formControlName="name"
+          class="w-full"
+          placeholder="Ex: Atelier de formation entrepreneuriale" />
+        <ui-input
+          label="Lieu de l'événement"
+          id="place"
+          formControlName="place"
+          class="w-full"
+          placeholder="Ex: Kinshasa, RDC" />
+        <ui-input
+          label="Durée estimée (en heures)"
+          id="duration_hours"
+          type="number"
+          formControlName="duration_hours"
+          class="w-full"
+          placeholder="Ex: 8" />
+        <ui-select
+          [filter]="true"
+          label="Programme associé"
+          id="program"
+          formControlName="program"
+          class="w-full"
+          placeholder="Sélectionner un programme" />
+        <ui-select
+          inputId="event_manager"
+          label="Responsable de l'événement"
+          id="event_manager"
+          formControlName="event_manager"
+          class="w-full"
+          placeholder="Sélectionner un responsable" />
+        <ui-multi-select
+          label="Catégories"
+          id="categories"
+          formControlName="categories"
+          class="w-full"
+          placeholder="Choisir une ou plusieurs catégories" />
       </div>
     </div>
     <div>
       <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Présentation détaillée</h6>
       <div class="grid grid-cols-1 gap-6">
         <div class="flex flex-col gap-2">
-          <label for="description" class="text-sm font-semibold text-gray-700">
-            Présentation générale<span class="text-red-500 ml-1">*</span>
-          </label>
-          <textarea
-            ui-textarea
+          <ui-textarea
+            label="Présentation générale"
             id="description"
             formControlName="description"
-            rows="6"
-            class="w-full"
-            placeholder="Présentez l'événement de manière claire et concise..."></textarea>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="context" class="text-sm font-semibold text-gray-700">Contexte et justification</label>
-          <textarea
-            ui-textarea
+            placeholder="Présentez l'événement de manière claire et concise..." />
+          <ui-textarea
+            label="Contexte et justification"
             id="context"
             formControlName="context"
-            rows="6"
-            class="w-full"
-            placeholder="Décrivez le contexte dans lequel s'inscrit cet événement..."></textarea>
+            placeholder="Décrivez le contexte dans lequel s'inscrit cet événement..." />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="objectives" class="text-sm font-semibold text-gray-700">Objectifs visés</label>
-          <textarea
-            ui-textarea
+          <ui-textarea
+            label="Objectifs visés"
             id="objectives"
             formControlName="objectives"
-            rows="6"
-            class="w-full"
-            placeholder="Listez les objectifs principaux et les résultats attendus..."></textarea>
+            placeholder="Listez les objectifs principaux et les résultats attendus..." />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="selection_criteria" class="text-sm font-semibold text-gray-700">Critères d'éligibilité</label>
-          <textarea
-            ui-textarea
+          <ui-textarea
+            label="Critères d'éligibilité"
             id="selection_criteria"
             formControlName="selection_criteria"
-            rows="6"
-            class="w-full"
-            placeholder="Définissez les conditions d'accès et les prérequis..."></textarea>
+            placeholder="Définissez les conditions d'accès et les prérequis..." />
         </div>
       </div>
     </div>
@@ -137,7 +82,7 @@
         [disabled]="store.isLoading() || form.invalid"
         variant="primary"
         type="submit">
-        {{ store.isLoading() ? 'Enregistrement...' : 'Modifier le projet' }}
+        {{ store.isLoading() ? 'Modification...' : "Modifier l'événement" }}
       </ui-button>
     </div>
   </div>

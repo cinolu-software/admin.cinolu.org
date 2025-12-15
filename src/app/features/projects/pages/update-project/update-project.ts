@@ -1,17 +1,9 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SquarePen, Images, ChartColumn, ListTree } from 'lucide-angular';
 import { UiTabs, MetricsTableComponent } from '@shared/ui';
-import { totalMetrics, achievementPercentage, metricsMap, metricsMapToDto } from '@shared/helpers';
+import { totalMetrics, achievementRate, metricsMap, metricsMapToDto } from '@shared/helpers';
 import { IProject } from '@shared/models';
 import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { GalleryStore } from '../../store/project-gallery.store';
@@ -57,9 +49,7 @@ export class UpdateProject implements OnInit {
   ];
   totalTargeted = computed(() => totalMetrics(this.metricsMap, 'target'));
   totalAchieved = computed(() => totalMetrics(this.metricsMap, 'achieved'));
-  achievementPercentage = computed(() =>
-    achievementPercentage(this.totalTargeted(), this.totalAchieved())
-  );
+  achievementPercentage = computed(() => achievementRate(this.totalTargeted(), this.totalAchieved()));
 
   constructor() {
     this.#watchProjectChanges();

@@ -6,11 +6,10 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   selector: 'ui-textarea',
   imports: [CommonModule],
   templateUrl: './textarea.html',
-  providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiTextarea), multi: true }
-  ]
+  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiTextarea), multi: true }]
 })
 export class UiTextarea implements ControlValueAccessor {
+  label = input<string>('');
   placeholder = input<string>('');
   disabled = input<boolean>(false);
   id = input<string>('');

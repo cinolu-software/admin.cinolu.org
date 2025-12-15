@@ -3,26 +3,21 @@
   <div class="relative px-8 py-10">
     <div class="flex items-start justify-between gap-6 mb-8">
       <div class="flex-1">
-        <div
-          class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-4">
           <i-lucide [name]="icons.folder" class="w-4 h-4 text-white" />
-          <span class="text-sm font-medium text-white">{{
-            event().program.name || 'Programme'
-          }}</span>
+          <span class="text-sm font-medium text-white">{{ event().program.name || 'Programme' }}</span>
         </div>
         <h1 class="text-4xl font-bold text-white mb-4 leading-tight">{{ event().name }}</h1>
         <div class="flex flex-wrap gap-2">
           @for (category of event().categories; track category.id) {
-          <span
-            class="px-4 py-2 bg-white/90 text-primary-700 rounded-full text-sm font-semibold shadow-sm">
+          <span class="px-4 py-2 bg-white/90 text-primary-700 rounded-full text-sm font-semibold shadow-sm">
             {{ category.name }}
           </span>
           }
         </div>
       </div>
       @if (event().event_manager) {
-      <div
-        class="hidden lg:block bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+      <div class="hidden lg:block bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
         <div class="text-xs text-white/80 mb-2">Responsable</div>
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -119,77 +114,57 @@
   </div>
 </div>
 
-<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-  <ui-accordion [multiple]="true">
-    <ui-accordion-panel value="0">
-      <ui-accordion-header>
-        <div class="flex items-center gap-2 w-full py-2 px-2">
-          <i-lucide [name]="icons.fileText" class="w-5 h-5 text-secondary-600" />
-          <h5 class="font-medium text-gray-900">Présentation générale</h5>
-        </div>
-      </ui-accordion-header>
-      <ui-accordion-content>
-        <div class="px-4 py-6 bg-linear-to-br rounded from-secondary-50/30 to-transparent">
-          <div class="prose prose-sm max-w-none">
-            <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-              {{ event().description || 'Aucune présentation disponible pour le moment.' }}
-            </p>
-          </div>
-        </div>
-      </ui-accordion-content>
-    </ui-accordion-panel>
-    <ui-accordion-panel value="1">
-      <ui-accordion-header>
-        <div class="flex items-center gap-2 w-full py-2 px-2">
-          <i-lucide [name]="icons.bookOpen" class="w-5 h-5 text-primary-600" />
-          <h5 class="font-medium text-gray-900">Contexte et justification</h5>
-        </div>
-      </ui-accordion-header>
-      <ui-accordion-content>
-        <div class="px-4 py-6 bg-linear-to-br rounded from-primary-50/30 to-transparent">
-          <div class="prose prose-sm max-w-none">
-            <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-              {{ event().context || 'Aucun contexte défini pour le moment.' }}
-            </p>
-          </div>
-        </div>
-      </ui-accordion-content>
-    </ui-accordion-panel>
-    <ui-accordion-panel value="2">
-      <ui-accordion-header>
-        <div class="flex items-center gap-2 w-full py-2 px-2">
-          <i-lucide [name]="icons.target" class="w-5 h-5 text-secondary-600" />
-          <h5 class="font-medium text-gray-900">Objectifs visés</h5>
-        </div>
-      </ui-accordion-header>
-      <ui-accordion-content>
-        <div class="px-4 py-6 bg-linear-to-br rounded from-secondary-50/30 to-transparent">
-          <div class="prose prose-sm max-w-none">
-            <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-              {{ event().objectives || 'Aucun objectif défini pour le moment.' }}
-            </p>
-          </div>
-        </div>
-      </ui-accordion-content>
-    </ui-accordion-panel>
-    <ui-accordion-panel value="3">
-      <ui-accordion-header>
-        <div class="flex items-center gap-2 w-full py-2 px-2">
-          <i-lucide [name]="icons.checkSquare" class="w-5 h-5 text-primary-600" />
-          <h5 class="font-medium text-gray-900">Critères d'éligibilité</h5>
-        </div>
-      </ui-accordion-header>
-      <ui-accordion-content>
-        <div class="px-4 py-6 bg-linear-to-br rounded from-primary-50/30 to-transparent">
-          <div class="prose prose-sm max-w-none">
-            <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-              {{
-                event().selection_criteria || "Aucun critère d'éligibilité défini pour le moment."
-              }}
-            </p>
-          </div>
-        </div>
-      </ui-accordion-content>
-    </ui-accordion-panel>
-  </ui-accordion>
-</div>
+<ui-accordion [multiple]="true">
+  <ui-accordion-panel value="0">
+    <ui-accordion-header>
+      <div class="flex items-center gap-2 w-full py-2 px-2">
+        <i-lucide [name]="icons.fileText" class="w-5 h-5 text-secondary-600" />
+        <h5 class="font-medium text-gray-900">Présentation générale</h5>
+      </div>
+    </ui-accordion-header>
+    <ui-accordion-content>
+      <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+        {{ event().description || 'Aucune présentation disponible pour le moment.' }}
+      </p>
+    </ui-accordion-content>
+  </ui-accordion-panel>
+  <ui-accordion-panel value="1">
+    <ui-accordion-header>
+      <div class="flex items-center gap-2 w-full py-2 px-2">
+        <i-lucide [name]="icons.bookOpen" class="w-5 h-5 text-primary-600" />
+        <h5 class="font-medium text-gray-900">Contexte et justification</h5>
+      </div>
+    </ui-accordion-header>
+    <ui-accordion-content>
+      <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+        {{ event().context || 'Aucun contexte défini pour le moment.' }}
+      </p>
+    </ui-accordion-content>
+  </ui-accordion-panel>
+  <ui-accordion-panel value="2">
+    <ui-accordion-header>
+      <div class="flex items-center gap-2 w-full py-2 px-2">
+        <i-lucide [name]="icons.target" class="w-5 h-5 text-secondary-600" />
+        <h5 class="font-medium text-gray-900">Objectifs visés</h5>
+      </div>
+    </ui-accordion-header>
+    <ui-accordion-content>
+      <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+        {{ event().objectives || 'Aucun objectif défini pour le moment.' }}
+      </p>
+    </ui-accordion-content>
+  </ui-accordion-panel>
+  <ui-accordion-panel value="3">
+    <ui-accordion-header>
+      <div class="flex items-center gap-2 w-full py-2 px-2">
+        <i-lucide [name]="icons.checkSquare" class="w-5 h-5 text-primary-600" />
+        <h5 class="font-medium text-gray-900">Critères d'éligibilité</h5>
+      </div>
+    </ui-accordion-header>
+    <ui-accordion-content>
+      <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+        {{ event().selection_criteria || "Aucun critère d'éligibilité défini pour le moment." }}
+      </p>
+    </ui-accordion-content>
+  </ui-accordion-panel>
+</ui-accordion>

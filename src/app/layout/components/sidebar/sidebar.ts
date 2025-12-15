@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { LucideAngularModule, ChevronDown, House } from 'lucide-angular';
 import { filter } from 'rxjs';
@@ -7,16 +7,18 @@ import { AuthStore } from '@core/auth/auth.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LINKS } from '../../data/links.data';
 import { ILink } from '../../types/link.type';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule, RouterModule, LucideAngularModule],
+  imports: [ RouterModule, LucideAngularModule],
   templateUrl: './sidebar.html'
 })
 export class Sidebar {
   #router = inject(Router);
   style = input<string>();
-  icons = { chevronDown: ChevronDown, home: House };
+  icons = { ChevronDown, House };
+  appUrl = environment.appUrl;
   currentUrl = signal(this.#router.url);
   toggleTab = signal<string | null>(null);
   closedTab = signal<string | null>(null);
@@ -26,10 +28,7 @@ export class Sidebar {
     const url = this.currentUrl();
     return (
       this.links().find((link) => {
-        return (
-          link.path === url ||
-          link.children?.some((child) => child.path && url.startsWith(child.path))
-        );
+        return link.path === url || link.children?.some((child) => child.path && url.startsWith(child.path));
       })?.name ?? null
     );
   });

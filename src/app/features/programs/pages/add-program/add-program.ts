@@ -5,12 +5,12 @@ import { LucideAngularModule, CircleAlert } from 'lucide-angular';
 import { ProgramsStore } from '../../store/programs.store';
 import { ProgramDto } from '../../dto/programs/program.dto';
 import { CategoriesStore } from '@features/projects/store/project-categories.store';
-import { UiButton, UiInput, UiSelect } from '@shared/ui';
+import { UiButton, UiInput, UiSelect, UiTextarea } from '@shared/ui';
 
 @Component({
   selector: 'app-add-program',
   providers: [ProgramsStore, CategoriesStore],
-  imports: [CommonModule, ReactiveFormsModule, UiButton, UiInput, UiSelect, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, UiButton, UiInput, UiSelect, UiTextarea, LucideAngularModule],
   templateUrl: './add-program.html'
 })
 export class AddProgramPage {

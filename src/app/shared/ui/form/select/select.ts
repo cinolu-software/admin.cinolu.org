@@ -1,6 +1,6 @@
 import { Component, input, forwardRef, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChevronDown, LucideAngularModule } from 'lucide-angular';
 
 export interface SelectOption {
   label: string;
@@ -10,11 +10,12 @@ export interface SelectOption {
 
 @Component({
   selector: 'ui-select',
-  imports: [CommonModule],
+  imports: [LucideAngularModule],
   templateUrl: './select.html',
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiSelect), multi: true }]
 })
 export class UiSelect implements ControlValueAccessor {
+  label = input<string>('');
   options = input<SelectOption[] | unknown[]>([]);
   placeholder = input<string>('');
   disabled = input<boolean>(false);
@@ -23,6 +24,7 @@ export class UiSelect implements ControlValueAccessor {
   filter = input<boolean>(false);
   optionLabel = input<string>('');
   optionValue = input<string>('');
+  icons = { ChevronDown };
 
   normalizedOptions = computed(() => {
     const opts = this.options();
@@ -42,13 +44,8 @@ export class UiSelect implements ControlValueAccessor {
 
   value: unknown = '';
 
-  #onChangeCallback: (value: unknown) => void = () => {
-    // no operation
-  };
-
-  onTouched: () => void = () => {
-    // no operation
-  };
+  #onChangeCallback!: (value: unknown) => void;
+  onTouched!: () => void;
 
   writeValue(value: unknown): void {
     this.value = value ?? '';

@@ -6,9 +6,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   selector: 'ui-checkbox',
   imports: [CommonModule],
   templateUrl: './checkbox.html',
-  providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiCheckbox), multi: true }
-  ]
+  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiCheckbox), multi: true }]
 })
 export class UiCheckbox implements ControlValueAccessor {
   label = input<string>('');
@@ -45,9 +43,9 @@ export class UiCheckbox implements ControlValueAccessor {
   }
 
   checkboxClasses() {
-    const baseClasses = 'w-5 h-5 rounded border-2 transition-colors cursor-pointer';
-    const invalidClasses = this.invalid() ? 'border-red-500' : 'border-gray-300';
-    const disabledClasses = this.disabled() ? 'opacity-50 cursor-not-allowed' : '';
+    const baseClasses = 'ui-checkbox-input';
+    const invalidClasses = this.invalid() ? 'ui-checkbox-invalid' : '';
+    const disabledClasses = this.disabled() ? 'ui-checkbox-disabled' : '';
     return [baseClasses, invalidClasses, disabledClasses].filter(Boolean).join(' ');
   }
 }

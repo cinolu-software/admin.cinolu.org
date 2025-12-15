@@ -9,22 +9,13 @@ import { SubprogramsStore } from '@features/programs/store/subprograms.store';
 import { UsersStore } from '@features/users/store/users.store';
 import { CategoriesStore } from '../../store/event-categories.store';
 import { IndicatorsStore } from '@features/programs/store/indicators.store';
-import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect } from '@shared/ui';
-import { SelectOption } from '@shared/ui/form/select/select';
+import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, SelectOption } from '@shared/ui';
 
 @Component({
   selector: 'app-event-add',
   templateUrl: './add-event.html',
   providers: [EventsStore, IndicatorsStore, SubprogramsStore, UsersStore, CategoriesStore],
-  imports: [
-    UiSelect,
-    UiMultiSelect,
-    CommonModule,
-    UiButton,
-    UiInput,
-    UiDatepicker,
-    ReactiveFormsModule
-  ]
+  imports: [UiSelect, UiMultiSelect, CommonModule, UiButton, UiInput, UiDatepicker, ReactiveFormsModule]
 })
 export class AddEventComponent {
   #fb = inject(FormBuilder);

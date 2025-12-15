@@ -1,12 +1,4 @@
-import {
-  Component,
-  input,
-  output,
-  forwardRef,
-  signal,
-  computed,
-  HostListener
-} from '@angular/core';
+import { Component, input, forwardRef, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LucideAngularModule, Calendar, ChevronLeft, ChevronRight } from 'lucide-angular';
@@ -17,12 +9,11 @@ export type DatePickerView = 'date' | 'month' | 'year';
   selector: 'ui-datepicker',
   imports: [CommonModule, LucideAngularModule],
   templateUrl: './datepicker.html',
-  providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiDatepicker), multi: true }
-  ]
+  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiDatepicker), multi: true }]
 })
 export class UiDatepicker implements ControlValueAccessor {
   view = input<DatePickerView>('date');
+  label = input<string>('');
   placeholder = input<string>('');
   disabled = input<boolean>(false);
   id = input<string>('');
@@ -30,9 +21,6 @@ export class UiDatepicker implements ControlValueAccessor {
   dateFormat = input<string>('');
   minDate = input<Date | null>(null);
   maxDate = input<Date | null>(null);
-  focused = output<FocusEvent>();
-  blurred = output<FocusEvent>();
-
   isOpen = signal<boolean>(false);
   selectedDate = signal<Date | null>(null);
   currentViewDate = signal<Date>(new Date());
@@ -73,7 +61,7 @@ export class UiDatepicker implements ControlValueAccessor {
 
   months = computed(() => {
     const months: { name: string; value: number }[] = [];
-    const date = new Date(2000, 0, 1); // Use a fixed year for month names
+    const date = new Date(2000, 0, 1);
     for (let i = 0; i < 12; i++) {
       date.setMonth(i);
       months.push({
@@ -273,20 +261,6 @@ export class UiDatepicker implements ControlValueAccessor {
     const invalidClass = this.invalid() ? 'ui-datepicker-invalid' : '';
     const disabledClass = this.disabled() ? 'ui-datepicker-disabled' : '';
     return [baseClasses, invalidClass, disabledClass].filter(Boolean).join(' ');
-  }
-
-  onInputFocus(event: FocusEvent): void {
-    this.focused.emit(event);
-  }
-
-  onInputBlur(event: FocusEvent): void {
-    // Don't blur if clicking inside the calendar
-    setTimeout(() => {
-      if (!this.isOpen()) {
-        this.blurred.emit(event);
-        this.#onTouchedCallback();
-      }
-    }, 200);
   }
 
   @HostListener('document:click', ['$event'])

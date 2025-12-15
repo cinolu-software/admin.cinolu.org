@@ -1,49 +1,24 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-  <div
-    class="bg-gradient-to-r from-primary-50 to-primary-100/50 px-6 py-5 border-b border-primary-200/50">
+  <div class="p-6">
     <h3 class="text-xl font-bold text-gray-900 mb-1">Créer un nouveau programme</h3>
-    <p class="text-sm text-gray-600">
-      Remplissez les informations ci-dessous pour ajouter un programme
-    </p>
+    <p class="text-sm text-gray-600">Remplissez les informations ci-dessous pour ajouter un programme</p>
   </div>
 
   <form class="p-6 space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="space-y-2">
-        <label for="categories" class="block text-sm font-semibold text-gray-700">Catégorie</label>
         <ui-select
-          class="w-full!"
+          label="Catégorie"
           [options]="categoryOptions()"
           formControlName="category"
           placeholder="Sélectionner une catégorie" />
-        <p class="text-xs text-gray-500 mt-1">Choisissez la catégorie appropriée</p>
       </div>
       <div class="space-y-2">
-        <label for="name" class="block text-sm font-semibold text-gray-700">
-          Nom du programme
-          <span class="text-red-500 ml-0.5">*</span>
-        </label>
-        <ui-input
-          id="name"
-          formControlName="name"
-          placeholder="Ex: Programme d'Innovation"
-          class="w-full" />
-        <p class="text-xs text-gray-500 mt-1">Donnez un nom clair et descriptif</p>
+        <ui-input label="Nom du programme" formControlName="name" placeholder="Ex: Programme d'Innovation" />
       </div>
     </div>
     <div class="space-y-2">
-      <label for="description" class="block text-sm font-semibold text-gray-700">
-        Description
-        <span class="text-red-500 ml-0.5">*</span>
-      </label>
-      <textarea
-        ui-textarea
-        id="description"
-        formControlName="description"
-        rows="6"
-        placeholder="Décrivez le programme en détail..."
-        class="w-full"></textarea>
-      <p class="text-xs text-gray-500 mt-1">Fournissez une description complète du programme</p>
+      <ui-textarea label="Description" formControlName="description" placeholder="Décrivez le programme en détail..." />
     </div>
 
     <div class="flex items-center justify-between pt-4 border-t border-gray-100">

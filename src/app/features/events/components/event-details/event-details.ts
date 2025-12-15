@@ -19,14 +19,7 @@ import { UiAccordion, UiAccordionPanel, UiAccordionHeader, UiAccordionContent } 
 @Component({
   selector: 'app-event-details',
   templateUrl: './event-details.html',
-  imports: [
-    UiAccordion,
-    UiAccordionPanel,
-    UiAccordionHeader,
-    UiAccordionContent,
-    LucideAngularModule,
-    CommonModule
-  ]
+  imports: [UiAccordion, UiAccordionPanel, UiAccordionHeader, UiAccordionContent, LucideAngularModule, CommonModule]
 })
 export class EventDetailsComponent {
   event = input.required<IEvent>();

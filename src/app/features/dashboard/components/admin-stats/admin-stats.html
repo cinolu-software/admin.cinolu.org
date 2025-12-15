@@ -6,11 +6,7 @@
       Performance Globale : {{ year().getFullYear() }}
     </label>
   </div>
-  <ui-datepicker
-    inputId="indicator-year"
-    name="indicator-year"
-    [view]="'year'"
-    [(ngModel)]="year" />
+  <ui-datepicker [id]="'indicator-year'" [view]="'year'" [(ngModel)]="year" />
 </div>
 @if (reportStore.isLoading()) {
 <app-performance-skeleton />

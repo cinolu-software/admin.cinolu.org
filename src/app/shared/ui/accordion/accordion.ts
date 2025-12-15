@@ -1,5 +1,6 @@
 import { Component, input, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChevronDown, LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'ui-accordion',
@@ -34,7 +35,7 @@ export class UiAccordion {
   selector: 'ui-accordion-panel',
   imports: [CommonModule],
   template: `
-    <div class="border border-gray-200 rounded-lg overflow-hidden">
+    <div class="border border-gray-200 rounded-lg mb-3 overflow-hidden">
       <ng-content />
     </div>
   `
@@ -54,27 +55,24 @@ export class UiAccordionPanel {
 
 @Component({
   selector: 'ui-accordion-header',
-  imports: [CommonModule],
+  imports: [LucideAngularModule],
   template: `
     <button
       type="button"
-      class="w-full text-left px-4 py-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors"
-      [class.bg-gray-50]="panel?.isActive()"
+      [class.bg-gray-100]="panel?.isActive()"
+      class="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-gray-100 transition-colors"
       (click)="panel?.toggle()">
       <ng-content />
-      <svg
-        class="w-5 h-5 transition-transform flex-shrink-0"
-        [class.rotate-180]="panel?.isActive()"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
+      <i-lucide
+        [img]="icons.ChevronDown"
+        class="size-5 transition-transform shrink-0"
+        [class.rotate-180]="panel?.isActive()" />
     </button>
   `
 })
 export class UiAccordionHeader {
   panel = inject(UiAccordionPanel, { optional: true });
+  icons = { ChevronDown };
 }
 
 @Component({
@@ -82,7 +80,7 @@ export class UiAccordionHeader {
   imports: [CommonModule],
   template: `
     @if (panel?.isActive()) {
-    <div class="bg-white">
+    <div class=" px-6 pt-3 pb-6">
       <ng-content />
     </div>
     }

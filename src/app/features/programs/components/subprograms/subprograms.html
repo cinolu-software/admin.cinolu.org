@@ -1,180 +1,130 @@
 @let program = programSignal(); @let isLoading = store.isLoading(); @let subprograms = store.unpaginatedSubprograms();
-<div class="relative bg-white rounded-xl shadow-sm pb-12">
-  <div class="px-6 pt-6 pb-4 border-b border-gray-100">
-    <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-      <div>
-        <h5 class="text-2xl font-bold text-gray-900 mb-1">
-          Sous-programmes
-          <span class="text-gray-400 text-sm">• {{ subprograms.length }} au total</span>
-        </h5>
-        <p class="text-sm text-gray-500">
-          Gérez les sous-programmes associés à
-          <span class="font-semibold text-gray-900">{{ program?.name || 'ce programme' }}</span>
-        </p>
-      </div>
-      <button class="ui-button ui-button-small ui-button-primary" [disabled]="!program" (click)="onToggleForm()">
-        <i-lucide [name]="icons.Plus" class="size-4" />
-        {{ formVisible() ? 'Fermer le formulaire' : 'Ajouter un sous-programme' }}
-      </button>
-    </div>
+<div class="pt-6 pb-4 border-b border-gray-100">
+  <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
+    <h5 class="text-2xl font-bold text-gray-900 mb-1">Sous-programmes</h5>
+    <ui-button [disabled]="!program" (clicked)="onToggleForm()" variant="primary" size="small">
+      {{ formVisible() ? 'Fermer le formulaire' : 'Ajouter un sous-programme' }}
+    </ui-button>
   </div>
-
-  <!-- Collapsible Form -->
-  <div class="px-6">
+  <div
+    class="rounded-2xl bg-gray-50 shadow-sm transition-all duration-500 ease-in-out overflow-hidden"
+    [style.maxHeight]="formVisible() ? '900px' : '0px'"
+    [style.opacity]="formVisible() ? 1 : 0"
+    [style.padding]="formVisible() ? '24px' : '0 24px'">
+    <form class="space-y-6" [formGroup]="subprogramForm" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-1">
+        <h6 class="text-lg font-bold text-gray-900">
+          {{ formMode() === 'edit' ? 'Modifier le sous-programme' : 'Ajouter un sous-programme' }}
+        </h6>
+      </div>
+      <div class="grid grid-cols-1 gap-6">
+        <div class="space-y-2">
+          <ui-input label="Nom du sous-programme" formControlName="name" placeholder="Nom du sous-programme" />
+        </div>
+        <div class="space-y-2">
+          <ui-textarea
+            label="Description"
+            formControlName="description"
+            placeholder="Décrivez brièvement le sous-programme..." />
+        </div>
+      </div>
+      @if (formMode() === 'edit' && editingSubprogram()) {
+      <div class="rounded-xl border w-full md:w-1/2 border-dashed border-gray-300 bg-white p-4">
+        <p class="text-xs font-semibold text-gray-600 mb-3">Logo</p>
+        <ui-file-upload [name]="'logo'" [url]="url + editingSubprogram()?.id" />
+      </div>
+      }
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+        <ui-button type="button" size="small" variant="secondary" [outlined]="true" (clicked)="onCancelForm()">
+          Annuler
+        </ui-button>
+        <ui-button
+          type="submit"
+          size="small"
+          variant="primary"
+          [disabled]="subprogramForm.invalid || store.isLoading()"
+          [loading]="store.isLoading()">
+          {{ formMode() === 'edit' ? 'Mettre à jour' : 'Ajouter' }}
+        </ui-button>
+      </div>
+    </form>
+  </div>
+</div>
+<div>
+  @if (isLoading && subprograms.length === 0) {
+  <ui-table-skeleton [rows]="4" [columns]="3" />
+  } @else if (subprograms.length === 0) {
+  <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
     <div
-      class="rounded-2xl border border-gray-200 bg-linear-to-br from-gray-50 to-white shadow-sm transition-all duration-500 ease-in-out overflow-hidden"
-      [style.maxHeight]="formVisible() ? '900px' : '0px'"
-      [style.opacity]="formVisible() ? 1 : 0"
-      [style.padding]="formVisible() ? '24px' : '0 24px'"
-      [style.marginTop]="formVisible() ? '24px' : '0px'">
-      <form class="space-y-6" [formGroup]="subprogramForm" (ngSubmit)="onSubmit()">
-        <div class="flex flex-col gap-1">
-          <h6 class="text-lg font-bold text-gray-900">
-            {{ formMode() === 'edit' ? 'Modifier le sous-programme' : 'Ajouter un sous-programme' }}
-          </h6>
-          <p class="text-xs text-gray-500">
-            {{
-              formMode() === 'edit' ? 'Mettez à jour les détails sélectionnés.' : 'Décrivez un nouveau sous-programme.'
-            }}
-          </p>
-        </div>
-        <div class="grid grid-cols-1 gap-6">
-          <div class="space-y-2">
-            <label for="sub-name" class="block text-sm font-semibold text-gray-700">
-              Nom du sous-programme
-              <span class="text-red-500">*</span>
-            </label>
-            <ui-input id="sub-name" formControlName="name" placeholder="Nom du sous-programme" class="w-full" />
-          </div>
-          <div class="space-y-2">
-            <label for="sub-description" class="block text-sm font-semibold text-gray-700">
-              Description
-              <span class="text-red-500">*</span>
-            </label>
-            <textarea
-              ui-textarea
-              id="sub-description"
-              formControlName="description"
-              rows="5"
-              placeholder="Décrivez brièvement le sous-programme..."
-              class="w-full resize-none"></textarea>
-          </div>
-        </div>
-        @if (formMode() === 'edit' && editingSubprogram()) {
-        <div class="rounded-xl border w-full md:w-1/2 border-dashed border-gray-300 bg-white p-4">
-          <p class="text-xs font-semibold text-gray-600 mb-3">Logo</p>
-          <ui-file-upload [name]="'logo'" [url]="url + editingSubprogram()?.id" />
-        </div>
+      class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
+      <i-lucide [name]="icons.Plus" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+    </div>
+    <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">Aucun sous-programme</h3>
+    <p class="text-gray-500 text-center max-w-lg mb-8 text-base leading-relaxed">
+      Ajoutez votre premier sous-programme pour structurer vos initiatives au sein de ce programme.
+    </p>
+    <ui-button (clicked)="onToggleForm()" variant="primary" [outlined]="true" size="small" [disabled]="!program">
+      Créer un sous-programme
+    </ui-button>
+  </div>
+  } @else {
+  <div class="ui-table-wrapper">
+    <table class="ui-table">
+      <thead class="ui-table-head">
+        <tr class="ui-table-head-row">
+          <th class="ui-table-header">Sous-programme</th>
+          <th class="ui-table-header">Statut</th>
+          <th class="ui-table-header">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="ui-table-body">
+        @for (subprogram of subprograms; track subprogram.id) {
+        <tr class="ui-table-row">
+          <td class="ui-table-cell">
+            <div class="flex items-center gap-3">
+              <ui-avatar [image]="subprogram | apiIMG : 'subprogram'" [label]="subprogram.name" />
+              <div class="min-w-0">
+                <p class="font-semibold text-gray-900">{{ subprogram.name }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">Créé le {{ subprogram.created_at | date : 'dd MMM yyyy' }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="ui-table-cell">
+            @if (subprogram.is_published) {
+            <ui-badge [showDot]="true" variant="success" [label]="'Publié'" />
+            } @else {
+            <ui-badge [showDot]="true" variant="default" [label]="'Brouillon'" />
+            }
+          </td>
+          <td class="ui-table-cell">
+            <div class="flex items-center gap-1">
+              <button
+                (click)="highlightSubprogram(subprogram.id)"
+                [class]="subprogram.is_highlighted ? 'action-button-contrast' : 'action-button-default'"
+                [title]="subprogram.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette'">
+                <i-lucide [name]="subprogram.is_highlighted ? icons.Star : icons.StarOff" class="size-4" />
+              </button>
+              <button
+                (click)="onPublishProgram(subprogram.id)"
+                [class]="subprogram.is_published ? 'action-button-success' : 'action-button-default'"
+                [title]="subprogram.is_published ? 'Dépublier' : 'Publier'">
+                <i-lucide [name]="subprogram.is_published ? icons.Eye : icons.EyeOff" class="size-4" />
+              </button>
+              <button (click)="onToggleForm(subprogram)" class="action-button-default">
+                <i-lucide [name]="icons.Pencil" class="size-4" />
+                Modifier
+              </button>
+              <button (click)="onDelete(subprogram.id)" class="action-button-danger">
+                <i-lucide [name]="icons.Trash" class="size-4" />
+                Supprimer
+              </button>
+            </div>
+          </td>
+        </tr>
         }
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-          <ui-button type="button" size="small" variant="secondary" [outlined]="true" (clicked)="onCancelForm()">
-            Annuler
-          </ui-button>
-          <ui-button
-            type="submit"
-            size="small"
-            variant="primary"
-            [disabled]="subprogramForm.invalid || store.isLoading()"
-            [loading]="store.isLoading()">
-            {{ formMode() === 'edit' ? 'Mettre à jour' : 'Ajouter' }}
-          </ui-button>
-        </div>
-      </form>
-    </div>
+      </tbody>
+    </table>
   </div>
-
-  <div class="px-4 sm:px-6 mt-6">
-    @if (isLoading && subprograms.length === 0) {
-    <ui-table-skeleton [rows]="4" [columns]="3" />
-    } @else if (subprograms.length === 0) {
-    <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
-      <div
-        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
-        <i-lucide [name]="icons.Plus" class="w-10 h-10 stroke-[1.5] text-primary-500" />
-      </div>
-      <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">Aucun sous-programme</h3>
-      <p class="text-gray-500 text-center max-w-lg mb-8 text-base leading-relaxed">
-        Ajoutez votre premier sous-programme pour structurer vos initiatives au sein de ce programme.
-      </p>
-      <ui-button (clicked)="onToggleForm()" variant="primary" [outlined]="true" size="small" [disabled]="!program">
-        Créer un sous-programme
-      </ui-button>
-    </div>
-    } @else {
-    <div class="ui-table-wrapper">
-      <table class="ui-table">
-        <thead class="ui-table-head">
-          <tr class="ui-table-head-row">
-            <th class="ui-table-header">Sous-programme</th>
-            <th class="ui-table-header">Statut</th>
-            <th class="ui-table-header">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="ui-table-body">
-          @for (subprogram of subprograms; track subprogram.id) {
-          <tr class="ui-table-row">
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-3">
-                <div class="relative">
-                  <ui-avatar [image]="subprogram | apiIMG : 'subprogram'" [label]="subprogram.name" />
-                  @if (subprogram.is_highlighted) {
-                  <div
-                    class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                    <i-lucide [name]="icons.Star" class="size-2.5 text-white" />
-                  </div>
-                  }
-                </div>
-                <div class="min-w-0">
-                  <p class="font-semibold text-gray-900">{{ subprogram.name }}</p>
-                  <p class="text-xs text-gray-500 mt-0.5">Créé le {{ subprogram.created_at | date : 'dd MMM yyyy' }}</p>
-                </div>
-              </div>
-            </td>
-            <td class="ui-table-cell">
-              @if (subprogram.is_published) {
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                Publié
-              </span>
-              } @else {
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                <span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
-                Brouillon
-              </span>
-              }
-            </td>
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-1">
-                <button
-                  (click)="highlightSubprogram(subprogram.id)"
-                  [class]="subprogram.is_highlighted ? 'action-button-contrast' : 'action-button-default'"
-                  [title]="subprogram.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette'">
-                  <i-lucide [name]="subprogram.is_highlighted ? icons.Star : icons.StarOff" class="size-4" />
-                </button>
-                <button
-                  (click)="onPublishProgram(subprogram.id)"
-                  [class]="subprogram.is_published ? 'action-button-success' : 'action-button-default'"
-                  [title]="subprogram.is_published ? 'Dépublier' : 'Publier'">
-                  <i-lucide [name]="subprogram.is_published ? icons.Eye : icons.EyeOff" class="size-4" />
-                </button>
-                <button (click)="onToggleForm(subprogram)" class="action-button-default">
-                  <i-lucide [name]="icons.Pencil" class="size-4" />
-                  Modifier
-                </button>
-                <button (click)="onDelete(subprogram.id)" class="action-button-danger">
-                  <i-lucide [name]="icons.Trash" class="size-4" />
-                  Supprimer
-                </button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    }
-  </div>
+  }
   <ui-confirm-dialog />
 </div>

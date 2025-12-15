@@ -6,13 +6,13 @@ import { CategoriesStore } from '../../store/project-categories.store';
 import { SubprogramsStore } from '../../../programs/store/subprograms.store';
 import { UsersStore } from '@features/users/store/users.store';
 import { IndicatorsStore } from '@features/programs/store/indicators.store';
-import { UiButton, UiDatepicker, UiMultiSelect, UiSelect } from '@shared/ui';
+import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 
 @Component({
   selector: 'app-project-add',
   templateUrl: './add-project.html',
   providers: [ProjectsStore, IndicatorsStore, SubprogramsStore, CategoriesStore, UsersStore],
-  imports: [UiSelect, UiMultiSelect, UiButton, CommonModule, UiDatepicker, ReactiveFormsModule]
+  imports: [UiSelect, UiInput, UiMultiSelect, UiButton, UiDatepicker, UiTextarea, ReactiveFormsModule]
 })
 export class AddProjectComponent {
   #fb = inject(FormBuilder);

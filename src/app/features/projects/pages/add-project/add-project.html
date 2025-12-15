@@ -1,155 +1,88 @@
 <section class="pt-32 dashboard-main-content flex flex-col gap-6">
-  <div class="mb-2">
-    <h5 class="text-3xl font-bold text-gray-800">Créer un nouveau projet</h5>
-    <p class="text-gray-600 mt-1">Définissez les paramètres essentiels de votre projet</p>
-  </div>
-
   <form class="w-full" [formGroup]="form" (ngSubmit)="onAddProject()">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-      <div class="mb-8">
-        <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">
-          Informations essentielles
-        </h6>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="flex flex-col gap-2">
-            <label for="name" class="text-sm font-semibold text-gray-700">
-              Titre du projet<span class="text-red-500 ml-1">*</span>
-            </label>
-            <input
-              ui-input
-              id="name"
-              formControlName="name"
-              class="w-full"
-              placeholder="Ex: Programme d'incubation 2024" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="duration_hours" class="text-sm font-semibold text-gray-700"
-              >Durée estimée (en heures)</label
-            >
-            <input
-              ui-input
-              id="duration_hours"
-              type="number"
-              formControlName="duration_hours"
-              class="w-full"
-              placeholder="Ex: 120" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="program" class="text-sm font-semibold text-gray-700">
-              Programme associé<span class="text-red-500 ml-1">*</span>
-            </label>
-            <ui-select
-              inputId="program"
-              [options]="programOptions()"
-              formControlName="program"
-              placeholder="Sélectionner un programme"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="project_manager" class="text-sm font-semibold text-gray-700"
-              >Chef de projet</label
-            >
-            <ui-select
-              inputId="project_manager"
-              [options]="staffOptions()"
-              formControlName="project_manager"
-              placeholder="Sélectionner un responsable"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="categories" class="text-sm font-semibold text-gray-700">
-              Catégories<span class="text-red-500 ml-1">*</span>
-            </label>
-            <ui-multi-select
-              [options]="categoryOptions()"
-              formControlName="categories"
-              placeholder="Choisir une ou plusieurs catégories"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="started_at" class="text-sm font-semibold text-gray-700">
-              Date de lancement<span class="text-red-500 ml-1">*</span>
-            </label>
-            <ui-datepicker
-              showIcon
-              iconDisplay="input"
-              formControlName="started_at"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="ended_at" class="text-sm font-semibold text-gray-700">
-              Date de clôture<span class="text-red-500 ml-1">*</span>
-            </label>
-            <ui-datepicker showIcon iconDisplay="input" formControlName="ended_at" class="w-full" />
-          </div>
-        </div>
+    <div class="mb-8">
+      <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Informations essentielles</h6>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ui-input
+          label="Titre du projet"
+          id="name"
+          formControlName="name"
+          class="w-full"
+          placeholder="Ex: Programme d'incubation 2024" />
+        <ui-input
+          label="Durée estimée (en heures)"
+          id="duration_hours"
+          formControlName="duration_hours"
+          class="w-full"
+          placeholder="Ex: 120" />
+        <ui-select
+          label="Programme associé"
+          inputId="program"
+          [options]="programOptions()"
+          formControlName="program"
+          placeholder="Sélectionner un programme"
+          class="w-full" />
+        <ui-select
+          label="Chef de projet"
+          inputId="project_manager"
+          [options]="staffOptions()"
+          formControlName="project_manager"
+          placeholder="Sélectionner un responsable"
+          class="w-full" />
+        <ui-multi-select
+          label="Catégories"
+          inputId="categories"
+          [options]="categoryOptions()"
+          formControlName="categories"
+          placeholder="Choisir une ou plusieurs catégories"
+          class="w-full" />
+        <ui-datepicker
+          label="Date de lancement"
+          showIcon
+          iconDisplay="input"
+          formControlName="started_at"
+          class="w-full" />
+        <ui-datepicker label="Date de clôture" showIcon iconDisplay="input" formControlName="ended_at" class="w-full" />
       </div>
-      <div>
-        <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">
-          Présentation détaillée
-        </h6>
-        <div class="grid grid-cols-1 gap-6">
-          <div class="flex flex-col gap-2">
-            <label for="description" class="text-sm font-semibold text-gray-700">
-              Présentation générale<span class="text-red-500 ml-1">*</span>
-            </label>
-            <textarea
-              ui-textarea
-              id="description"
-              formControlName="description"
-              rows="6"
-              class="w-full"
-              placeholder="Présentez le projet de manière claire et concise..."></textarea>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="context" class="text-sm font-semibold text-gray-700"
-              >Contexte et justification</label
-            >
-            <textarea
-              ui-textarea
-              id="context"
-              formControlName="context"
-              rows="6"
-              class="w-full"
-              placeholder="Décrivez le contexte dans lequel s'inscrit ce projet..."></textarea>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="objectives" class="text-sm font-semibold text-gray-700"
-              >Objectifs visés</label
-            >
-            <textarea
-              ui-textarea
-              id="objectives"
-              formControlName="objectives"
-              rows="6"
-              class="w-full"
-              placeholder="Listez les objectifs principaux et les résultats attendus..."></textarea>
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <label for="selection_criteria" class="text-sm font-semibold text-gray-700"
-              >Critères d'éligibilité</label
-            >
-            <textarea
-              ui-textarea
-              id="selection_criteria"
-              formControlName="selection_criteria"
-              rows="6"
-              class="w-full"
-              placeholder="Définissez les conditions d'accès et les prérequis..."></textarea>
-          </div>
-        </div>
+    </div>
+    <div>
+      <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Présentation détaillée</h6>
+      <div class="grid grid-cols-1 gap-6">
+        <ui-textarea
+          label="Présentation générale"
+          id="description"
+          formControlName="description"
+          class="w-full"
+          placeholder="Présentez le projet de manière claire et concise..." />
+        <ui-textarea
+          label="Contexte et justification"
+          id="context"
+          formControlName="context"
+          class="w-full"
+          placeholder="Décrivez le contexte dans lequel s'inscrit ce projet..." />
+        <ui-textarea
+          label="Objectifs visés"
+          id="objectives"
+          formControlName="objectives"
+          class="w-full"
+          placeholder="Listez les objectifs principaux et les résultats attendus..." />
+        <ui-textarea
+          label="Critères d'éligibilité"
+          id="selection_criteria"
+          formControlName="selection_criteria"
+          class="w-full"
+          placeholder="Définissez les conditions d'accès et les prérequis..." />
       </div>
-      <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-        <ui-button
-          [size]="'small'"
-          [loading]="store.isLoading()"
-          [disabled]="store.isLoading() || form.invalid"
-          variant="primary"
-          type="submit">
-          Créer le projet
-        </ui-button>
-      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+      <ui-button
+        [size]="'small'"
+        [loading]="store.isLoading()"
+        [disabled]="store.isLoading() || form.invalid"
+        variant="primary"
+        type="submit">
+        Créer le projet
+      </ui-button>
     </div>
   </form>
 </section>

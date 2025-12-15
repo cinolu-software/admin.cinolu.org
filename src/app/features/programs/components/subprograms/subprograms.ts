@@ -20,7 +20,7 @@ import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { IProgram } from '@shared/models';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
-import { UiButton, UiInput, UiConfirmDialog, FileUpload, UiAvatar } from '@ui';
+import { UiButton, UiInput, UiConfirmDialog, FileUpload, UiAvatar, UiTextarea, UiBadge } from '@ui';
 
 @Component({
   selector: 'app-list-subprograms',
@@ -36,7 +36,10 @@ import { UiButton, UiInput, UiConfirmDialog, FileUpload, UiAvatar } from '@ui';
     FileUpload,
     ApiImgPipe,
     UiAvatar,
-    UiTableSkeleton
+    UiTableSkeleton,
+    UiTextarea,
+    UiButton,
+    UiBadge
   ]
 })
 export class ListSubprograms {

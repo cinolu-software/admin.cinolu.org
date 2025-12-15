@@ -1,25 +1,19 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IndicatorsStore } from '../../store/indicators.store';
 import { ProgramsStore } from '../../store/programs.store';
 import { ProgramCategoriesStore } from '../../store/program-categories.store';
-import { ChartColumn, SquarePen, Check, Trash2, Funnel, Tag, Save } from 'lucide-angular';
+import { ChartColumn, SquarePen, Trash2, Funnel, Tag } from 'lucide-angular';
 import { LucideAngularModule } from 'lucide-angular';
-import { environment } from '../../../../../environments/environment';
-import { UiTabs, FileUpload } from '@shared/ui';
+import { environment } from '@env/environment';
+import { UiTabs, FileUpload, UiDatepicker, UiInput } from '@shared/ui';
 import { IProgram } from '@shared/models';
 import { INDICATORS_CATEGORIES } from '../../data/indicators.data';
 import { IndicatorFormData } from '../../types/indicator-form.type';
 import { ListSubprograms } from '../../components/subprograms/subprograms';
-import { UiButton, UiSelect } from '@shared/ui';
+import { UiButton, UiSelect, UiTextarea } from '@shared/ui';
 import { SelectOption } from '@shared/ui/form/select/select';
 
 @Component({
@@ -31,10 +25,13 @@ import { SelectOption } from '@shared/ui/form/select/select';
     ReactiveFormsModule,
     UiButton,
     FormsModule,
+    UiDatepicker,
     UiSelect,
     FileUpload,
     LucideAngularModule,
-    ListSubprograms
+    ListSubprograms,
+    UiTextarea,
+    UiInput
   ],
   templateUrl: './update-program.html'
 })
@@ -42,7 +39,6 @@ export class UpdateProgram {
   #route = inject(ActivatedRoute);
   #fb = inject(FormBuilder);
   store = inject(ProgramsStore);
-
   categoriesStore = inject(ProgramCategoriesStore);
   url = environment.apiUrl + 'programs/logo/';
   activeTab = signal('edit');
@@ -66,16 +62,9 @@ export class UpdateProgram {
     }))
   );
 
-  icons = {
-    check: Check,
-    trash: Trash2,
-    filter: Funnel,
-    tag: Tag,
-    barChart: ChartColumn,
-    save: Save
-  };
+  icons = { Trash2, Funnel, Tag, ChartColumn };
   tabs = [
-    { label: 'Modifier', name: 'edit', icon: SquarePen },
+    { label: 'Modifier le programme', name: 'edit', icon: SquarePen },
     { label: 'Sous programmes', name: 'subprograms', icon: Tag },
     { label: 'Indicateurs', name: 'indicators', icon: ChartColumn }
   ];

@@ -1,18 +1,33 @@
-<div class="flex items-center gap-2">
-  <input
-    type="checkbox"
-    [id]="id()"
-    [name]="name()"
-    [checked]="value"
-    [disabled]="disabled()"
-    [class]="checkboxClasses()"
-    (change)="onCheckboxChange($event)"
-    class="accent-primary-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2" />
+<div class="ui-checkbox-wrapper flex items-center gap-3">
+  <div class="ui-checkbox-container relative">
+    <input
+      type="checkbox"
+      [id]="id()"
+      [name]="name()"
+      [checked]="value"
+      [disabled]="disabled()"
+      [class]="checkboxClasses()"
+      (change)="onCheckboxChange($event)"
+      class="ui-checkbox-input" />
+    @if (value) {
+    <div class="ui-checkbox-checkmark">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    </div>
+    }
+  </div>
   @if (label()) {
-  <label
-    [for]="id()"
-    class="text-sm font-medium text-gray-700 cursor-pointer select-none transition-colors"
-    [class.opacity-50]="disabled()">
+  <label [for]="id()" class="ui-checkbox-label" [class.ui-checkbox-label-disabled]="disabled()">
     {{ label() }}
   </label>
   }

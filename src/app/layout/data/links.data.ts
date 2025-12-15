@@ -1,7 +1,19 @@
-import { LucideIconData, UserCheck, Calendar1, BookOpen, Layers, Folders } from 'lucide-angular';
+import { UserCheck, Calendar1, BookOpen, Layers, Folders, LayoutDashboard, Settings, UserCog } from 'lucide-angular';
 import { ILink } from '../types/link.type';
 
 export const LINKS: ILink[] = [
+  {
+    name: 'Dashboard',
+    path: '/',
+    exactUrl: true,
+    icon: LayoutDashboard
+  },
+  {
+    name: 'Mon compte',
+    path: '/account',
+    icon: UserCog,
+    exactUrl: true
+  },
   {
     name: 'Les programmes',
     path: '/list-programs',

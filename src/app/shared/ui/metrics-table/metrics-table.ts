@@ -9,9 +9,9 @@ import { UiButton } from '../form/button/button';
 
 @Component({
   selector: 'ui-metrics-table',
-  imports: [CommonModule, FormsModule, LucideAngularModule, CircularProgressComponent, UiButton],
+  imports: [FormsModule, LucideAngularModule, CircularProgressComponent, UiButton],
   templateUrl: './metrics-table.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MetricsTableComponent {
   indicators = input.required<IIndicator[]>();
@@ -24,11 +24,11 @@ export class MetricsTableComponent {
   icons = {
     barChart: ChartColumn,
     lock: Lock,
-    alertTriangle: AlertTriangle,
+    alertTriangle: AlertTriangle
   };
 
   iconsChevron = {
-    chevron: ChevronDown,
+    chevron: ChevronDown
   };
   #metricsVersion = signal(0);
   totalIndicators = computed(() => this.indicators().length);
@@ -41,7 +41,7 @@ export class MetricsTableComponent {
     const map = this.metricsMap();
     return this.groupedIndicators().map((g) => ({
       ...g,
-      summary: calculateGroupMetrics(map, g.indicators),
+      summary: calculateGroupMetrics(map, g.indicators)
     }));
   });
 

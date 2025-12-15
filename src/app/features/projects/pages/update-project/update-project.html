@@ -1,7 +1,6 @@
 <section class="pt-32 dashboard-main-content flex flex-col gap-4">
   @let project = projectStore.project();
   <ui-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
-
   @if (projectStore.isLoading()) {
   <app-project-details-skeleton />
   } @if (activeTab() === 'details' && project) {

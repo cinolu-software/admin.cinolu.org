@@ -1,12 +1,7 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-  <!-- Section: Image de présentation -->
   <div class="mb-10">
-    <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">
-      Image de présentation
-    </h6>
-    <p class="text-sm text-gray-600 mb-4">
-      Cette image sera utilisée comme couverture principale de l'événement
-    </p>
+    <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Image de présentation</h6>
+    <p class="text-sm text-gray-600 mb-4">Cette image sera utilisée comme couverture principale de l'événement</p>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-1">
         <div
@@ -39,12 +34,8 @@
       </div>
     </div>
   </div>
-
-  <!-- Section: Galerie d'images -->
   <div>
-    <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">
-      Galerie d'images
-    </h6>
+    <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Galerie d'images</h6>
     <p class="text-sm text-gray-600 mb-4">
       Ajoutez plusieurs images pour présenter votre événement de manière visuelle
     </p>
@@ -61,13 +52,12 @@
       </div>
       }
     </div>
-
     @if (gallery().length > 0) {
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       @for (image of gallery(); track image.id) {
       <div class="relative group">
         <div
-          class="relative h-40 w-full bg-gray-200 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-primary-400 transition">
+          class="relative h-36 w-full bg-gray-200 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-primary-400 transition">
           <img
             class="object-cover w-full h-full"
             priority
@@ -75,7 +65,7 @@
             [ngSrc]="image | apiIMG : 'gallery'"
             [alt]="event().name + ' gallery image'" />
           <div
-            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center">
+            class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center">
             <button
               type="button"
               (click)="onDeleteImage(image.id)"

@@ -1,114 +1,94 @@
-<div class="ui-datepicker-wrapper relative">
+<div class="ui-datepicker-wrapper relative space-y-2">
+  @if (label()) {
+  <label [for]="id()" class="block text-sm font-semibold text-gray-700">
+    {{ label() }}
+  </label>
+  }
   <div class="relative">
     <input
       [id]="id()"
       [value]="formattedValue()"
       [placeholder]="placeholder()"
       [disabled]="disabled()"
-      [readonly]="true"
       [class]="inputClasses()"
-      (click)="toggleCalendar()"
-      (focus)="onInputFocus($event)"
-      (blur)="onInputBlur($event)" />
+      (click)="toggleCalendar()" />
     <button
       type="button"
       [disabled]="disabled()"
       (click)="toggleCalendar()"
-      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded p-1"
-      [attr.aria-label]="'Open calendar'">
+      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded p-1">
       <i-lucide [name]="icons.Calendar" class="size-5" />
     </button>
   </div>
-
-  @if (isOpen()) {
   <div
-    class="ui-datepicker-panel absolute z-50 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg min-w-[280px]"
-    (click)="$event.stopPropagation()">
-    <div class="flex items-center justify-between p-3 border-b border-slate-200">
-      <button
-        type="button"
-        (click)="navigatePrevious()"
-        class="p-1.5 rounded-md hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-900">
+    class="absolute opacity-0 z-50 bg-white border border-slate-200/80 rounded-xl shadow-2xl min-w-[280px] transition-all duration-200 ease-in-out translate-y-0"
+    [class.opacity-100]="isOpen()"
+    [class.translate-y-1]="isOpen()">
+    <div class="flex items-center justify-between p-4 border-b border-slate-100">
+      <button type="button" (click)="navigatePrevious()" class="ui-datepicker-nav-button">
         <i-lucide [name]="icons.ChevronLeft" class="size-4" />
       </button>
-      <div class="font-semibold text-slate-900 text-sm">{{ monthYearLabel() }}</div>
-      <button
-        type="button"
-        (click)="navigateNext()"
-        class="p-1.5 rounded-md hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-900">
+      <div class="ui-datepicker-header-label">{{ monthYearLabel() }}</div>
+      <button type="button" (click)="navigateNext()" class="ui-datepicker-nav-button">
         <i-lucide [name]="icons.ChevronRight" class="size-4" />
       </button>
     </div>
     @if (view() === 'year') {
-    <div class="p-3">
-      <div class="grid grid-cols-4 gap-2">
-        @for (year of years(); track year) {
-        <button
-          type="button"
-          [disabled]="isDisabledYear(year)"
-          (click)="selectYear(year)"
-          [class]="
-            'px-3 py-2 text-sm rounded-md transition-colors font-medium ' +
-            (isSelectedYear(year)
-              ? 'bg-primary-600 text-white hover:bg-primary-700'
-              : 'text-slate-700 hover:bg-slate-100') +
-            (isDisabledYear(year) ? ' opacity-50 cursor-not-allowed' : '')
-          ">
-          {{ year }}
-        </button>
-        }
-      </div>
+    <div class="grid grid-cols-4 gap-2 p-4">
+      @for (year of years(); track year) {
+      <button
+        type="button"
+        [disabled]="isDisabledYear(year)"
+        (click)="selectYear(year)"
+        [class]="
+          'ui-datepicker-year-button ' +
+          (isSelectedYear(year) ? 'ui-datepicker-year-selected' : '') +
+          (isDisabledYear(year) ? ' ui-datepicker-year-disabled' : '')
+        ">
+        {{ year }}
+      </button>
+      }
     </div>
     } @if (view() === 'month') {
-    <div class="p-3">
-      <div class="grid grid-cols-3 gap-2">
-        @for (month of months(); track month.value) {
-        <button
-          type="button"
-          [disabled]="isDisabledMonth(month.value)"
-          (click)="selectMonth(month.value)"
-          [class]="
-            'px-3 py-2 text-sm rounded-md transition-colors font-medium ' +
-            (isSelectedMonth(month.value)
-              ? 'bg-primary-600 text-white hover:bg-primary-700'
-              : 'text-slate-700 hover:bg-slate-100') +
-            (isDisabledMonth(month.value) ? ' opacity-50 cursor-not-allowed' : '')
-          ">
-          {{ month.name }}
-        </button>
-        }
-      </div>
+    <div class="grid grid-cols-3 gap-2.5 p-4">
+      @for (month of months(); track month.value) {
+      <button
+        type="button"
+        [disabled]="isDisabledMonth(month.value)"
+        (click)="selectMonth(month.value)"
+        [class]="
+          'ui-datepicker-month-button ' +
+          (isSelectedMonth(month.value) ? 'ui-datepicker-month-selected' : '') +
+          (isDisabledMonth(month.value) ? ' ui-datepicker-month-disabled' : '')
+        ">
+        {{ month.name }}
+      </button>
+      }
     </div>
     } @if (view() === 'date') {
-    <div class="p-3">
-      <div class="grid grid-cols-7 gap-1 mb-2">
-        @for (day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track day) {
-        <div class="text-center text-xs font-semibold text-slate-500 py-1">{{ day }}</div>
-        }
-      </div>
-      <div class="grid grid-cols-7 gap-1">
-        @for (day of calendarDays(); track $index) { @if (day === null) {
-        <div class="aspect-square"></div>
-        } @else {
-        <button
-          type="button"
-          [disabled]="isDisabledDay(day)"
-          (click)="selectDay(day)"
-          [class]="
-            'aspect-square px-2 py-1 text-sm rounded-md transition-colors font-medium ' +
-            (isSelectedDay(day)
-              ? 'bg-primary-600 text-white hover:bg-primary-700'
-              : isToday(day)
-              ? 'bg-primary-50 text-primary-700 hover:bg-primary-100 font-semibold'
-              : 'text-slate-700 hover:bg-slate-100') +
-            (isDisabledDay(day) ? ' opacity-50 cursor-not-allowed' : '')
-          ">
-          {{ day }}
-        </button>
-        } }
-      </div>
+    <div class="grid grid-cols-7 gap-1.5 mb-3 p-4">
+      @for (day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track day) {
+      <div class="ui-datepicker-weekday">{{ day }}</div>
+      }
+    </div>
+    <div class="grid grid-cols-7 gap-1.5 p-4">
+      @for (day of calendarDays(); track $index) { @if (day === null) {
+      <div class="aspect-square"></div>
+      } @else {
+      <button
+        type="button"
+        [disabled]="isDisabledDay(day)"
+        (click)="selectDay(day)"
+        [class]="
+          'ui-datepicker-day-button ' +
+          (isSelectedDay(day) ? 'ui-datepicker-day-selected' : '') +
+          (isToday(day) && !isSelectedDay(day) ? ' ui-datepicker-day-today' : '') +
+          (isDisabledDay(day) ? ' ui-datepicker-day-disabled' : '')
+        ">
+        {{ day }}
+      </button>
+      } }
     </div>
     }
   </div>
-  }
 </div>

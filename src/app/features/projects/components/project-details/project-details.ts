@@ -4,7 +4,7 @@ import { IProject } from '@shared/models';
 import {
   BookOpen,
   Calendar,
-  CheckSquare,
+  SquareCheckBig,
   Clock,
   FileText,
   Flag,
@@ -18,27 +18,9 @@ import { UiAccordion, UiAccordionPanel, UiAccordionHeader, UiAccordionContent } 
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.html',
-  imports: [
-    UiAccordion,
-    UiAccordionPanel,
-    UiAccordionHeader,
-    UiAccordionContent,
-    LucideAngularModule,
-    CommonModule
-  ]
+  imports: [UiAccordion, UiAccordionPanel, UiAccordionHeader, UiAccordionContent, LucideAngularModule, CommonModule]
 })
 export class ProjectDetailsComponent {
   project = input.required<IProject>();
-
-  icons = {
-    folder: FolderOpen,
-    user: User,
-    clock: Clock,
-    calendar: Calendar,
-    flag: Flag,
-    fileText: FileText,
-    bookOpen: BookOpen,
-    target: Target,
-    checkSquare: CheckSquare
-  };
+  icons = { FolderOpen, User, Clock, Calendar, Flag, FileText, BookOpen, Target, SquareCheckBig };
 }

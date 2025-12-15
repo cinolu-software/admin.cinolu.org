@@ -1,110 +1,59 @@
 <section class="dashboard-main-content">
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">Créer un article</h1>
-    <p class="text-gray-600">Rédigez et publiez un nouvel article pour votre blog</p>
-  </div>
   <form [formGroup]="form" (ngSubmit)="onAddArticle()">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div class="p-8 space-y-8">
-        <div class="space-y-2">
-          <label for="title" class="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
-            <i-lucide [img]="icons.penLine" [size]="16" class="text-primary-600" />
-            Titre de l'article
-            <span class="text-red-500">*</span>
-          </label>
-          <ui-input
-            [id]="'title'"
-            formControlName="title"
-            [placeholder]="'Ex: Les tendances du développement web en 2025'"
-            class="w-full" />
-          <p class="text-xs text-gray-500 mt-1">Choisissez un titre accrocheur et descriptif</p>
-        </div>
+    <div class="flex flex-col gap-6">
+      <ui-input
+        label="Titre de l'article"
+        [id]="'title'"
+        formControlName="title"
+        [placeholder]="'Ex: Les tendances du développement web en 2025'"
+        class="w-full" />
 
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="space-y-2">
-            <label for="tags" class="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
-              <lucide-icon [img]="icons.tag" [size]="16" class="text-primary-600"></lucide-icon>
-              Tags de l'article
-              <span class="text-red-500">*</span>
-            </label>
-            <ui-multi-select
-              [id]="'tags'"
-              [options]="tagOptions()"
-              [placeholder]="'Sélectionnez des tags'"
-              formControlName="tags"
-              [display]="'chip'"
-              class="w-full" />
-            <p class="text-xs text-gray-500 mt-1">Aidez les lecteurs à trouver votre article</p>
-          </div>
-          <div class="space-y-2">
-            <label
-              class="text-sm font-semibold text-gray-900 flex items-center gap-1.5"
-              for="published_at">
-              <lucide-icon
-                [img]="icons.calendar"
-                [size]="16"
-                class="text-primary-600"></lucide-icon>
-              Date de publication
-            </label>
-            <ui-datepicker
-              [id]="'published_at'"
-              formControlName="published_at"
-              [placeholder]="'Sélectionnez une date'"
-              class="w-full" />
-            <p class="text-xs text-gray-500 mt-1">Planifiez la publication de votre article</p>
-          </div>
-        </div>
-        <div class="space-y-2">
-          <label
-            for="summary"
-            class="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
-            <i-lucide [img]="icons.list" [size]="16" class="text-primary-600" />
-            Résumé
-            <span class="text-red-500">*</span>
-          </label>
-          <ui-textarea
-            [id]="'summary'"
-            formControlName="summary"
-            [rows]="6"
-            [placeholder]="'Rédigez un résumé captivant de votre article...'"></ui-textarea>
-          <p class="text-xs text-gray-500 mt-1">
-            Un aperçu concis de votre article (150-200 caractères)
-          </p>
-        </div>
-        <div class="space-y-2">
-          <label
-            for="content"
-            class="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
-            <i-lucide [img]="icons.fileText" [size]="16" class="text-primary-600" />
-            Contenu de l'article
-            <span class="text-red-500">*</span>
-          </label>
-          <ui-text-editor
-            formControlName="content"
-            [minHeight]="'400px'"
-            [placeholder]="'Commencez à écrire votre article...'"
-            [id]="'content'" />
-          <p class="text-xs text-gray-500 mt-1">Utilisez l'éditeur pour formater votre contenu</p>
-        </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <ui-multi-select
+          label="Tags de l'article"
+          [id]="'tags'"
+          [options]="tagOptions()"
+          [placeholder]="'Sélectionnez des tags'"
+          formControlName="tags"
+          [display]="'chip'"
+          class="w-full" />
+        <ui-datepicker
+          label="Date de publication"
+          [id]="'published_at'"
+          formControlName="published_at"
+          [placeholder]="'Sélectionnez une date'"
+          class="w-full" />
       </div>
-      <div class="px-8 py-6 border-t border-gray-100 flex items-center justify-between">
-        <div class="flex items-center gap-2 text-sm text-gray-600">
-          <i-lucide [img]="icons.info" [size]="16" />
-          <span>Les champs marqués d'un <span class="text-red-500">*</span> sont obligatoires</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <ui-button
-            [type]="'submit'"
-            [variant]="'primary'"
-            [size]="'small'"
-            [loading]="store.isLoading()"
-            [disabled]="store.isLoading() || form.invalid">
-            <span class="flex items-center gap-2">
-              <i-lucide [img]="icons.check" [size]="16" />
-              <span>Publier l'article</span>
-            </span>
-          </ui-button>
-        </div>
+      <ui-textarea
+        label="Résumé"
+        [id]="'summary'"
+        formControlName="summary"
+        [rows]="6"
+        [placeholder]="'Rédigez un résumé captivant de votre article...'"></ui-textarea>
+      <ui-text-editor
+        label="Contenu de l'article"
+        formControlName="content"
+        [minHeight]="'400px'"
+        [placeholder]="'Commencez à écrire votre article...'"
+        [id]="'content'" />
+    </div>
+    <div class="py-6 border-t border-gray-100 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <i-lucide [img]="icons.info" [size]="16" />
+        <span>Les champs marqués d'un <span class="text-red-500">*</span> sont obligatoires</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <ui-button
+          [type]="'submit'"
+          [variant]="'primary'"
+          [size]="'small'"
+          [loading]="store.isLoading()"
+          [disabled]="store.isLoading() || form.invalid">
+          <span class="flex items-center gap-2">
+            <i-lucide [img]="icons.check" [size]="16" />
+            <span>Publier l'article</span>
+          </span>
+        </ui-button>
       </div>
     </div>
   </form>

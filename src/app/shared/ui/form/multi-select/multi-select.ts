@@ -7,11 +7,10 @@ import { SelectOption } from '../select/select';
   selector: 'ui-multi-select',
   imports: [CommonModule],
   templateUrl: './multi-select.html',
-  providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiMultiSelect), multi: true }
-  ]
+  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiMultiSelect), multi: true }]
 })
 export class UiMultiSelect implements ControlValueAccessor {
+  label = input<string>('');
   options = input<SelectOption[] | unknown[]>([]);
   placeholder = input<string>('Select items');
   disabled = input<boolean>(false);
@@ -44,9 +43,7 @@ export class UiMultiSelect implements ControlValueAccessor {
   });
 
   selectedLabels = computed(() => {
-    const selectedOptions = this.normalizedOptions().filter((opt) =>
-      this.value.includes(opt.value)
-    );
+    const selectedOptions = this.normalizedOptions().filter((opt) => this.value.includes(opt.value));
     return selectedOptions.map((opt) => opt.label);
   });
 
@@ -95,14 +92,11 @@ export class UiMultiSelect implements ControlValueAccessor {
   }
 
   selectClasses() {
-    const baseClasses =
-      'w-full px-3 py-2 border rounded-lg transition-colors cursor-pointer min-h-[42px]';
-    const invalidClasses = this.invalid()
-      ? 'border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:ring-primary-500';
-    const disabledClasses = this.disabled()
-      ? 'bg-gray-100 cursor-not-allowed'
-      : 'bg-white hover:border-gray-400';
-    return [baseClasses, invalidClasses, disabledClasses].filter(Boolean).join(' ');
+    // Only return conditional classes, base styles are in CSS
+    const classes: string[] = [];
+    if (this.invalid()) {
+      classes.push('border-red-500');
+    }
+    return classes.join(' ');
   }
 }

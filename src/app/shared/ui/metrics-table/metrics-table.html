@@ -50,21 +50,15 @@
             <div
               class="h-full transition-all duration-500 ease-out"
               [class.bg-red-500]="group.summary.percentage < 50"
-              [class.bg-yellow-500]="
-                group.summary.percentage >= 50 && group.summary.percentage < 80
-              "
+              [class.bg-yellow-500]="group.summary.percentage >= 50 && group.summary.percentage < 80"
               [class.bg-green-500]="group.summary.percentage >= 80"
-              [style.width.%]="
-                group.summary.percentage > 100 ? 100 : group.summary.percentage
-              "></div>
+              [style.width.%]="group.summary.percentage > 100 ? 100 : group.summary.percentage"></div>
           </div>
           <div class="shrink-0">
             <div
               class="flex items-center justify-center font-bold text-sm transition-all duration-300"
               [class.text-red-500]="group.summary.percentage < 50"
-              [class.text-yellow-500]="
-                group.summary.percentage >= 50 && group.summary.percentage < 80
-              "
+              [class.text-yellow-500]="group.summary.percentage >= 50 && group.summary.percentage < 80"
               [class.text-green-500]="group.summary.percentage >= 80">
               {{ group.summary.percentage }}%
             </div>
@@ -117,11 +111,7 @@
             metricsMap()[indicator.id].target! > indicator.target!) {
             <div class="text-xs text-orange-600 flex items-center gap-1 ml-auto">
               <i-lucide [img]="icons.alertTriangle" class="w-4 h-4" />
-              <span
-                >La cible du projet ne peut pas dépasser la cible globale ({{
-                  indicator.target
-                }})</span
-              >
+              <span> La cible du projet ne peut pas dépasser la cible globale ({{ indicator.target }}) </span>
             </div>
             }
           </div>
@@ -131,14 +121,8 @@
     </div>
     }
   </div>
-
   <div class="flex justify-end mt-4">
-    <ui-button
-      size="small"
-      variant="info"
-      [disabled]="isLoading()"
-      [loading]="isLoading()"
-      (clicked)="onSaveAll()">
+    <ui-button size="small" variant="info" [disabled]="isLoading()" [loading]="isLoading()" (clicked)="onSaveAll()">
       Enregistrer les indicateurs
     </ui-button>
   </div>
@@ -154,8 +138,7 @@
     Il n'y a pas encore d'indicateurs de performance configurés pour ce programme ou événement.
   </p>
   <p class="text-sm text-gray-500 text-center max-w-md">
-    Veuillez d'abord ajouter des indicateurs pour pouvoir suivre les performances et générer des
-    rapports.
+    Veuillez d'abord ajouter des indicateurs pour pouvoir suivre les performances et générer des rapports.
   </p>
 </div>
 }
