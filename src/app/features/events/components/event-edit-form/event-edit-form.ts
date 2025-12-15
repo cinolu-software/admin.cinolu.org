@@ -30,7 +30,7 @@ export class EventEditFormComponent {
       this.#patchForm(event);
       this.programsStore.loadUnpaginated();
     });
-    this.categoriesStore.loadUnpaginatedCategories();
+    this.categoriesStore.loadUnpaginated();
     this.usersStore.loadStaff();
   }
 
@@ -64,6 +64,6 @@ export class EventEditFormComponent {
   }
 
   onSubmit(): void {
-    if (this.form.valid) this.store.updateEvent(this.form.value);
+    if (this.form.valid) this.store.update(this.form.value);
   }
 }

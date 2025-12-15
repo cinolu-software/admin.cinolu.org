@@ -3,23 +3,24 @@
   <div class="px-6 pt-6 pb-4 border-b border-gray-100">
     <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
       <div>
-        <h5 class="text-2xl font-bold text-gray-900 mb-1">
-          Événements @if (!isLoading) {
-          <span class="text-gray-400 text-sm">• {{ eventCount }} au total</span>
-          }
-        </h5>
+        <h5 class="text-2xl font-bold text-gray-900 mb-1">Événements</h5>
       </div>
-      <a [routerLink]="'/events/add'" class="ui-button ui-button-small ui-button-primary">
-        <i-lucide [name]="icons.Plus" class="size-4" />
-        Nouvel événement
-      </a>
+      <a [routerLink]="'/events/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel événement </a>
     </div>
     <form [formGroup]="searchForm" class="search-input-wrapper">
       <div class="search-input-group">
         <div class="search-input-icon">
           <i-lucide [name]="icons.Search" class="search-input-icon-svg" />
         </div>
-        <input type="text" formControlName="q" placeholder="Rechercher un événement..." class="search-input" />
+        <label for="event-search-input" class="sr-only">Rechercher un événement</label>
+        <input
+          type="text"
+          id="event-search-input"
+          name="q"
+          formControlName="q"
+          placeholder="Rechercher une catégorie..."
+          class="search-input"
+          autocomplete="off" />
       </div>
     </form>
   </div>
@@ -63,14 +64,14 @@
             <td class="ui-table-cell">
               <div class="flex flex-col md:flex-row md:items-center gap-2">
                 <button
-                  (click)="showcaseEvent(event.id)"
+                  (click)="onShowcase(event.id)"
                   [class]="event.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
                   <i-lucide [img]="icons.Star" class="size-4" />
                   En avant
                 </button>
                 <button (click)="onPublish(event.id)" class="action-button-active">
                   <i-lucide [name]="icons.Eye" class="size-4" />
-                  {{ event.is_published ? 'Depublié' : 'Publier' }}
+                  {{ event.is_published ? 'Depublier' : 'Publier' }}
                 </button>
                 <a [routerLink]="['/events/edit', event.slug]" class="action-button-default">
                   <i-lucide [name]="icons.Pencil" class="size-4" />
@@ -97,17 +98,17 @@
     </div>
   </div>
   @if (eventCount === 0 && !isLoading) {
-  <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
+  <div class="mx-6 flex flex-col items-start justify-center p px-8">
     <div
       class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
       <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
     </div>
-    <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">Aucun événement trouvé</h3>
-    <p class="text-gray-500 text-center max-w-lg mb-8 text-base leading-relaxed">
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun événement trouvé</h3>
+    <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
       Nous n'avons trouvé aucun événement correspondant à vos critères.<br />
     </p>
     <app-ui-button
-      (clicked)="resetFilters()"
+      (clicked)="onResetFilters()"
       variant="secondary"
       [outlined]="true"
       styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">

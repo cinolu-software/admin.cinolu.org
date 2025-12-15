@@ -3,14 +3,9 @@
   <div class="px-6 pt-6 pb-4 border-b border-gray-100">
     <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
       <div>
-        <h5 class="text-2xl font-bold text-gray-900 mb-1">
-          Catégories d'événements @if (!isLoading) {
-          <span class="text-gray-400 text-sm">• {{ categoryCount }} au total</span>
-          }
-        </h5>
+        <h5 class="text-2xl font-bold text-gray-900 mb-1">Catégories d'événements</h5>
       </div>
       <button class="ui-button ui-button-small ui-button-primary" (click)="onToggleForm()">
-        <i-lucide [name]="icons.Plus" class="size-4" />
         {{ formVisible() ? 'Fermer' : 'Nouvelle catégorie' }}
       </button>
     </div>
@@ -19,7 +14,15 @@
         <div class="search-input-icon">
           <i-lucide [name]="icons.Search" class="search-input-icon-svg" />
         </div>
-        <input type="text" formControlName="q" placeholder="Rechercher une catégorie..." class="search-input" />
+        <label for="event-category-search-input" class="sr-only">Rechercher une catégorie</label>
+        <input
+          type="text"
+          id="event-category-search-input"
+          name="q"
+          formControlName="q"
+          placeholder="Rechercher une catégorie..."
+          class="search-input"
+          autocomplete="off" />
       </div>
     </form>
   </div>
@@ -39,6 +42,8 @@
         </div>
         <div class="space-y-2">
           <app-ui-input
+            [id]="'event-category-name'"
+            name="name"
             label="Nom de la catégorie"
             formControlName="name"
             placeholder="Ex: Conférence, Atelier, Séminaire..." />
@@ -109,13 +114,13 @@
     </div>
   </div>
   @if (categoryCount === 0 && !isLoading) {
-  <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
+  <div class="mx-6 flex flex-col items-start justify-center p px-8">
     <div
       class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
       <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
     </div>
-    <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">Aucune catégorie trouvée</h3>
-    <p class="text-gray-500 text-center max-w-lg mb-8 text-base leading-relaxed">
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucune catégorie trouvée</h3>
+    <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
       Nous n'avons trouvé aucune catégorie correspondant à vos critères.<br />
     </p>
     <app-ui-button

@@ -1,144 +1,84 @@
 <section class="pt-32 dashboard-main-content flex flex-col gap-6">
-  <div class="mb-2">
-    <h5 class="text-3xl font-bold text-gray-800">Créer un nouvel événement</h5>
-    <p class="text-gray-600 mt-1">Définissez les paramètres essentiels de votre événement</p>
-  </div>
   <form class="w-full" [formGroup]="form" (ngSubmit)="onAddEvent()">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-      <div class="mb-8">
-        <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">
-          Informations essentielles
-        </h6>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="flex flex-col gap-2">
-            <label for="name" class="text-sm font-semibold text-gray-700">
-              Titre de l'événement<span class="text-red-500 ml-1">*</span>
-            </label>
-            <input
-              ui-input
-              id="name"
-              formControlName="name"
-              class="w-full"
-              placeholder="Ex: Atelier de formation entrepreneuriale" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="place" class="text-sm font-semibold text-gray-700">Lieu de l'événement</label>
-            <app-ui-input id="place" formControlName="place" class="w-full" placeholder="Ex: Kinshasa, RDC" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="duration_hours" class="text-sm font-semibold text-gray-700">Durée estimée (en heures)</label>
-            <input
-              ui-input
-              id="duration_hours"
-              type="number"
-              formControlName="duration_hours"
-              class="w-full"
-              placeholder="Ex: 8" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="program" class="text-sm font-semibold text-gray-700">
-              Programme associé<span class="text-red-500 ml-1">*</span>
-            </label>
-            <app-ui-select
-              [filter]="true"
-              inputId="program"
-              [options]="programOptions()"
-              formControlName="program"
-              placeholder="Sélectionner un programme"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="event_manager" class="text-sm font-semibold text-gray-700">Responsable de l'événement</label>
-            <app-ui-select
-              inputId="event_manager"
-              [options]="staffOptions()"
-              formControlName="event_manager"
-              placeholder="Sélectionner un responsable"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="categories" class="text-sm font-semibold text-gray-700">
-              Catégories<span class="text-red-500 ml-1">*</span>
-            </label>
-            <app-ui-multi-select
-              [id]="'categories'"
-              [options]="categoriesStore.allCategories()"
-              [optionValue]="'id'"
-              [optionLabel]="'name'"
-              formControlName="categories"
-              placeholder="Choisir une ou plusieurs catégories"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <app-ui-datepicker
-              label="Date de début"
-              [id]="'started_at'"
-              showIcon
-              iconDisplay="input"
-              formControlName="started_at"
-              class="w-full" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="ended_at" class="text-sm font-semibold text-gray-700">
-              Date de fin<span class="text-red-500 ml-1">*</span>
-            </label>
-            <app-ui-datepicker showIcon iconDisplay="input" formControlName="ended_at" class="w-full" />
-          </div>
-        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <app-ui-input
+        [id]="'name'"
+        label="Titre de l'événement"
+        [required]="true"
+        formControlName="name"
+        placeholder="Ex: Atelier de formation entrepreneuriale" />
+      <app-ui-input
+        [id]="'place'"
+        label="Lieu de l'événement"
+        formControlName="place"
+        placeholder="Ex: Kinshasa, RDC" />
+      <app-ui-input
+        [id]="'duration_hours'"
+        label="Durée estimée (en heures)"
+        formControlName="duration_hours"
+        placeholder="Ex: 8" />
+      <app-ui-select
+        [id]="'program'"
+        label="Programme associé"
+        [filter]="true"
+        [optionLabel]="'name'"
+        [optionValue]="'id'"
+        [options]="programsStore.allSubprograms()"
+        formControlName="program"
+        placeholder="Sélectionner un programme" />
+      <app-ui-select
+        [id]="'event_manager'"
+        label="Responsable de l'événement"
+        [optionLabel]="'name'"
+        [optionValue]="'id'"
+        [options]="usersStore.staff()"
+        formControlName="event_manager"
+        placeholder="Sélectionner un responsable" />
+
+      <app-ui-multi-select
+        [id]="'categories'"
+        [options]="categoriesStore.allCategories()"
+        [optionValue]="'id'"
+        [optionLabel]="'name'"
+        formControlName="categories"
+        placeholder="Choisir une ou plusieurs catégories" />
+      <app-ui-datepicker
+        [id]="'started_at'"
+        label="Date de début"
+        showIcon
+        iconDisplay="input"
+        formControlName="started_at" />
+      <app-ui-datepicker
+        [id]="'ended_at'"
+        label="Date de fin"
+        showIcon
+        iconDisplay="input"
+        formControlName="ended_at" />
+      <div class="grid grid-cols-1 gap-6 col-span-2">
+        <app-ui-textarea
+          [id]="'description'"
+          [rows]="6"
+          label="Présentation générale"
+          [required]="true"
+          formControlName="description"
+          placeholder="Présentez l'événement de manière claire et concise..." />
+        <app-ui-textarea
+          [id]="'selection_criteria'"
+          [rows]="6"
+          label="Critères d'éligibilité"
+          formControlName="selection_criteria"
+          placeholder="Définissez les conditions d'accès et les prérequis..." />
       </div>
-      <div>
-        <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Présentation détaillée</h6>
-        <div class="grid grid-cols-1 gap-6">
-          <div class="flex flex-col gap-2">
-            <label for="description" class="text-sm font-semibold text-gray-700">
-              Présentation générale<span class="text-red-500 ml-1">*</span>
-            </label>
-            <textarea
-              ui-textarea
-              id="description"
-              formControlName="description"
-              rows="6"
-              placeholder="Présentez l'événement de manière claire et concise..."></textarea>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="context" class="text-sm font-semibold text-gray-700">Contexte et justification</label>
-            <textarea
-              ui-textarea
-              id="context"
-              formControlName="context"
-              rows="6"
-              placeholder="Décrivez le contexte dans lequel s'inscrit cet événement..."></textarea>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="objectives" class="text-sm font-semibold text-gray-700">Objectifs visés</label>
-            <textarea
-              ui-textarea
-              id="objectives"
-              formControlName="objectives"
-              rows="6"
-              placeholder="Listez les objectifs principaux et les résultats attendus..."></textarea>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="selection_criteria" class="text-sm font-semibold text-gray-700">Critères d'éligibilité</label>
-            <textarea
-              ui-textarea
-              id="selection_criteria"
-              formControlName="selection_criteria"
-              rows="6"
-              placeholder="Définissez les conditions d'accès et les prérequis..."></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-        <app-ui-button
-          [size]="'small'"
-          [loading]="eventsStore.isLoading()"
-          [disabled]="eventsStore.isLoading() || form.invalid"
-          variant="primary"
-          type="submit">
-          Créer l'événement
-        </app-ui-button>
-      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+      <app-ui-button
+        [size]="'small'"
+        [loading]="eventsStore.isLoading()"
+        [disabled]="eventsStore.isLoading() || form.invalid"
+        variant="primary"
+        type="submit">
+        Créer l'événement
+      </app-ui-button>
     </div>
   </form>
 </section>

@@ -18,7 +18,7 @@ export const GalleryStore = signalStore(
     _toast: inject(ToastrService)
   })),
   withMethods(({ _http, _toast, ...store }) => ({
-    loadGallery: rxMethod<string>(
+    loadAll: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
@@ -34,7 +34,7 @@ export const GalleryStore = signalStore(
         )
       )
     ),
-    deleteImage: rxMethod<string>(
+    delete: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>

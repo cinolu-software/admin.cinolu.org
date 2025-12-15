@@ -1,89 +1,69 @@
 <form class="w-full" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-    <div class="mb-8">
-      <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Informations essentielles</h6>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <app-ui-input
-          label="Titre de l'événement"
-          id="name"
-          formControlName="name"
-          class="w-full"
-          placeholder="Ex: Atelier de formation entrepreneuriale" />
-        <app-ui-input
-          label="Lieu de l'événement"
-          id="place"
-          formControlName="place"
-          class="w-full"
-          placeholder="Ex: Kinshasa, RDC" />
-        <app-ui-input
-          label="Durée estimée (en heures)"
-          id="duration_hours"
-          type="number"
-          formControlName="duration_hours"
-          class="w-full"
-          placeholder="Ex: 8" />
-        <app-ui-select
-          [filter]="true"
-          label="Programme associé"
-          id="program"
-          formControlName="program"
-          class="w-full"
-          placeholder="Sélectionner un programme" />
-        <app-ui-select
-          inputId="event_manager"
-          label="Responsable de l'événement"
-          id="event_manager"
-          formControlName="event_manager"
-          class="w-full"
-          placeholder="Sélectionner un responsable" />
-        <app-ui-multi-select
-          label="Catégories"
-          id="categories"
-          formControlName="categories"
-          class="w-full"
-          placeholder="Choisir une ou plusieurs catégories" />
-      </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <app-ui-input
+      label="Titre de l'événement"
+      [id]="'name'"
+      formControlName="name"
+      placeholder="Ex: Atelier de formation entrepreneuriale" />
+    <app-ui-input label="Lieu de l'événement" [id]="'place'" formControlName="place" placeholder="Ex: Kinshasa, RDC" />
+    <app-ui-input
+      label="Durée estimée (en heures)"
+      [id]="'duration_hours'"
+      type="number"
+      formControlName="duration_hours"
+      placeholder="Ex: 8" />
+    <app-ui-select
+      [filter]="true"
+      label="Programme associé"
+      [id]="'program'"
+      formControlName="program"
+      placeholder="Sélectionner un programme" />
+    <app-ui-select
+      [id]="'event_manager'"
+      label="Responsable de l'événement"
+      formControlName="event_manager"
+      placeholder="Sélectionner un responsable" />
+    <app-ui-multi-select
+      label="Catégories"
+      [id]="'categories'"
+      formControlName="categories"
+      placeholder="Choisir une ou plusieurs catégories" />
+
+    <div class="grid grid-cols-1 gap-6 col-span-2">
+      <app-ui-textarea
+        label="Présentation générale"
+        [id]="'description'"
+        [rows]="6"
+        formControlName="description"
+        placeholder="Présentez l'événement de manière claire et concise..." />
+      <app-ui-textarea
+        label="Contexte et justification"
+        [id]="'context'"
+        [rows]="6"
+        formControlName="context"
+        placeholder="Décrivez le contexte dans lequel s'inscrit cet événement..." />
+      <app-ui-textarea
+        label="Objectifs visés"
+        [id]="'objectives'"
+        [rows]="6"
+        formControlName="objectives"
+        placeholder="Listez les objectifs principaux et les résultats attendus..." />
+      <app-ui-textarea
+        label="Critères d'éligibilité"
+        [id]="'selection_criteria'"
+        [rows]="6"
+        formControlName="selection_criteria"
+        placeholder="Définissez les conditions d'accès et les prérequis..." />
     </div>
-    <div>
-      <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Présentation détaillée</h6>
-      <div class="grid grid-cols-1 gap-6">
-        <div class="flex flex-col gap-2">
-          <app-ui-textarea
-            label="Présentation générale"
-            id="description"
-            formControlName="description"
-            placeholder="Présentez l'événement de manière claire et concise..." />
-          <app-ui-textarea
-            label="Contexte et justification"
-            id="context"
-            formControlName="context"
-            placeholder="Décrivez le contexte dans lequel s'inscrit cet événement..." />
-        </div>
-        <div class="flex flex-col gap-2">
-          <app-ui-textarea
-            label="Objectifs visés"
-            id="objectives"
-            formControlName="objectives"
-            placeholder="Listez les objectifs principaux et les résultats attendus..." />
-        </div>
-        <div class="flex flex-col gap-2">
-          <app-ui-textarea
-            label="Critères d'éligibilité"
-            id="selection_criteria"
-            formControlName="selection_criteria"
-            placeholder="Définissez les conditions d'accès et les prérequis..." />
-        </div>
-      </div>
-    </div>
-    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-      <app-ui-button
-        [size]="'small'"
-        [loading]="store.isLoading()"
-        [disabled]="store.isLoading() || form.invalid"
-        variant="primary"
-        type="submit">
-        {{ store.isLoading() ? 'Modification...' : "Modifier l'événement" }}
-      </app-ui-button>
-    </div>
+  </div>
+  <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+    <app-ui-button
+      [size]="'small'"
+      [loading]="store.isLoading()"
+      [disabled]="store.isLoading() || form.invalid"
+      variant="primary"
+      type="submit">
+      {{ store.isLoading() ? 'Modification...' : "Modifier l'événement" }}
+    </app-ui-button>
   </div>
 </form>

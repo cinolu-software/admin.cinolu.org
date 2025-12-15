@@ -30,7 +30,7 @@ export const EventsStore = signalStore(
     _indicatorsStore: inject(IndicatorsStore)
   })),
   withMethods(({ _http, _router, _toast, _indicatorsStore, ...store }) => ({
-    loadEvents: rxMethod<FilterEventCategoriesDto>(
+    loadAll: rxMethod<FilterEventCategoriesDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {
@@ -47,7 +47,7 @@ export const EventsStore = signalStore(
         })
       )
     ),
-    loadEvent: rxMethod<string>(
+    loadOne: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
@@ -67,10 +67,7 @@ export const EventsStore = signalStore(
         )
       )
     ),
-    addMetrics: rxMethod<{
-      id: string;
-      metrics: { indicatorId: string; target?: number; achieved?: number }[];
-    }>(
+    createMetrics: rxMethod<{ id: string; metrics: { indicatorId: string; target?: number; achieved?: number }[] }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((params) =>
@@ -88,7 +85,7 @@ export const EventsStore = signalStore(
         )
       )
     ),
-    addEvent: rxMethod<EventDto>(
+    create: rxMethod<EventDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) =>
@@ -107,7 +104,7 @@ export const EventsStore = signalStore(
         )
       )
     ),
-    updateEvent: rxMethod<EventDto>(
+    update: rxMethod<EventDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) =>
@@ -128,7 +125,7 @@ export const EventsStore = signalStore(
         )
       )
     ),
-    deleteEvent: rxMethod<string>(
+    delete: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
@@ -148,7 +145,7 @@ export const EventsStore = signalStore(
         )
       )
     ),
-    publishEvent: rxMethod<string>(
+    publish: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
@@ -166,7 +163,7 @@ export const EventsStore = signalStore(
         )
       )
     ),
-    highlight: rxMethod<string>(
+    showcase: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>

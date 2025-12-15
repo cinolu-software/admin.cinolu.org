@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
-import { LucideAngularModule, Trash, Search, Plus, Eye, Star, Funnel, Pencil } from 'lucide-angular';
+import { LucideAngularModule, Trash, Search, Eye, Star, Funnel, Pencil } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -40,7 +40,7 @@ export class ListEvents {
   searchForm: FormGroup;
   store = inject(EventsStore);
   itemsPerPage = 10;
-  icons = { Pencil, Trash, Search, Plus, Eye, Star, Funnel };
+  icons = { Pencil, Trash, Search, Eye, Star, Funnel };
   queryParams = signal<FilterEventsDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q'),
@@ -60,7 +60,7 @@ export class ListEvents {
       q: [this.queryParams().q || '']
     });
     effect(() => {
-      this.store.loadEvents(this.queryParams());
+      this.store.loadAll(this.queryParams());
     });
     const searchValue = this.searchForm.get('q');
     searchValue?.valueChanges
@@ -93,15 +93,15 @@ export class ListEvents {
     this.#router.navigate(['/events'], { queryParams });
   }
 
-  showcaseEvent(eventId: string): void {
-    this.store.highlight(eventId);
+  onShowcase(eventId: string): void {
+    this.store.showcase(eventId);
   }
 
   onPublish(eventId: string): void {
-    this.store.publishEvent(eventId);
+    this.store.publish(eventId);
   }
 
-  resetFilters(): void {
+  onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.update((qp) => ({
       ...qp,
@@ -119,7 +119,7 @@ export class ListEvents {
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
       accept: () => {
-        this.store.deleteEvent(eventId);
+        this.store.delete(eventId);
       }
     });
   }

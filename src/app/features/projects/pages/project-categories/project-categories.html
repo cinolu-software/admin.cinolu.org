@@ -26,8 +26,6 @@
       </div>
     </form>
   </div>
-
-  <!-- Collapsible Form -->
   <div class="px-6">
     <div
       class="rounded-2xl border border-gray-200 bg-linear-to-br from-gray-50 to-white shadow-sm transition-all duration-500 ease-in-out overflow-hidden"
@@ -112,13 +110,13 @@
     </div>
   </div>
   @if (categoryCount === 0 && !isLoading) {
-  <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
+  <div class="mx-6 flex flex-col items-start justify-center p px-8">
     <div
       class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
       <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
     </div>
-    <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">Aucune catégorie trouvée</h3>
-    <p class="text-gray-500 text-center max-w-lg mb-8 text-base leading-relaxed">
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucune catégorie trouvée</h3>
+    <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
       Nous n'avons trouvé aucune catégorie correspondant à vos critères.<br />
     </p>
     <app-ui-button

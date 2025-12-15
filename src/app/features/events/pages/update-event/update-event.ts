@@ -1,5 +1,4 @@
 import { Component, effect, inject, OnInit, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ChartColumn, SquarePen, Images } from 'lucide-angular';
 import { UiTabs, MetricsTableComponent } from '@shared/ui';
@@ -18,7 +17,6 @@ import { GalleryStore } from '../../store/event-gallery.store';
   templateUrl: './update-event.html',
   providers: [EventsStore, IndicatorsStore, GalleryStore],
   imports: [
-    CommonModule,
     UiTabs,
     MetricsTableComponent,
     EventDetailsComponent,
@@ -50,8 +48,8 @@ export class UpdateEvent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.eventsStore.loadEvent(this.#slug);
-    this.galleryStore.loadGallery(this.#slug);
+    this.eventsStore.loadOne(this.#slug);
+    this.galleryStore.loadAll(this.#slug);
   }
 
   #watchEventChanges(): void {
@@ -72,15 +70,15 @@ export class UpdateEvent implements OnInit {
   }
 
   onDeleteImage(imageId: string): void {
-    this.galleryStore.deleteImage(imageId);
+    this.galleryStore.delete(imageId);
   }
 
   onCoverUploaded(): void {
-    this.eventsStore.loadEvent(this.#slug);
+    this.eventsStore.loadOne(this.#slug);
   }
 
   onGalleryUploaded(): void {
-    this.galleryStore.loadGallery(this.#slug);
+    this.galleryStore.loadAll(this.#slug);
   }
 
   onSaveMetrics(): void {
@@ -88,6 +86,6 @@ export class UpdateEvent implements OnInit {
     if (!event) return;
     const indicators = this.indicatorsStore.indicators();
     const metrics = metricsMapToDto(this.metricsMap, indicators);
-    this.eventsStore.addMetrics({ id: event.id, metrics });
+    this.eventsStore.createMetrics({ id: event.id, metrics });
   }
 }
