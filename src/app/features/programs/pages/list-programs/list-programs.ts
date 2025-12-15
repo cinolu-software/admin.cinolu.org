@@ -103,11 +103,11 @@ export class ListPrograms {
     this.store.loadAll(this.queryParams());
   }
 
-  showcaseProgram(id: string): void {
+  onShowcase(id: string): void {
     this.store.highlight(id);
   }
 
-  resetFilters(): void {
+  onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.set({ page: null, q: null, filter: null });
   }

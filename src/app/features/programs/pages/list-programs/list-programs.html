@@ -69,7 +69,7 @@
               <div class="flex items-center gap-2">
                 <div class="flex items-center gap-1.5">
                   <button
-                    (click)="showcaseProgram(program.id)"
+                    (click)="onShowcase(program.id)"
                     [class]="program.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
                     <i-lucide [name]="icons.Star" class="size-4" [class.fill-current]="program.is_highlighted" />
                     En avant
@@ -117,7 +117,7 @@
       Nous n'avons trouvé aucun programme correspondant à vos critères.<br />
     </p>
     <app-ui-button
-      (clicked)="resetFilters()"
+      (clicked)="onResetFilters()"
       variant="secondary"
       [outlined]="true"
       styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow"
