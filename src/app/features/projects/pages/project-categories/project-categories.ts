@@ -80,7 +80,7 @@ export class ProjectCategories {
     }));
   }
 
-  resetFilters(): void {
+  onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.set({ page: null, q: null });
   }
