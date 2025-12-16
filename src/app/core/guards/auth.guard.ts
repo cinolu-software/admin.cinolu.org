@@ -8,6 +8,6 @@ export const authGuard: CanActivateFn = () => {
   const user = authStore.user();
   const roles = user?.roles as unknown as string[];
   const hasRights = roles?.includes('admin') || roles?.includes('staff') || false;
-  if (!hasRights) return router.parseUrl('/sign-in');
+  if (!hasRights) return router.navigate(['/sign-in']);
   return true;
 };
