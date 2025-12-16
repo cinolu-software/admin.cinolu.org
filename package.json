@@ -1,5 +1,5 @@
 {
-  "name": "onestop",
+  "name": "admin",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "ssr": "node dist/onestop/server/server.mjs",
+    "ssr": "node dist/admin/server/server.mjs",
     "prepare": "husky"
   },
   "prettier": {

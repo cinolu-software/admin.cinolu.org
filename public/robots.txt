@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://onestop.cinolu.org/sitemap.xml
+Sitemap: https://admin.cinolu.org/sitemap.xml

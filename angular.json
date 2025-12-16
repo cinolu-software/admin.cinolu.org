@@ -4,13 +4,11 @@
   "cli": {
     "packageManager": "pnpm",
     "analytics": false,
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "projects",
   "projects": {
-    "onestop": {
+    "admin": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -74,10 +72,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "onestop:build:production"
+              "buildTarget": "admin:build:production"
             },
             "development": {
-              "buildTarget": "onestop:build:development"
+              "buildTarget": "admin:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,10 +86,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
