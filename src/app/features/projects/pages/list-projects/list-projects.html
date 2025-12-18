@@ -48,7 +48,7 @@
             <td class="ui-table-cell">
               <div class="flex items-center gap-3">
                 <div class="relative">
-                  <app-ui-avatar [image]="project | apiIMG : 'project'" [label]="project.name" />
+                  <app-ui-avatar [shape]="'square'" [image]="project | apiIMG : 'project'" [label]="project.name" />
                 </div>
                 <p class="font-semibold capitalize text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2">
                   {{ project.name }}

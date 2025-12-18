@@ -2,7 +2,7 @@
   @if (user(); as user) {
   <div class="relative group">
     <button class="group flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-gray-50 transition-all duration-200">
-      <app-ui-avatar [image]="user | apiIMG : 'user'" [size]="50" [label]="user.name" />
+      <app-ui-avatar [image]="user | apiIMG : 'user'" [label]="user.name" />
       <div class="flex items-center gap-1.5">
         <span class="font-semibold text-gray-800 text-sm max-w-[140px] truncate">
           {{ user.name }}

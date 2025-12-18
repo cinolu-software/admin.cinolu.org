@@ -57,7 +57,7 @@
 <div>
   @if (isLoading && subprograms.length === 0) {
   <app-ui-table-skeleton [rows]="4" [columns]="3" />
-  } @else if (subprograms.length === 0) {
+  } @else if (subprograms.length === 0 && !isLoading) {
   <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
     <div
       class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
@@ -86,7 +86,10 @@
         <tr class="ui-table-row">
           <td class="ui-table-cell">
             <div class="flex items-center gap-3">
-              <app-ui-avatar [image]="subprogram | apiIMG : 'subprogram'" [label]="subprogram.name" />
+              <app-ui-avatar
+                [shape]="'square'"
+                [image]="subprogram | apiIMG : 'subprogram'"
+                [label]="subprogram.name" />
               <div class="whitespace-nowrap w-32 md:w-48 line-clamp-1 md:line-clamp-2">
                 <p class="font-semibold text-gray-900">{{ subprogram.name }}</p>
                 <p class="text-xs text-gray-500 mt-0.5">Créé le {{ subprogram.created_at | date : 'dd MMM yyyy' }}</p>
