@@ -7,9 +7,7 @@ export const authGuard: CanActivateFn = (_, state) => {
   const router = inject(Router);
   const hasRights = authStore.hasRights();
   if (!hasRights) {
-    return router.navigate(['/sign-in'], {
-      queryParams: { redirect: state.url }
-    });
+    return router.navigateByUrl('/sign-in?redirect=' + state.url);
   }
   return true;
 };

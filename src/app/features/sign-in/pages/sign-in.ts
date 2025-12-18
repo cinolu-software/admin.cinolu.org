@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { UiInput, UiPassword, UiButton } from '@ui';
 import { SignInStore } from '../store/sign-in.store';
 import { AuthStore } from '@core/auth/auth.store';
@@ -13,6 +14,7 @@ import { AuthStore } from '@core/auth/auth.store';
 })
 export class SignIn {
   #formBuilder: FormBuilder = inject(FormBuilder);
+  #route = inject(ActivatedRoute);
   form: FormGroup;
   store = inject(SignInStore);
   authStore = inject(AuthStore);
@@ -26,8 +28,10 @@ export class SignIn {
 
   onSignIn(): void {
     if (this.form.invalid) return;
+    const redirectPath = this.#route.snapshot.queryParamMap.get('redirect');
     this.store.signIn({
       payload: this.form.value,
+      redirectPath: redirectPath || '/',
       onSuccess: () => true
     });
   }
