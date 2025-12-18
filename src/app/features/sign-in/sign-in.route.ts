@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { signInGuard } from '@core/guards';
+import { unauthGuard } from '@core/guards';
 
 export const signInRoutes: Routes = [
   {
     path: '',
     title: 'Connexion',
-    canActivate: [signInGuard],
+    canActivate: [unauthGuard],
     loadComponent: () => import('./pages/sign-in').then((c) => c.SignIn)
   }
 ];
