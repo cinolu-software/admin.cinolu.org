@@ -5,9 +5,9 @@ import { BackButton } from '@shared/ui/back-button/back-button';
 import { Topbar } from '../../components/topbar/topbar';
 
 @Component({
-  selector: 'app-dashboard-layout',
-  templateUrl: './dashboard-layout.html',
+  selector: 'app-sidebar-layout',
+  templateUrl: './sidebar-layout.html',
   imports: [RouterOutlet, Sidebar, BackButton, Topbar],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardLayout {}
+export class SidebarLayout {}

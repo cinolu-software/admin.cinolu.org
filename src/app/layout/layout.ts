@@ -3,18 +3,18 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { AppConfigService } from '@shared/services/config/config.service';
 import { AppConfig } from '@shared/services/config/config.types';
-import { DashboardLayout } from './pages/dashboard-layout/dashboard-layout';
+import { SidebarLayout } from './pages/sidebar-layout/sidebar-layout';
 import { EmptyLayout } from './pages/empty-layout/empty-layout';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
-  imports: [DashboardLayout, EmptyLayout],
+  imports: [SidebarLayout, EmptyLayout],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Layout implements OnInit, OnDestroy {
   config: AppConfig = {} as AppConfig;
-  layout = 'full-layout';
+  layout = 'sidebar-layout';
   #unsubscribeAll = new Subject();
   #router = inject(Router);
   #activatedRoute = inject(ActivatedRoute);
