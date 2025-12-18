@@ -1,10 +1,10 @@
 <span
-  class="inline-flex items-center rounded-full font-medium border"
-  [ngClass]="[variantClasses[variant()].container, sizeClasses[size()].container]">
-  @if (showDot()) {
-  <span
-    class="rounded-full"
-    [ngClass]="[variantClasses[variant()].dot, sizeClasses[size()].dot]"></span>
-  }
+  [class]="
+    'inline-flex items-center rounded-full font-medium border ' +
+    variantClasses[variant()].container +
+    ' ' +
+    sizeClasses[size()].container
+  ">
+  <span [class]="'rounded-full ' + variantClasses[variant()].dot + ' ' + sizeClasses[size()].dot"></span>
   {{ label() }}
 </span>

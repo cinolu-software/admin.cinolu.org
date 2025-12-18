@@ -1,5 +1,4 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'default';
 type BadgeSize = 'small' | 'medium' | 'large';
@@ -7,16 +6,14 @@ type BadgeSize = 'small' | 'medium' | 'large';
 @Component({
   selector: 'app-ui-badge',
   templateUrl: './badge.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiBadge {
   label = input.required<string>();
   variant = input<BadgeVariant>('default');
   size = input<BadgeSize>('medium');
-  showDot = input<boolean>(false);
 
-  protected readonly variantClasses: Record<BadgeVariant, { container: string; dot: string }> = {
+  variantClasses: Record<BadgeVariant, { container: string; dot: string }> = {
     success: {
       container: 'bg-emerald-50 text-emerald-700 border-emerald-200',
       dot: 'bg-emerald-500'
@@ -39,7 +36,7 @@ export class UiBadge {
     }
   };
 
-  protected readonly sizeClasses: Record<BadgeSize, { container: string; dot: string }> = {
+  protected sizeClasses: Record<BadgeSize, { container: string; dot: string }> = {
     small: {
       container: 'px-2 py-0.5 text-xs gap-1',
       dot: 'w-1 h-1'
