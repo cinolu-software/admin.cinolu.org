@@ -10,7 +10,7 @@ export { UiTabs } from './tabs/tabs';
 export { UiLoader } from './loader/loader';
 export { UiAvatar } from './avatar/avatar';
 export { UiProgressBar } from './progress-bar/progress-bar';
-export { UiAccordion, UiAccordionPanel, UiAccordionHeader, UiAccordionContent } from './accordion/accordion';
+export * from './accordion/index';
 export { UiStepper } from './stepper/stepper';
 export { UiTextEditor } from './text-editor/text-editor';
 export { UiPagination } from './pagination/pagination';

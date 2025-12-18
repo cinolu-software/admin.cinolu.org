@@ -1,0 +1,19 @@
+import { input, inject, computed, Component } from '@angular/core';
+import { UiAccordion } from '../accordion';
+
+@Component({
+  selector: 'app-ui-accordion-panel',
+  templateUrl: './accordion-panel.html'
+})
+export class UiAccordionPanel {
+  value = input.required<string>();
+  #accordion = inject(UiAccordion, { optional: true });
+
+  isActive = computed(() => {
+    return this.#accordion?.isActive(this.value()) ?? false;
+  });
+
+  toggle(): void {
+    this.#accordion?.toggle(this.value());
+  }
+}
