@@ -20,15 +20,15 @@ export class CircularProgressComponent {
   });
   strokeColor = computed(() => {
     const perc = this.percentage();
-    if (perc < 50) return 'text-red-500';
-    if (perc < 80) return 'text-yellow-500';
-    return 'text-green-500';
+    if (perc < 50) return 'text-primary-400';
+    if (perc < 80) return 'text-primary-500';
+    return 'text-primary-600';
   });
 
   textColor = computed(() => {
     const perc = this.percentage();
-    if (perc < 50) return 'text-red-600';
-    if (perc < 80) return 'text-yellow-600';
-    return 'text-green-600';
+    if (perc < 50) return 'text-primary-600';
+    if (perc < 80) return 'text-primary-700';
+    return 'text-primary-800';
   });
 }

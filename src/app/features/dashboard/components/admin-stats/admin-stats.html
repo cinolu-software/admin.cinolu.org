@@ -1,25 +1,227 @@
-<div
-  class="flex items-center flex-wrap justify-between gap-4 mb-8 bg-white rounded-xl px-6 py-4 shadow-sm border border-gray-200">
-  <div class="flex items-center gap-3">
-    <i-lucide [img]="icons.Calendar" class="text-primary-600 w-5 h-5 stroke-2" />
-    <label for="indicator-year" class="font-semibold text-gray-800">
-      Performance Globale : {{ year().getFullYear() }}
-    </label>
+@if (adminStatsStore.isLoading()) {
+<div class="mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    @for (i of [1,2,3,4]; track i) {
+    <div class="bg-white rounded-xl border border-gray-200 p-6 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-24 mb-4"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    }
   </div>
-  <app-ui-datepicker [id]="'indicator-year'" [view]="'year'" [(ngModel)]="year" />
 </div>
-@if (reportStore.isLoading()) {
-<app-performance-skeleton />
-} @else if (reportStore.report().length === 0) {
-<app-ui-empty-state [year]="year().getFullYear()" />
-} @else {
-<app-performance-overview
-  [year]="year().getFullYear()"
-  [programCount]="reportStore.report().length"
-  [averagePerformance]="averagePerformance()" />
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  @for (program of sortedPrograms(); track $index) {
-  <app-program-card [program]="program" />
-  }
+} @if (showError()) {
+<div class="mb-8 bg-primary-50 border border-primary-200 rounded-xl p-6">
+  <div class="flex items-center gap-3">
+    <i-lucide [img]="icons.Award" class="w-5 h-5 text-primary-600" [strokeWidth]="2" />
+    <p class="text-primary-800 font-medium">Impossible de charger les statistiques. Veuillez réessayer plus tard.</p>
+  </div>
+</div>
+} @if (showStats()) {
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div
+    class="group relative bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div
+      class="absolute top-0 right-0 w-32 h-32 bg-primary-100 rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+    <div class="relative z-10">
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="w-14 h-14 rounded-xl bg-linear-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+          <i-lucide [img]="icons.Users" class="w-7 h-7 text-white" [strokeWidth]="2" />
+        </div>
+        <span
+          class="text-xs font-semibold text-primary-700 bg-primary-50 px-3 py-1.5 rounded-full border border-primary-200">
+          Total
+        </span>
+      </div>
+      <p class="text-sm font-medium text-gray-600 mb-2">Utilisateurs</p>
+      <p class="text-4xl font-bold text-gray-900">{{ stats()!.users.total }}</p>
+    </div>
+  </div>
+  <div
+    class="group relative bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div
+      class="absolute top-0 right-0 w-32 h-32 bg-secondary-100 rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+    <div class="relative z-10">
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="w-14 h-14 rounded-xl bg-linear-to-br from-secondary-500 to-secondary-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+          <i-lucide [img]="icons.FileText" class="w-7 h-7 text-white" [strokeWidth]="2" />
+        </div>
+        <span
+          class="text-xs font-semibold text-secondary-700 bg-secondary-50 px-3 py-1.5 rounded-full border border-secondary-200"
+          >Contenu</span
+        >
+      </div>
+      <p class="text-sm font-medium text-gray-600 mb-2">Éléments</p>
+      <p class="text-4xl font-bold text-gray-900">{{ totalContent() }}</p>
+    </div>
+  </div>
+  <div
+    class="group relative bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div
+      class="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+    <div class="relative z-10">
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="w-14 h-14 rounded-xl bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+          <i-lucide [img]="icons.MessageSquare" class="w-7 h-7 text-white" [strokeWidth]="2" />
+        </div>
+        <span class="text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-200">
+          Engagement
+        </span>
+      </div>
+      <p class="text-sm font-medium text-gray-600 mb-2">Interactions</p>
+      <p class="text-4xl font-bold text-gray-900">{{ stats()!.engagement.comments }}</p>
+    </div>
+  </div>
+  <div
+    class="group relative bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div
+      class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+    <div class="relative z-10">
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="w-14 h-14 rounded-xl bg-linear-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+          <i-lucide [img]="icons.Award" class="w-7 h-7 text-white" [strokeWidth]="2" />
+        </div>
+        <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">
+          Mentors
+        </span>
+      </div>
+      <p class="text-sm font-medium text-gray-600 mb-2">Approuvés</p>
+      <div class="flex items-center gap-1">
+        <p class="text-4xl font-bold text-gray-900">{{ stats()!.mentors.approved }}</p>
+        <div class="flex items-center gap-2 text-xs">
+          <div class="flex items-center gap-1.5 text-amber-600">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span class="font-medium">{{ stats()!.mentors.pending }} en attente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mb-8">
+  <h3 class="text-base font-semibold text-gray-900 mb-4">Statut des candidatures des mentors</h3>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <!-- Total -->
+    <div class="bg-white rounded-lg border border-gray-200 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center">
+          <i-lucide [img]="icons.Users" class="w-4 h-4 text-primary-600" [strokeWidth]="2" />
+        </div>
+        <p class="text-xs font-medium text-gray-600">Total</p>
+      </div>
+      <p class="text-2xl font-semibold text-gray-900 mb-1">{{ stats()!.mentors.total }}</p>
+      <p class="text-xs text-gray-400">Candidatures</p>
+    </div>
+
+    <!-- Pending -->
+    <div class="bg-white rounded-lg border border-gray-200 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
+          <i-lucide [img]="icons.Clock" class="w-4 h-4 text-amber-600" [strokeWidth]="2" />
+        </div>
+        <p class="text-xs font-medium text-gray-600">En attente</p>
+      </div>
+      <p class="text-2xl font-semibold text-gray-900 mb-1">{{ stats()!.mentors.pending }}</p>
+      <p class="text-xs text-gray-400">À valider</p>
+    </div>
+
+    <!-- Approved -->
+    <div class="bg-white rounded-lg border border-gray-200 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center">
+          <i-lucide [img]="icons.Award" class="w-4 h-4 text-emerald-600" [strokeWidth]="2" />
+        </div>
+        <p class="text-xs font-medium text-gray-600">Approuvés</p>
+      </div>
+      <p class="text-2xl font-semibold text-gray-900 mb-1">{{ stats()!.mentors.approved }}</p>
+      <p class="text-xs text-gray-400">
+        {{ calculatePercentage(stats()!.mentors.approved, stats()!.mentors.total) }}% du total
+      </p>
+    </div>
+
+    <!-- Rejected -->
+    <div class="bg-white rounded-lg border border-gray-200 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center">
+          <i-lucide [img]="icons.CircleX" class="w-4 h-4 text-gray-500" [strokeWidth]="2" />
+        </div>
+        <p class="text-xs font-medium text-gray-600">Rejetés</p>
+      </div>
+      <p class="text-2xl font-semibold text-gray-900 mb-1">{{ stats()!.mentors.rejected }}</p>
+      <p class="text-xs text-gray-400">Non retenus</p>
+    </div>
+  </div>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+  <div class="px-6 py-5 border-b border-gray-200">
+    <h3 class="text-base font-semibold text-gray-900">Répartition du contenu</h3>
+    <p class="text-xs text-gray-500 mt-1">{{ totalContent() }} éléments au total</p>
+  </div>
+  <div class="divide-y divide-gray-100">
+    @for (item of contentData(); track item.label) {
+    <div class="group px-6 py-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4 flex-1">
+          <div class="flex items-center justify-center w-10 h-10">
+            <i-lucide
+              [img]="item.icon"
+              class="w-5 h-5 transition-colors duration-200"
+              [class.text-primary-500]="item.color === 'primary'"
+              [class.text-secondary-500]="item.color === 'secondary'"
+              [class.text-amber-500]="item.color === 'amber'"
+              [class.text-emerald-500]="item.color === 'emerald'"
+              [class.text-blue-500]="item.color === 'blue'"
+              [class.text-purple-500]="item.color === 'purple'"
+              [strokeWidth]="2" />
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-900">{{ item.label }}</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-xs text-emerald-600 font-medium">{{ item.published }} publiés</span>
+              @if (item.unpublished > 0) {
+              <span class="text-xs text-gray-400">•</span>
+              <span class="text-xs text-gray-500">{{ item.unpublished }} brouillons</span>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-2xl font-semibold text-gray-900">{{ item.total }}</p>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
 </div>
 }
+<div class="mt-12">
+  <div
+    class="flex items-center flex-wrap justify-between gap-4 mb-8 bg-white rounded-xl px-6 py-4 shadow-sm border border-gray-200">
+    <div class="flex items-center gap-3">
+      <i-lucide [img]="icons.Calendar" class="text-primary-600 w-5 h-5 stroke-2" />
+      <label for="indicator-year" class="font-semibold text-gray-800">
+        Performance Globale : {{ year().getFullYear() }}
+      </label>
+    </div>
+    <app-ui-datepicker [id]="'indicator-year'" [view]="'year'" [(ngModel)]="year" />
+  </div>
+
+  @if (reportStore.isLoading()) {
+  <app-performance-skeleton />
+  } @if (reportStore.report()) {
+  <app-performance-overview
+    [year]="year().getFullYear()"
+    [programCount]="reportStore.report().length"
+    [averagePerformance]="averagePerformance()" />
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (program of sortedPrograms(); track $index) {
+    <app-program-card [program]="program" />
+    }
+  </div>
+  }
+</div>
