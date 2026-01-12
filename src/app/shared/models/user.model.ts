@@ -5,6 +5,7 @@ import type { IProject } from './project.model';
 import type { IEvent } from './event.model';
 import type { IArticle } from './article.model';
 import type { IComment } from './article.model';
+import { IMentorProfile } from './mentor-profile.model';
 
 export interface IUser extends IBase {
   email: string;
@@ -30,4 +31,5 @@ export interface IUser extends IBase {
   managed_events: IEvent[];
   articles: IArticle[];
   comments: IComment[];
+  mentor_profile?: IMentorProfile | null;
 }

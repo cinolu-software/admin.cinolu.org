@@ -13,3 +13,5 @@ export * from './metric.model';
 export * from './venture.model';
 export * from './phase.model';
 export * from './form.model';
+export * from './expertise.model';
+export * from './mentor-profile.model';

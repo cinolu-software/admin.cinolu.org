@@ -1,4 +1,14 @@
-import { UserCheck, Calendar1, BookOpen, Layers, Folders, LayoutDashboard, UserCog } from 'lucide-angular';
+import {
+  UserCheck,
+  Calendar1,
+  BookOpen,
+  Layers,
+  Folders,
+  LayoutDashboard,
+  UserCog,
+  User,
+  Building
+} from 'lucide-angular';
 import { ILink } from '../types/link.type';
 
 export const LINKS: ILink[] = [
@@ -15,7 +25,6 @@ export const LINKS: ILink[] = [
   },
   {
     name: 'Les programmes',
-    path: '/list-programs',
     icon: Layers,
     children: [
       {
@@ -30,7 +39,6 @@ export const LINKS: ILink[] = [
   },
   {
     name: 'Les projets',
-    path: '/list-programs',
     icon: Folders,
     children: [
       {
@@ -45,7 +53,6 @@ export const LINKS: ILink[] = [
   },
   {
     name: 'Les événements',
-    path: '/list-programs',
     icon: Calendar1,
     children: [
       {
@@ -57,6 +64,25 @@ export const LINKS: ILink[] = [
         path: '/event-categories'
       }
     ]
+  },
+  {
+    name: 'Les mentors',
+    icon: User,
+    children: [
+      {
+        name: 'Tous les mentors',
+        path: '/mentor-profiles'
+      },
+      {
+        name: 'Les expertises',
+        path: '/expertises'
+      }
+    ]
+  },
+  {
+    name: 'Les entreprises',
+    path: '/entreprises',
+    icon: Building
   },
   {
     name: 'Le blog',

@@ -52,6 +52,14 @@ export const routes: Routes = [
   },
   {
     component: Layout,
+    data: { layout: 'sidebar-layout' },
+    canActivate: [authGuard],
+    path: '',
+    title: 'Mentors',
+    loadChildren: () => import('@features/mentor-profiles/mentors.routes').then((m) => m.mentorsRoutes)
+  },
+  {
+    component: Layout,
     path: 'account',
     title: 'Mon compte',
     data: { layout: 'sidebar-layout' },

@@ -1,0 +1,78 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { MentorProfilesStore } from '../../store/mentor-profiles.store';
+import {
+  LucideAngularModule,
+  CircleCheckBig,
+  CircleX,
+  Briefcase,
+  Calendar,
+  Award,
+  FileText,
+  ExternalLink
+} from 'lucide-angular';
+import { UiBadge, UiConfirmDialog } from '@shared/ui';
+import { ConfirmationService } from '@shared/services/confirmation';
+import { DatePipe } from '@angular/common';
+import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
+import { UiAvatar } from '@shared/ui';
+
+@Component({
+  selector: 'app-mentor-profile-view',
+  templateUrl: './view-mentor-profile.html',
+  providers: [MentorProfilesStore, ConfirmationService],
+  imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar]
+})
+export class ViewMentorProfile implements OnInit {
+  #route = inject(ActivatedRoute);
+  #confirmationService = inject(ConfirmationService);
+  #id = this.#route.snapshot.params['id'];
+  store = inject(MentorProfilesStore);
+  icons = { CircleCheckBig, CircleX, Briefcase, Calendar, Award, FileText, ExternalLink };
+
+  ngOnInit(): void {
+    this.store.loadOne(this.#id);
+  }
+
+  onApprove(): void {
+    this.#confirmationService.confirm({
+      header: "Confirmer l'approbation",
+      message: 'Êtes-vous sûr de vouloir approuver ce profil mentor ?',
+      acceptLabel: 'Approuver',
+      rejectLabel: 'Annuler',
+      accept: () => {
+        this.store.approve(this.#id);
+      }
+    });
+  }
+
+  onReject(): void {
+    this.#confirmationService.confirm({
+      header: 'Confirmer le rejet',
+      message: 'Êtes-vous sûr de vouloir rejeter ce profil mentor ?',
+      acceptLabel: 'Rejeter',
+      rejectLabel: 'Annuler',
+      accept: () => {
+        this.store.reject(this.#id);
+      }
+    });
+  }
+
+  formatDate(date: Date | string): string {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
+  }
+
+  getStatusVariant(status: string): 'warning' | 'success' | 'danger' {
+    if (status === 'pending') return 'warning';
+    if (status === 'approved') return 'success';
+    return 'danger';
+  }
+
+  getStatusLabel(status: string): string {
+    if (status === 'pending') return 'En attente';
+    if (status === 'approved') return 'Approuvé';
+    return 'Rejeté';
+  }
+}

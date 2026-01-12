@@ -1,58 +1,51 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
-import { LucideAngularModule, Trash, Search, Eye, Star, Funnel, Pencil } from 'lucide-angular';
+import { LucideAngularModule, Search, Funnel, Eye, CircleCheckBig, CircleX } from 'lucide-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { EventsStore } from '../../store/events.store';
-import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
-import { FilterEventsDto } from '../../dto/events/filter-events.dto';
+import { MentorProfilesStore } from '../../store/mentor-profiles.store';
+import { FilterMentorsProfileDto } from '../../dto/mentors/filter-mentors-profiles.dto';
+import { MentorStatus } from '../../enums/mentor.enum';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { UiAvatar, UiButton, UiConfirmDialog, UiPagination, UiTabs } from '@shared/ui';
-import { ConfirmationService } from '@shared/services/confirmation';
+import { UiButton, UiPagination, UiTabs, UiBadge } from '@shared/ui';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
-import { IndicatorsStore } from '@features/programs/store/indicators.store';
-import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-events-list',
-  templateUrl: './list-events.html',
-  providers: [EventsStore, IndicatorsStore],
+  selector: 'app-mentor-profiles-list',
+  templateUrl: './list-mentor-profiles.html',
+  providers: [MentorProfilesStore],
   imports: [
     LucideAngularModule,
-    DatePipe,
     UiButton,
     ReactiveFormsModule,
     RouterLink,
-    UiConfirmDialog,
-    UiAvatar,
-    ApiImgPipe,
-    UiTabs,
     UiPagination,
-    UiTableSkeleton
+    UiTabs,
+    UiTableSkeleton,
+    UiBadge
   ]
 })
-export class ListEvents {
+export class ListMentorProfiles {
   #route = inject(ActivatedRoute);
   #router = inject(Router);
   #fb = inject(FormBuilder);
-  #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
   searchForm: FormGroup;
-  store = inject(EventsStore);
+  store = inject(MentorProfilesStore);
   itemsPerPage = 20;
-  icons = { Pencil, Trash, Search, Eye, Star, Funnel };
-  queryParams = signal<FilterEventsDto>({
+  icons = { Eye, Search, Funnel, CircleCheckBig, CircleX };
+  queryParams = signal<FilterMentorsProfileDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q'),
-    filter: this.#route.snapshot.queryParamMap.get('filter')
+    status: (this.#route.snapshot.queryParamMap.get('status') as MentorStatus) || null
   });
-  activeTab = computed(() => this.queryParams().filter || 'all');
+  activeTab = computed(() => this.queryParams().status || 'all');
   currentPage = computed(() => Number(this.queryParams().page) || 1);
   tabsConfig = signal([
     { label: 'Tous', name: 'all' },
-    { label: 'Publiés', name: 'published' },
-    { label: 'Brouillons', name: 'drafts' },
-    { label: 'En vedette', name: 'highlighted' }
+    { label: 'En attente', name: MentorStatus.PENDING },
+    { label: 'Approuvés', name: MentorStatus.APPROVED },
+    { label: 'Rejetés', name: MentorStatus.REJECTED }
   ]);
 
   constructor() {
@@ -76,7 +69,11 @@ export class ListEvents {
   }
 
   onTabChange(tabName: string): void {
-    this.queryParams.update((qp) => ({ ...qp, filter: tabName, page: null }));
+    this.queryParams.update((qp) => ({
+      ...qp,
+      status: tabName === 'all' ? null : (tabName as MentorStatus),
+      page: null
+    }));
     this.updateRoute();
   }
 
@@ -90,32 +87,20 @@ export class ListEvents {
 
   updateRoute(): void {
     const queryParams = this.queryParams();
-    this.#router.navigate(['/events'], { queryParams });
+    this.#router.navigate(['/mentor-profiles'], { queryParams });
   }
 
-  onShowcase(eventId: string): void {
-    this.store.showcase(eventId);
+  onApprove(profileId: string): void {
+    this.store.approve(profileId);
   }
 
-  onPublish(eventId: string): void {
-    this.store.publish(eventId);
+  onReject(profileId: string): void {
+    this.store.reject(profileId);
   }
 
   onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
-    this.queryParams.update((qp) => ({ ...qp, q: null, page: null, filter: 'all' }));
+    this.queryParams.update((qp) => ({ ...qp, q: null, page: null, status: null }));
     this.updateRoute();
-  }
-
-  onDelete(eventId: string): void {
-    this.#confirmationService.confirm({
-      header: 'Confirmation',
-      message: 'Êtes-vous sûr de vouloir supprimer cet événement ?',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
-      accept: () => {
-        this.store.delete(eventId);
-      }
-    });
   }
 }
