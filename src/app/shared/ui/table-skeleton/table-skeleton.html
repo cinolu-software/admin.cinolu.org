@@ -1,13 +1,15 @@
-<table class="w-full min-w-24 bg-white">
-  <tbody>
-    @for (i of rowsArray(); track $index) {
-    <tr>
-      @for (col of columnsArray(); track $index) {
-      <td class="px-6 py-4">
-        <div class="h-4 w-full max-w-xs bg-gray-200 rounded animate-pulse"></div>
-      </td>
+<div class="rounded-md border border-gray-200/80 overflow-hidden">
+  <table class="w-full border-collapse">
+    <tbody>
+      @for (i of rowsArray(); track $index) {
+      <tr class="border-b last:border-b-0 border-gray-200/80">
+        @for (col of columnsArray(); track $index) {
+        <td class="px-6 py-4">
+          <div class="h-4 w-full max-w-xs bg-gray-200 rounded animate-pulse"></div>
+        </td>
+        }
+      </tr>
       }
-    </tr>
-    }
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</div>
