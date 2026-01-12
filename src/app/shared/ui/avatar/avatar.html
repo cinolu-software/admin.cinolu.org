@@ -1,4 +1,9 @@
-<div [class]="'ui-avatar relative overflow-hidden h-10 w-10 ring-2 ring-primary-500  ' + avatarClasses()">
+<div
+  [class]="
+    'ui-avatar relative overflow-hidden h-10 w-10 ' +
+    (shape() === 'circle' ? ' ring-2 ring-primary-500 ' : ' ') +
+    avatarClasses()
+  ">
   @if (image()) {
   <img [ngSrc]="image()!" [alt]="image()!" class="w-full h-full object-cover" fill />
   } @else {
