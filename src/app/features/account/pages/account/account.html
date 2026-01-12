@@ -1,12 +1,3 @@
 <section class="pt-32 dashboard-main-content">
-  @if (store.user(); as user) {
-  <app-ui-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
-  <div class="mt-6">
-    @if (activeTab() === 'overview') {
-    <app-account-overview [user]="user" />
-    } @if (activeTab() === 'update') {
-    <app-account-update />
-    }
-  </div>
-  }
+  <app-account-update />
 </section>
