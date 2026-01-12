@@ -3,7 +3,6 @@ import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { buildQueryParams } from '@shared/helpers';
 import { IMentorProfile } from '@shared/models';
 import { FilterMentorsProfileDto } from '../dto/mentors/filter-mentors-profiles.dto';
@@ -23,10 +22,9 @@ export const MentorProfilesStore = signalStore(
   }),
   withProps(() => ({
     _http: inject(HttpClient),
-    _router: inject(Router),
     _toast: inject(ToastrService)
   })),
-  withMethods(({ _http, _router, _toast, ...store }) => ({
+  withMethods(({ _http, _toast, ...store }) => ({
     loadAll: rxMethod<FilterMentorsProfileDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
