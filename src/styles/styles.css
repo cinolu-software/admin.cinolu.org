@@ -133,35 +133,31 @@
   }
 
   .ui-table-wrapper {
-    @apply overflow-x-scroll  rounded-xl border border-gray-200 shadow-sm;
+    @apply overflow-x-auto rounded-md border border-gray-100;
   }
 
   .ui-table {
-    @apply w-full;
+    @apply w-full border-collapse bg-gray-100;
   }
 
   .ui-table-head {
     @apply text-left;
   }
 
-  .ui-table-head-row {
-    @apply border-b border-gray-200;
-  }
-
   .ui-table-header {
-    @apply px-6 py-4 text-xs uppercase tracking-wide font-bold text-gray-900 bg-gray-50/50;
+    @apply px-6 py-4 text-sm font-semibold tracking-wider text-gray-600 bg-gray-50/40;
   }
 
   .ui-table-body {
-    @apply bg-white divide-y divide-gray-100;
+    @apply bg-white divide-y divide-gray-50/50;
   }
 
   .ui-table-row {
-    @apply hover:bg-gray-50 transition-colors duration-150;
+    @apply hover:bg-gray-50/60 transition-all duration-200 ease-in-out border-b border-gray-200/80 last:border-b-0;
   }
 
   .ui-table-cell {
-    @apply px-6 py-5;
+    @apply px-6 py-4 text-sm text-gray-700;
   }
 
   /* Action Button Components */
