@@ -1,11 +1,5 @@
 <section class="pt-32 dashboard-main-content flex flex-col gap-4">
-  @let user = usersStore.user();
-  <app-ui-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
-  @if (usersStore.isLoading()) {
-  <app-user-details-skeleton />
-  } @if (activeTab() === 'details' && user) {
-  <app-user-details [user]="user" />
-  } @if (activeTab() === 'edit' && user) {
+  @let user = usersStore.user(); @if (user) {
   <app-user-edit-form [user]="user" />
   }
 </section>

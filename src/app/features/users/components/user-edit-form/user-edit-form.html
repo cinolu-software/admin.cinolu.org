@@ -36,6 +36,15 @@
       [options]="rolesStore.allRoles()"
       formControlName="roles"
       placeholder="Sélectionner un ou plusieurs rôles" />
+    <div class="col-span-2">
+      <app-ui-textarea
+        label="Biographie"
+        [id]="'biography'"
+        formControlName="biography"
+        class="w-full"
+        placeholder="Biographie de l'utilisateur"
+        [rows]="6" />
+    </div>
   </div>
   <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
     <app-ui-button
