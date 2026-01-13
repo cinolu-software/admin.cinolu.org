@@ -14,7 +14,7 @@ import { ILink } from '../types/link.type';
 export const LINKS: ILink[] = [
   {
     name: 'Dashboard',
-    path: '/',
+    path: '/dashboard',
     exactUrl: true,
     icon: LayoutDashboard
   },
