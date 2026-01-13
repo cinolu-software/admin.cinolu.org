@@ -13,15 +13,11 @@ import {
   Award,
   Clock,
   CircleX,
-  TrendingUp,
-  TrendingDown,
-  PieChart,
-  BarChart3,
   Building2,
   Briefcase,
   FolderKanban,
   Layers,
-  Shield
+  SearchX
 } from 'lucide-angular';
 import { PerformanceOverview } from '../performance-overview/performance-overview';
 import { ProgramCard } from '../../ui/program-card/program-card';
@@ -50,28 +46,17 @@ export class AdminStats {
     Calendar,
     Users,
     FileText,
-    BookOpen,
     MessageSquare,
     Award,
     Clock,
     CircleX,
-    TrendingUp,
-    TrendingDown,
-    PieChart,
-    BarChart3,
-    Building2,
-    Briefcase,
-    FolderKanban,
-    Layers,
-    Shield
+    SearchX
   };
-
   constructor() {
     effect(() => {
       this.reportStore.getAdminReport(this.year().getFullYear());
     });
   }
-
   averagePerformance = computed(() => {
     const reports = this.reportStore.report();
     if (!reports || reports.length === 0) return 0;
@@ -84,7 +69,6 @@ export class AdminStats {
     }, 0);
     return Math.round(totalPerformance / reports.length);
   });
-
   sortedPrograms = computed(() => {
     const reports = this.reportStore.report();
     if (!reports || reports.length === 0) return [];
@@ -100,23 +84,9 @@ export class AdminStats {
       return perfB - perfA;
     });
   });
-
   stats = computed(() => this.adminStatsStore.stats() ?? null);
   showStats = computed(() => !this.adminStatsStore.isLoading() && this.stats() !== null);
   showError = computed(() => !this.adminStatsStore.isLoading() && this.stats() === null);
-
-  userRolesData = computed(() => {
-    const stats = this.stats();
-    if (!stats) return [];
-    const { byRole } = stats.users;
-    return [
-      { label: 'Utilisateurs', value: byRole.user, color: 'primary', icon: Users },
-      { label: 'Mentors', value: byRole.mentor, color: 'secondary', icon: Award },
-      { label: 'Personnel', value: byRole.staff, color: 'blue', icon: Briefcase },
-      { label: 'Administrateurs', value: byRole.admin, color: 'purple', icon: Shield }
-    ];
-  });
-
   contentData = computed(() => {
     const stats = this.stats();
     if (!stats) return [];
@@ -186,30 +156,7 @@ export class AdminStats {
     );
   });
 
-  totalPublishedContent = computed(() => {
-    const stats = this.stats();
-    if (!stats) return 0;
-    return (
-      stats.content.ventures.published +
-      stats.content.projects.published +
-      stats.content.events.published +
-      stats.content.programs.published +
-      stats.content.subprograms.published +
-      stats.content.articles.published
-    );
-  });
-
-  round(value: number): number {
-    return Math.round(value);
-  }
-
   calculatePercentage(part: number, total: number): number {
     return total > 0 ? Math.round((part / total) * 100) : 0;
-  }
-
-  getUserRolePercentage(roleCount: number): number {
-    const stats = this.stats();
-    if (!stats || stats.users.total === 0) return 0;
-    return this.calculatePercentage(roleCount, stats.users.total);
   }
 }
