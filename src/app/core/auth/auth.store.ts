@@ -46,7 +46,7 @@ export const AuthStore = signalStore(
         exhaustMap(() =>
           _http.post<void>('auth/sign-out', {}).pipe(
             tap(() => {
-              _router.navigate(['/sign-in']);
+              _router.navigate(['/']);
               patchState(store, { user: null });
               _toast.showSuccess('Déconnexion réussie');
             }),
