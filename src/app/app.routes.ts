@@ -60,6 +60,14 @@ export const routes: Routes = [
   },
   {
     component: Layout,
+    data: { layout: 'sidebar-layout' },
+    canActivate: [authGuard],
+    path: '',
+    title: 'Ventures',
+    loadChildren: () => import('@features/ventures/ventures.routes').then((m) => m.venturesRoutes)
+  },
+  {
+    component: Layout,
     path: 'account',
     title: 'Mon compte',
     data: { layout: 'sidebar-layout' },

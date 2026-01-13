@@ -7,7 +7,7 @@ import {
   LayoutDashboard,
   UserCog,
   User,
-  Building
+  UserRoundCog
 } from 'lucide-angular';
 import { ILink } from '../types/link.type';
 
@@ -80,9 +80,9 @@ export const LINKS: ILink[] = [
     ]
   },
   {
-    name: 'Les entreprises',
-    path: '/entreprises',
-    icon: Building
+    name: 'Les startups',
+    path: '/ventures',
+    icon: UserRoundCog
   },
   {
     name: 'Le blog',

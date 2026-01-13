@@ -1,0 +1,146 @@
+@let isLoading = store.isLoading(); @let ventureCount = store.ventures()[1]; @let ventures = store.ventures()[0];
+<div class="dashboard-main-content">
+  <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
+    <h5 class="text-2xl font-bold text-gray-900 mb-1">Startups</h5>
+  </div>
+  <form [formGroup]="searchForm" class="search-input-wrapper">
+    <div class="search-input-group">
+      <div class="search-input-icon">
+        <i-lucide [name]="icons.Search" class="search-input-icon-svg" />
+      </div>
+      <label for="venture-search-input" class="sr-only">Rechercher un venture</label>
+      <input
+        type="text"
+        id="venture-search-input"
+        name="q"
+        formControlName="q"
+        placeholder="Rechercher un venture..."
+        class="search-input"
+        autocomplete="off" />
+    </div>
+  </form>
+
+  <div class="mt-6">
+    @if (isLoading && ventureCount === 0) {
+    <app-ui-table-skeleton [rows]="10" [columns]="6" />
+    } @if (ventureCount > 0) {
+    <div class="ui-table-wrapper scrollbar-hide">
+      <table class="ui-table">
+        <thead class="ui-table-head">
+          <tr class="ui-table-head-row">
+            <th class="ui-table-header">Venture</th>
+            <th class="ui-table-header">Propriétaire</th>
+            <th class="ui-table-header">Secteur</th>
+            <th class="ui-table-header">Stage</th>
+            <th class="ui-table-header">Statut</th>
+            <th class="ui-table-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="ui-table-body">
+          @for (venture of ventures; track venture.id) {
+          <tr class="ui-table-row">
+            <td class="ui-table-cell">
+              <div class="flex items-center gap-3">
+                @if (venture.logo) {
+                <div class="relative size-10 rounded-lg border border-gray-200">
+                  <img [ngSrc]="venture | apiIMG : 'venture'" [alt]="venture.name" fill class="object-cover" />
+                </div>
+                } @else {
+                <div
+                  class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
+                  {{ venture.name.charAt(0).toUpperCase() }}
+                </div>
+                }
+                <div class="flex flex-col">
+                  <p class="font-semibold text-gray-900 text-nowrap">{{ venture.name }}</p>
+                  @if (venture.location) {
+                  <p class="text-xs text-gray-500">{{ venture.location }}</p>
+                  }
+                </div>
+              </div>
+            </td>
+            <td class="ui-table-cell">
+              <div class="flex items-center gap-2.5">
+                <app-ui-avatar
+                  [shape]="'circle'"
+                  [image]="venture.owner | apiIMG : 'user'"
+                  [label]="venture.owner.name" />
+                <div class="flex flex-col">
+                  <p class="text-sm font-medium text-gray-900">{{ venture.owner.name }}</p>
+                  <p class="text-xs text-gray-500">{{ venture.owner.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="ui-table-cell">
+              @if (venture.sector) {
+              <app-ui-badge [label]="venture.sector" [variant]="'info'" [size]="'small'" />
+              } @else {
+              <span class="text-sm text-gray-400">-</span>
+              }
+            </td>
+            <td class="ui-table-cell text-nowrap">
+              @if (venture.stage) {
+              <span class="text-sm text-gray-600">{{ venture.stage }}</span>
+              } @else {
+              <span class="text-sm text-gray-400">-</span>
+              }
+            </td>
+            <td class="ui-table-cell">
+              @if (venture.is_published) {
+              <app-ui-badge [label]="'Publié'" [variant]="'success'" [size]="'small'" />
+              } @else {
+              <app-ui-badge [label]="'Non publié'" [variant]="'warning'" [size]="'small'" />
+              }
+            </td>
+            <td class="ui-table-cell">
+              <div class="flex items-center gap-1.5">
+                <button
+                  (click)="onTogglePublish(venture)"
+                  [class]="venture.is_published ? 'action-button-active' : 'action-button-default'">
+                  <i-lucide [name]="venture.is_published ? icons.ToggleRight : icons.ToggleLeft" class="size-4" />
+                  {{ venture.is_published ? 'Dépublier' : 'Publier' }}
+                </button>
+                <div class="h-6 w-px bg-gray-200"></div>
+                <a [routerLink]="['/ventures/view', venture.slug]" class="action-button-default">
+                  <i-lucide [name]="icons.Eye" class="size-4" />
+                  Détails
+                </a>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+    <div class="flex flex-col justify-end items-end">
+      <app-ui-pagination
+        [currentPage]="currentPage()"
+        [totalItems]="ventureCount"
+        [itemsPerPage]="itemsPerPage"
+        (pageChange)="onPageChange($event)" />
+    </div>
+  </div>
+  @if (ventureCount === 0 && !isLoading) {
+  <div class="flex flex-col items-start justify-center">
+    <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+      <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+    </div>
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun venture trouvé</h3>
+    <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
+      Nous n'avons trouvé aucun venture correspondant à vos critères.<br />
+    </p>
+    <app-ui-button
+      (clicked)="onResetFilters()"
+      variant="secondary"
+      [outlined]="true"
+      styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
+      <span class="flex items-center gap-2">
+        <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
+        <span>Réinitialiser les filtres</span>
+      </span>
+    </app-ui-button>
+  </div>
+  }
+  <app-ui-confirm-dialog />
+</div>
