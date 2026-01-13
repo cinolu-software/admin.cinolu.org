@@ -31,7 +31,7 @@ export class SignIn {
     const redirectPath = this.#route.snapshot.queryParamMap.get('redirect');
     this.store.signIn({
       payload: this.form.value,
-      redirectPath: redirectPath || '/',
+      redirectPath: redirectPath || '/dashboard',
       onSuccess: () => true
     });
   }
