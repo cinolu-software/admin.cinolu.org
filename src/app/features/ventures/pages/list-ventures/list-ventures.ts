@@ -9,14 +9,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UiButton, UiPagination, UiBadge, UiConfirmDialog } from '@shared/ui';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar } from '@shared/ui';
-import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-list-ventures',
   templateUrl: './list-ventures.html',
-  providers: [VenturesStore, ConfirmationService],
+  providers: [VenturesStore],
   imports: [
     LucideAngularModule,
     UiButton,
@@ -36,7 +35,6 @@ export class ListVentures {
   #router = inject(Router);
   #fb = inject(FormBuilder);
   #destroyRef = inject(DestroyRef);
-  #confirmationService = inject(ConfirmationService);
   searchForm: FormGroup;
   store = inject(VenturesStore);
   itemsPerPage = 20;
@@ -78,19 +76,6 @@ export class ListVentures {
   updateRoute(): void {
     const queryParams = this.queryParams();
     this.#router.navigate(['/ventures'], { queryParams });
-  }
-
-  onTogglePublish(venture: { slug: string; is_published: boolean; name: string }): void {
-    const action = venture.is_published ? 'dépublier' : 'publier';
-    this.#confirmationService.confirm({
-      header: `Confirmer la ${action}`,
-      message: `Êtes-vous sûr de vouloir ${action} "${venture.name}" ?`,
-      acceptLabel: action === 'publier' ? 'Publier' : 'Dépublier',
-      rejectLabel: 'Annuler',
-      accept: () => {
-        this.store.togglePublish(venture.slug);
-      }
-    });
   }
 
   onResetFilters(): void {

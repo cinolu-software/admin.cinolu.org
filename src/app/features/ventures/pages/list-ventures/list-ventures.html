@@ -19,7 +19,6 @@
         autocomplete="off" />
     </div>
   </form>
-
   <div class="mt-6">
     @if (isLoading && ventureCount === 0) {
     <app-ui-table-skeleton [rows]="10" [columns]="6" />
@@ -47,8 +46,8 @@
                 </div>
                 } @else {
                 <div
-                  class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
-                  {{ venture.name.charAt(0).toUpperCase() }}
+                  class="size-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
+                  {{ venture.name.charAt(0).toLocaleUpperCase() }}
                 </div>
                 }
                 <div class="flex flex-col">
@@ -93,19 +92,10 @@
               }
             </td>
             <td class="ui-table-cell">
-              <div class="flex items-center gap-1.5">
-                <button
-                  (click)="onTogglePublish(venture)"
-                  [class]="venture.is_published ? 'action-button-active' : 'action-button-default'">
-                  <i-lucide [name]="venture.is_published ? icons.ToggleRight : icons.ToggleLeft" class="size-4" />
-                  {{ venture.is_published ? 'Dépublier' : 'Publier' }}
-                </button>
-                <div class="h-6 w-px bg-gray-200"></div>
-                <a [routerLink]="['/ventures/view', venture.slug]" class="action-button-default">
-                  <i-lucide [name]="icons.Eye" class="size-4" />
-                  Détails
-                </a>
-              </div>
+              <a [routerLink]="['/ventures/view', venture.slug]" class="action-button-default">
+                <i-lucide [name]="icons.Eye" class="size-4" />
+                Détails
+              </a>
             </td>
           </tr>
           }
