@@ -10,9 +10,10 @@
     <div class="hidden lg:flex justify-end">
       <div
         class="fixed top-0 right-0 left-[25vw] xl:left-[22vw] h-16 flex items-center z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200/50">
-        <nav class="flex justify-end items-center w-full px-6">
+        <nav class="flex justify-between items-center w-full px-6">
           @if (user) {
-            <div class="relative" data-user-menu>
+            <h2 class="text-gray-700 font-bold">Tableau de bord</h2>
+            <div class="relative">
               <button
                 type="button"
                 (click)="toggleUserMenu()"
