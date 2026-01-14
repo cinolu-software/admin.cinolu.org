@@ -39,7 +39,7 @@ export const SignInStore = signalStore(
               patchState(store, { isLoading: false });
               _authStore.setUser(data);
               _toast.showSuccess('Connexion réussie');
-              _router.navigateByUrl(redirectPath);
+              _router.navigate([redirectPath]);
               onSuccess();
             }),
             catchError((err) => {
