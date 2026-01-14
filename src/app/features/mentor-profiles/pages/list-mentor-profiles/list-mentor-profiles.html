@@ -1,8 +1,17 @@
-@let isLoading = store.isLoading(); @let profileCount = store.mentorProfiles()[1]; @let profiles =
-store.mentorProfiles()[0];
+@let isLoading = store.isLoading();
+@let profileCount = store.mentorProfiles()[1];
+@let profiles = store.mentorProfiles()[0];
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl font-bold text-gray-900 mb-1">Profils mentors</h5>
+    <h5 class="text-2xl flex items-center gap-2 font-bold text-gray-900 mb-1">
+      Profils mentors
+      @if (profileCount > 0) {
+        <span
+          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
+          {{ profileCount }}
+        </span>
+      }
+    </h5>
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
@@ -23,7 +32,6 @@ store.mentorProfiles()[0];
 
   <div class="my-6">
     <app-ui-tabs
-      [counter]="profileCount"
       [tabs]="tabsConfig()"
       [activeTab]="activeTab()"
       (tabChange)="onTabChange($event)" />
@@ -31,69 +39,74 @@ store.mentorProfiles()[0];
 
   <div class="mt-6">
     @if (isLoading && profileCount === 0) {
-    <app-ui-table-skeleton [rows]="10" [columns]="6" />
-    } @if (profileCount > 0) {
-    <div class="ui-table-wrapper scrollbar-hide">
-      <table class="ui-table">
-        <thead class="ui-table-head">
-          <tr class="ui-table-head-row">
-            <th class="ui-table-header">Mentor</th>
-            <th class="ui-table-header text-nowrap">Années d'expérience</th>
-            <th class="ui-table-header">Expertises</th>
-            <th class="ui-table-header">Statut</th>
-            <th class="ui-table-header">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="ui-table-body">
-          @for (profile of profiles; track profile.id) {
-          <tr class="ui-table-row">
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-3">
-                <p class="font-semibold text-gray-900 text-nowrap">
-                  {{ profile.owner.name }}
-                </p>
-              </div>
-            </td>
-            <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">{{ profile.years_experience }} ans</td>
-            <td class="ui-table-cell text-sm text-gray-600">
-              <div class="flex flex-wrap gap-1">
-                @for (expertise of profile.expertises; track expertise.id) {
-                <app-ui-badge [label]="expertise.name" [variant]="'info'" [size]="'small'" />
-                }
-              </div>
-            </td>
-            <td class="ui-table-cell">
-              @if (profile.status === 'pending') {
-              <app-ui-badge [label]="'En attente'" [variant]="'warning'" [size]="'small'" />
-              } @else if (profile.status === 'approved') {
-              <app-ui-badge [label]="'Approuvé'" [variant]="'success'" [size]="'small'" />
-              } @else {
-              <app-ui-badge [label]="'Rejeté'" [variant]="'danger'" [size]="'small'" />
-              }
-            </td>
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-1.5">
-                @if (profile.status === 'pending') {
-                <button (click)="onApprove(profile.id)" class="action-button-active">
-                  <i-lucide [name]="icons.CircleCheckBig" class="size-4" />
-                  Approuver
-                </button>
-                <button (click)="onReject(profile.id)" class="action-button-danger">
-                  <i-lucide [name]="icons.CircleX" class="size-4" />
-                  Rejeter
-                </button>
-                }
-                <a [routerLink]="['/mentor-profiles/view', profile.id]" class="action-button-default">
-                  <i-lucide [name]="icons.Eye" class="size-4" />
-                  Voir le profil
-                </a>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      <app-ui-table-skeleton [rows]="10" [columns]="6" />
+    }
+    @if (profileCount > 0) {
+      <div class="ui-table-wrapper scrollbar-hide">
+        <table class="ui-table">
+          <thead class="ui-table-head">
+            <tr class="ui-table-head-row">
+              <th class="ui-table-header">Mentor</th>
+              <th class="ui-table-header text-nowrap">Années d'expérience</th>
+              <th class="ui-table-header">Expertises</th>
+              <th class="ui-table-header">Statut</th>
+              <th class="ui-table-header">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="ui-table-body">
+            @for (profile of profiles; track profile.id) {
+              <tr class="ui-table-row">
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-3">
+                    <p class="font-semibold text-gray-900 text-nowrap">
+                      {{ profile.owner.name }}
+                    </p>
+                  </div>
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  {{ profile.years_experience }} ans
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600">
+                  <div class="flex flex-wrap gap-1">
+                    @for (expertise of profile.expertises; track expertise.id) {
+                      <app-ui-badge [label]="expertise.name" [variant]="'info'" [size]="'small'" />
+                    }
+                  </div>
+                </td>
+                <td class="ui-table-cell">
+                  @if (profile.status === 'pending') {
+                    <app-ui-badge [label]="'En attente'" [variant]="'warning'" [size]="'small'" />
+                  } @else if (profile.status === 'approved') {
+                    <app-ui-badge [label]="'Approuvé'" [variant]="'success'" [size]="'small'" />
+                  } @else {
+                    <app-ui-badge [label]="'Rejeté'" [variant]="'danger'" [size]="'small'" />
+                  }
+                </td>
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-1.5">
+                    @if (profile.status === 'pending') {
+                      <button (click)="onApprove(profile.id)" class="action-button-active">
+                        <i-lucide [name]="icons.CircleCheckBig" class="size-4" />
+                        Approuver
+                      </button>
+                      <button (click)="onReject(profile.id)" class="action-button-danger">
+                        <i-lucide [name]="icons.CircleX" class="size-4" />
+                        Rejeter
+                      </button>
+                    }
+                    <a
+                      [routerLink]="['/mentor-profiles/view', profile.id]"
+                      class="action-button-default">
+                      <i-lucide [name]="icons.Eye" class="size-4" />
+                      Voir le profil
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
     <div class="flex flex-col justify-end items-end">
       <app-ui-pagination
@@ -104,24 +117,25 @@ store.mentorProfiles()[0];
     </div>
   </div>
   @if (profileCount === 0 && !isLoading) {
-  <div class="flex flex-col items-start justify-center">
-    <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
-      <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+    <div class="flex flex-col items-start justify-center">
+      <div
+        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+        <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun profil mentor trouvé</h3>
+      <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
+        Nous n'avons trouvé aucun profil mentor correspondant à vos critères.<br />
+      </p>
+      <app-ui-button
+        (clicked)="onResetFilters()"
+        variant="secondary"
+        [outlined]="true"
+        styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
+        <span class="flex items-center gap-2">
+          <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
+          <span>Réinitialiser les filtres</span>
+        </span>
+      </app-ui-button>
     </div>
-    <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun profil mentor trouvé</h3>
-    <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
-      Nous n'avons trouvé aucun profil mentor correspondant à vos critères.<br />
-    </p>
-    <app-ui-button
-      (clicked)="onResetFilters()"
-      variant="secondary"
-      [outlined]="true"
-      styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
-      <span class="flex items-center gap-2">
-        <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
-        <span>Réinitialiser les filtres</span>
-      </span>
-    </app-ui-button>
-  </div>
   }
 </div>

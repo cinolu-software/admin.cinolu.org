@@ -1,8 +1,21 @@
-@let isLoading = store.isLoading(); @let programCount = store.programs()[1]; @let programs = store.programs()[0];
+@let isLoading = store.isLoading();
+@let programCount = store.programs()[1];
+@let programs = store.programs()[0];
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl font-bold text-gray-900 mb-1">Programmes</h5>
-    <a class="ui-button ui-button-small ui-button-primary" [routerLink]="'/programs/add'"> Nouveau programme </a>
+    <h5 class="text-2xl flex items-center gap-2 font-bold text-gray-900 mb-1">
+      Programmes
+      @if (programCount > 0) {
+        <span
+          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
+          {{ programCount }}
+        </span>
+      }
+    </h5>
+
+    <a class="ui-button ui-button-small ui-button-primary" [routerLink]="'/programs/add'">
+      Nouveau programme
+    </a>
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
@@ -22,7 +35,6 @@
   </form>
   <div class="my-6">
     <app-ui-tabs
-      [counter]="programCount"
       [tabs]="tabsConfig()"
       [activeTab]="activeTab()"
       [isLoading]="isLoading"
@@ -30,57 +42,66 @@
   </div>
   <div class="mt-6">
     @if (isLoading && programCount === 0) {
-    <app-ui-table-skeleton [rows]="10" [columns]="3" />
-    } @if (programCount > 0) {
-    <div class="ui-table-wrapper scrollbar-hide">
-      <table class="ui-table">
-        <thead class="ui-table-head">
-          <tr class="ui-table-head-row">
-            <th class="ui-table-header">Programme</th>
-            <th class="ui-table-header">Statut</th>
-            <th class="ui-table-header">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="ui-table-body">
-          @for ( program of programs; track program.id ) {
-          <tr class="ui-table-row">
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-3">
-                <div class="relative">
-                  <app-ui-avatar [shape]="'square'" [image]="program | apiIMG : 'program'" [label]="program.name" />
-                </div>
-                <div class="min-w-0">
-                  <p class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
-                    {{ program.name }}
-                  </p>
-                  <p class="text-xs text-gray-500 mt-0.5">Créé {{ program.created_at | date : 'dd MMM yyyy' }}</p>
-                </div>
-              </div>
-            </td>
-            <td class="ui-table-cell">
-              @if (program.is_published) {
-              <app-ui-badge [variant]="'success'" [label]="'Publié'" />
-              } @else {
-              <app-ui-badge [label]="'Brouillon'" />
-              }
-            </td>
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-2">
-                <button [routerLink]="['/programs/update', program.slug]" class="action-button-default">
-                  <i-lucide [name]="icons.Pencil" class="size-4" />
-                  Modifier
-                </button>
-                <button (click)="onDelete(program.id)" class="action-button-danger">
-                  <i-lucide [name]="icons.Trash" class="size-4" />
-                  Supprimer
-                </button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      <app-ui-table-skeleton [rows]="10" [columns]="3" />
+    }
+    @if (programCount > 0) {
+      <div class="ui-table-wrapper scrollbar-hide">
+        <table class="ui-table">
+          <thead class="ui-table-head">
+            <tr class="ui-table-head-row">
+              <th class="ui-table-header">Programme</th>
+              <th class="ui-table-header">Statut</th>
+              <th class="ui-table-header">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="ui-table-body">
+            @for (program of programs; track program.id) {
+              <tr class="ui-table-row">
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-3">
+                    <div class="relative">
+                      <app-ui-avatar
+                        [shape]="'square'"
+                        [image]="program | apiIMG: 'program'"
+                        [label]="program.name" />
+                    </div>
+                    <div class="min-w-0">
+                      <p
+                        class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
+                        {{ program.name }}
+                      </p>
+                      <p class="text-xs text-gray-500 mt-0.5">
+                        Créé {{ program.created_at | date: 'dd MMM yyyy' }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="ui-table-cell">
+                  @if (program.is_published) {
+                    <app-ui-badge [variant]="'success'" [label]="'Publié'" />
+                  } @else {
+                    <app-ui-badge [label]="'Brouillon'" />
+                  }
+                </td>
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-2">
+                    <button
+                      [routerLink]="['/programs/update', program.slug]"
+                      class="action-button-default">
+                      <i-lucide [name]="icons.Pencil" class="size-4" />
+                      Modifier
+                    </button>
+                    <button (click)="onDelete(program.id)" class="action-button-danger">
+                      <i-lucide [name]="icons.Trash" class="size-4" />
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
     <div class="flex flex-col justify-end items-end">
       <app-ui-pagination
@@ -91,26 +112,29 @@
     </div>
   </div>
   @if (programCount === 0 && !isLoading) {
-  <div class="flex flex-col items-start">
-    <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
-      <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+    <div class="flex flex-col items-start">
+      <div
+        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+        <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+      </div>
+      <h3 id="no-programs-title" class="text-2xl font-bold text-gray-900 mb-2">
+        Aucun programme trouvé
+      </h3>
+      <p id="no-programs-desc" class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
+        Nous n'avons trouvé aucun programme correspondant à vos critères.<br />
+      </p>
+      <app-ui-button
+        (clicked)="onResetFilters()"
+        variant="secondary"
+        [outlined]="true"
+        styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow"
+        aria-label="Réinitialiser les filtres">
+        <span class="flex items-center gap-2">
+          <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
+          <span>Réinitialiser les filtres</span>
+        </span>
+      </app-ui-button>
     </div>
-    <h3 id="no-programs-title" class="text-2xl font-bold text-gray-900 mb-2">Aucun programme trouvé</h3>
-    <p id="no-programs-desc" class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
-      Nous n'avons trouvé aucun programme correspondant à vos critères.<br />
-    </p>
-    <app-ui-button
-      (clicked)="onResetFilters()"
-      variant="secondary"
-      [outlined]="true"
-      styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow"
-      aria-label="Réinitialiser les filtres">
-      <span class="flex items-center gap-2">
-        <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
-        <span>Réinitialiser les filtres</span>
-      </span>
-    </app-ui-button>
-  </div>
   }
   <app-ui-confirm-dialog />
 </div>

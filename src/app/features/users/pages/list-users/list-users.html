@@ -1,11 +1,16 @@
-@let isLoading = store.isLoading(); @let userCount = store.users()[1]; @let users = store.users()[0];
+@let isLoading = store.isLoading();
+@let userCount = store.users()[1];
+@let users = store.users()[0];
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
     <h5 class="text-2xl flex items-center gap-2 font-bold text-gray-900 mb-1">
       Utilisateurs
-      <span class="p-2 text-xs size-8 text-white bg-primary-600 rounded-full text-center">
-        {{ userCount }}
-      </span>
+      @if (userCount > 0) {
+        <span
+          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
+          {{ userCount }}
+        </span>
+      }
     </h5>
     <div class="flex items-center gap-2">
       <app-ui-button
@@ -17,7 +22,9 @@
         <i-lucide [name]="icons.Download" class="size-4" />
         Télécharger CSV
       </app-ui-button>
-      <a [routerLink]="'/users/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel utilisateur </a>
+      <a [routerLink]="'/users/add'" class="ui-button ui-button-small ui-button-primary">
+        Nouvel utilisateur
+      </a>
     </div>
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
@@ -39,54 +46,56 @@
 
   <div class="mt-6">
     @if (isLoading && userCount === 0) {
-    <app-ui-table-skeleton [rows]="10" [columns]="4" />
-    } @if (userCount > 0) {
-    <div class="ui-table-wrapper scrollbar-hide">
-      <table class="ui-table">
-        <thead class="ui-table-head">
-          <tr class="ui-table-head-row">
-            <th class="ui-table-header">Utilisateur</th>
-            <th class="ui-table-header">Email</th>
-            <th class="ui-table-header">Rejoint le</th>
-            <th class="ui-table-header">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="ui-table-body">
-          @for (user of users; track user.id) {
-          <tr class="ui-table-row">
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-3">
-                <div class="relative">
-                  <app-ui-avatar [image]="user | apiIMG : 'user'" [label]="user.name" />
-                </div>
-                <p class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
-                  {{ user.name }}
-                </p>
-              </div>
-            </td>
-            <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
-              {{ user.email }}
-            </td>
-            <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
-              {{ user.created_at | date }}
-            </td>
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-1.5">
-                <a [routerLink]="['/users/update', user.email]" class="action-button-default">
-                  <i-lucide [name]="icons.Pencil" class="size-4" />
-                  Modifier
-                </a>
-                <button (click)="onDelete(user.id)" class="action-button-danger">
-                  <i-lucide [name]="icons.Trash" class="size-4" />
-                  Supprimer
-                </button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      <app-ui-table-skeleton [rows]="10" [columns]="4" />
+    }
+    @if (userCount > 0) {
+      <div class="ui-table-wrapper scrollbar-hide">
+        <table class="ui-table">
+          <thead class="ui-table-head">
+            <tr class="ui-table-head-row">
+              <th class="ui-table-header">Utilisateur</th>
+              <th class="ui-table-header">Email</th>
+              <th class="ui-table-header">Rejoint le</th>
+              <th class="ui-table-header">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="ui-table-body">
+            @for (user of users; track user.id) {
+              <tr class="ui-table-row">
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-3">
+                    <div class="relative">
+                      <app-ui-avatar [image]="user | apiIMG: 'user'" [label]="user.name" />
+                    </div>
+                    <p
+                      class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
+                      {{ user.name }}
+                    </p>
+                  </div>
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  {{ user.email }}
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  {{ user.created_at | date }}
+                </td>
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-1.5">
+                    <a [routerLink]="['/users/update', user.email]" class="action-button-default">
+                      <i-lucide [name]="icons.Pencil" class="size-4" />
+                      Modifier
+                    </a>
+                    <button (click)="onDelete(user.id)" class="action-button-danger">
+                      <i-lucide [name]="icons.Trash" class="size-4" />
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
     <div class="flex flex-col justify-end items-end">
       <app-ui-pagination
@@ -97,25 +106,26 @@
     </div>
   </div>
   @if (userCount === 0 && !isLoading) {
-  <div class="flex flex-col items-start justify-center">
-    <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
-      <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+    <div class="flex flex-col items-start justify-center">
+      <div
+        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+        <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun utilisateur trouvé</h3>
+      <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
+        Nous n'avons trouvé aucun utilisateur correspondant à vos critères.<br />
+      </p>
+      <app-ui-button
+        (clicked)="onResetFilters()"
+        variant="secondary"
+        [outlined]="true"
+        styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
+        <span class="flex items-center gap-2">
+          <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
+          <span>Réinitialiser les filtres</span>
+        </span>
+      </app-ui-button>
     </div>
-    <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun utilisateur trouvé</h3>
-    <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
-      Nous n'avons trouvé aucun utilisateur correspondant à vos critères.<br />
-    </p>
-    <app-ui-button
-      (clicked)="onResetFilters()"
-      variant="secondary"
-      [outlined]="true"
-      styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
-      <span class="flex items-center gap-2">
-        <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
-        <span>Réinitialiser les filtres</span>
-      </span>
-    </app-ui-button>
-  </div>
   }
   <app-ui-confirm-dialog />
 </div>

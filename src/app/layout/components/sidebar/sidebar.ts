@@ -24,8 +24,6 @@ export class Sidebar {
   closedTab = signal<string | null>(null);
   authStore = inject(AuthStore);
   linkGroups = signal<ILinkGroup[]>(LINK_GROUPS);
-
-  // Flattened links for active tab computation
   allLinks = computed(() => this.linkGroups().flatMap((group) => group.links));
 
   activeTab = computed(() => {
@@ -68,7 +66,7 @@ export class Sidebar {
     return this.activeTab() === name;
   }
 
-  panelId(name: string): string {
-    return 'sidebar-panel-' + name.toLowerCase().replace(/\s+/g, '-');
-  }
+  // panelId(name: string): string {
+  //   return 'sidebar-panel-' + name.toLowerCase().replace(/\s+/g, '-');
+  // }
 }

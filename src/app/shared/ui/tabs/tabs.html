@@ -1,22 +1,17 @@
 <div class="flex gap-6 border-b border-gray-300 overflow-x-auto scrollbar-hide relative">
   @for (tab of tabs(); track $index) {
-  <button
-    [class]="
-      activeTab() === tab.name
-        ? 'font-semibold text-primary-600 border-primary-600'
-        : 'font-medium text-gray-500 hover:text-gray-700 border-transparent hover:border-gray-300'
-    "
-    (click)="onTabChange(tab.name)"
-    class="pb-3 text-sm border-b-2 transition-all duration-200 flex items-center gap-2 whitespace-nowrap relative">
-    @if (tab.icon) {
-    <i-lucide [name]="tab.icon" class="size-4"></i-lucide>
-    }
-    {{ tab.label }}
-    @if (activeTab() === tab.name && counter()) {
-    <span class="size-6 text-xs text-white bg-primary-600 rounded-full flex items-center justify-center">
-      {{ counter() }}
-    </span>
-    }
-  </button>
+    <button
+      [class]="
+        activeTab() === tab.name
+          ? 'font-semibold text-primary-600 border-primary-600'
+          : 'font-medium text-gray-500 hover:text-gray-700 border-transparent hover:border-gray-300'
+      "
+      (click)="onTabChange(tab.name)"
+      class="pb-3 text-sm border-b-2 transition-all duration-200 flex items-center gap-2 whitespace-nowrap relative">
+      @if (tab.icon) {
+        <i-lucide [name]="tab.icon" class="size-4"></i-lucide>
+      }
+      {{ tab.label }}
+    </button>
   }
 </div>

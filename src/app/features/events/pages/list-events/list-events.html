@@ -1,8 +1,20 @@
-@let isLoading = store.isLoading(); @let eventCount = store.events()[1]; @let events = store.events()[0];
+@let isLoading = store.isLoading();
+@let eventCount = store.events()[1];
+@let events = store.events()[0];
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl font-bold text-gray-900 mb-1">Événements</h5>
-    <a [routerLink]="'/events/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel événement </a>
+    <div class="flex items-center gap-3">
+      <h5 class="text-2xl font-bold text-gray-900">Événements</h5>
+      @if (eventCount > 0) {
+        <span
+          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
+          {{ eventCount }}
+        </span>
+      }
+    </div>
+    <a [routerLink]="'/events/add'" class="ui-button ui-button-small ui-button-primary">
+      Nouvel événement
+    </a>
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
@@ -23,7 +35,6 @@
 
   <div class="my-6">
     <app-ui-tabs
-      [counter]="eventCount"
       [tabs]="tabsConfig()"
       [activeTab]="activeTab()"
       (tabChange)="onTabChange($event)" />
@@ -31,54 +42,59 @@
 
   <div class="mt-6">
     @if (isLoading && eventCount === 0) {
-    <app-ui-table-skeleton [rows]="10" [columns]="6" />
-    } @if (eventCount > 0) {
-    <div class="ui-table-wrapper scrollbar-hide">
-      <table class="ui-table">
-        <thead class="ui-table-head">
-          <tr class="ui-table-head-row">
-            <th class="ui-table-header">Événement</th>
-            <th class="ui-table-header">Début</th>
-            <th class="ui-table-header">Fin</th>
-            <th class="ui-table-header">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="ui-table-body">
-          @for (event of events; track event.id) {
-          <tr class="ui-table-row">
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-3">
-                <div class="relative">
-                  <app-ui-avatar [shape]="'square'" [image]="event | apiIMG : 'event'" [label]="event.name" />
-                </div>
-                <p class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
-                  {{ event.name }}
-                </p>
-              </div>
-            </td>
-            <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
-              {{ event.started_at | date }}
-            </td>
-            <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
-              {{ event.ended_at | date }}
-            </td>
-            <td class="ui-table-cell">
-              <div class="flex items-center gap-1.5">
-                <a [routerLink]="['/events/update', event.slug]" class="action-button-default">
-                  <i-lucide [name]="icons.Pencil" class="size-4" />
-                  Modifier
-                </a>
-                <button (click)="onDelete(event.id)" class="action-button-danger">
-                  <i-lucide [name]="icons.Trash" class="size-4" />
-                  Supprimer
-                </button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      <app-ui-table-skeleton [rows]="10" [columns]="6" />
+    }
+    @if (eventCount > 0) {
+      <div class="ui-table-wrapper scrollbar-hide">
+        <table class="ui-table">
+          <thead class="ui-table-head">
+            <tr class="ui-table-head-row">
+              <th class="ui-table-header">Événement</th>
+              <th class="ui-table-header">Début</th>
+              <th class="ui-table-header">Fin</th>
+              <th class="ui-table-header">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="ui-table-body">
+            @for (event of events; track event.id) {
+              <tr class="ui-table-row">
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-3">
+                    <div class="relative">
+                      <app-ui-avatar
+                        [shape]="'square'"
+                        [image]="event | apiIMG: 'event'"
+                        [label]="event.name" />
+                    </div>
+                    <p
+                      class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
+                      {{ event.name }}
+                    </p>
+                  </div>
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  {{ event.started_at | date }}
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  {{ event.ended_at | date }}
+                </td>
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-1.5">
+                    <a [routerLink]="['/events/update', event.slug]" class="action-button-default">
+                      <i-lucide [name]="icons.Pencil" class="size-4" />
+                      Modifier
+                    </a>
+                    <button (click)="onDelete(event.id)" class="action-button-danger">
+                      <i-lucide [name]="icons.Trash" class="size-4" />
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
     <div class="flex flex-col justify-end items-end">
       <app-ui-pagination
@@ -89,25 +105,26 @@
     </div>
   </div>
   @if (eventCount === 0 && !isLoading) {
-  <div class="flex flex-col items-start justify-center">
-    <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
-      <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+    <div class="flex flex-col items-start justify-center">
+      <div
+        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+        <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun événement trouvé</h3>
+      <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
+        Nous n'avons trouvé aucun événement correspondant à vos critères.<br />
+      </p>
+      <app-ui-button
+        (clicked)="onResetFilters()"
+        variant="secondary"
+        [outlined]="true"
+        styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
+        <span class="flex items-center gap-2">
+          <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
+          <span>Réinitialiser les filtres</span>
+        </span>
+      </app-ui-button>
     </div>
-    <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun événement trouvé</h3>
-    <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
-      Nous n'avons trouvé aucun événement correspondant à vos critères.<br />
-    </p>
-    <app-ui-button
-      (clicked)="onResetFilters()"
-      variant="secondary"
-      [outlined]="true"
-      styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
-      <span class="flex items-center gap-2">
-        <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
-        <span>Réinitialiser les filtres</span>
-      </span>
-    </app-ui-button>
-  </div>
   }
   <app-ui-confirm-dialog />
 </div>

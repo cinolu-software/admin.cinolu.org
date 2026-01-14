@@ -1,12 +1,72 @@
 @if (true) {
-<aside class="hidden lg:block">
-  <app-sidebar />
-</aside>
-<main class="py-10 bg-gray-50">
-  <app-topbar />
-  <div class="lg:ml-[28vw] xl:ml-[25vw] px-6 lg:px-0 lg:mr-6 xl:mr-10 min-h-screen mt-12 md:mt-20">
-    <router-outlet />
-  </div>
-  <app-ui-back-button />
-</main>
+  @let user = authStore.user();
+  <main class="py-10 bg-gray-50">
+    <aside class="hidden lg:block">
+      <app-sidebar />
+    </aside>
+    <header class="lg:hidden">
+      <app-mobile-menu [user]="user" (signOut)="handleSignOut()" />
+    </header>
+    <div class="hidden lg:flex justify-end">
+      <div
+        class="fixed top-0 right-0 left-[25vw] xl:left-[22vw] h-16 flex items-center z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200/50">
+        <nav class="flex justify-end items-center w-full px-6">
+          @if (user) {
+            <div class="relative" data-user-menu>
+              <button
+                type="button"
+                (click)="toggleUserMenu()"
+                class="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                [attr.aria-expanded]="isUserMenuOpen()"
+                aria-label="Menu utilisateur">
+                <app-ui-avatar [image]="user | apiIMG: 'user'" [label]="user.name" />
+                <div class="flex items-center gap-1.5">
+                  <div class="flex flex-col items-start">
+                    <span class="text-sm font-semibold text-gray-900 leading-tight">
+                      {{ user.name }}
+                    </span>
+                    <span class="text-xs text-gray-500 leading-tight">{{ user.email }}</span>
+                  </div>
+                  <i-lucide
+                    [name]="icons.ChevronDown"
+                    class="size-4 text-gray-400 transition-transform duration-200"
+                    [class.rotate-180]="isUserMenuOpen()" />
+                </div>
+              </button>
+              @if (isUserMenuOpen()) {
+                <div
+                  data-user-menu
+                  class="absolute right-0 top-full mt-2 w-56 rounded-lg bg-white border border-gray-200 shadow-lg overflow-hidden transition-all duration-200 ease-out">
+                  <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ user.name }}</p>
+                    <p class="text-xs text-gray-500 truncate mt-0.5">{{ user.email }}</p>
+                  </div>
+                  <div class="py-1.5">
+                    <a
+                      [routerLink]="'/account'"
+                      (click)="closeUserMenu()"
+                      class="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors duration-150">
+                      <i-lucide [name]="icons.User" class="size-4" />
+                      <span>Mon compte</span>
+                    </a>
+                    <button
+                      type="button"
+                      (click)="handleSignOut(); closeUserMenu()"
+                      class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors duration-150">
+                      <i-lucide [name]="icons.LogOut" class="size-4" />
+                      <span>Se déconnecter</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </nav>
+      </div>
+    </div>
+    <div class="lg:ml-[28vw] xl:ml-[25vw] px-6 lg:px-0 lg:mr-6 xl:mr-10 min-h-screen mt-16">
+      <router-outlet />
+    </div>
+    <app-ui-back-button />
+  </main>
 }

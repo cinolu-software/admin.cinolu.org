@@ -97,18 +97,6 @@
           </td>
           <td class="ui-table-cell">
             <div class="flex items-center gap-1">
-              <button
-                (click)="onShowcase(subprogram.id)"
-                [class]="subprogram.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
-                <i-lucide [name]="icons.Star" class="size-4" />
-                En avant
-              </button>
-              <button
-                (click)="onPublishProgram(subprogram.id)"
-                [class]="subprogram.is_published ? 'action-button-active' : 'action-button-default'">
-                <i-lucide [name]="icons.Eye" class="size-4" />
-                {{ subprogram.is_published ? 'Dépublier' : 'Publier' }}
-              </button>
               <button (click)="onEdit(subprogram)" class="action-button-default">
                 <i-lucide [name]="icons.Pencil" class="size-4" />
                 Modifier
@@ -144,6 +132,28 @@
               <div class="rounded-xl border w-full md:w-1/2 border-dashed border-gray-300 bg-white p-4">
                 <p class="text-xs font-semibold text-gray-600 mb-3">Logo</p>
                 <app-ui-file-upload [name]="'logo'" [url]="url + getEditingSubprogram()?.id" />
+              </div>
+              }
+              @if (getEditingSubprogram()) {
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-gray-900">Gérer la publication et la mise en avant</p>
+                  <p class="text-xs text-gray-500 mt-1">Contrôlez la visibilité de ce sous-programme</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button
+                    (click)="onShowcase()"
+                    [class]="getEditingSubprogram()?.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
+                    <i-lucide [name]="icons.Star" class="size-4" />
+                    {{ getEditingSubprogram()?.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
+                  </button>
+                  <button
+                    (click)="onPublishProgram()"
+                    [class]="getEditingSubprogram()?.is_published ? 'action-button-active' : 'action-button-default'">
+                    <i-lucide [name]="icons.Eye" class="size-4" />
+                    {{ getEditingSubprogram()?.is_published ? 'Dépublier' : 'Publier' }}
+                  </button>
+                </div>
               </div>
               }
               <div class="flex items-center justify-end gap-3 pt-2">

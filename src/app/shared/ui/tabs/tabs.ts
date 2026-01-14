@@ -12,7 +12,6 @@ export class UiTabs {
   activeTab = input.required<string>();
   tabChange = output<string>();
   isLoading = input<boolean>(false);
-  counter = input<number>(0);
 
   onTabChange(tabName: string) {
     this.tabChange.emit(tabName);

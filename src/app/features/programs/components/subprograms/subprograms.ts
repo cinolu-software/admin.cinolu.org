@@ -61,18 +61,22 @@ export class ListSubprograms {
   isCreating = signal(false);
   editingSubprogramId = signal<string | null>(null);
 
-  onShowcase(id: string): void {
-    this.store.showcase(id);
-  }
-
   loadAll(programId?: string): void {
     const id = programId ?? this.programSignal()?.id;
     if (!id) return;
     this.store.loadAll(id);
   }
 
-  onPublishProgram(id: string): void {
-    this.store.publish(id);
+  onShowcase(): void {
+    const subprogram = this.getEditingSubprogram();
+    if (!subprogram) return;
+    this.store.showcase(subprogram.id);
+  }
+
+  onPublishProgram(): void {
+    const subprogram = this.getEditingSubprogram();
+    if (!subprogram) return;
+    this.store.publish(subprogram.id);
   }
 
   onFileUploadLoaded(): void {
