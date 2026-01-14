@@ -1,4 +1,13 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  input,
+  OnDestroy,
+  output,
+  signal
+} from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import {
   LucideAngularModule,
@@ -6,11 +15,12 @@ import {
   ChevronDown,
   LogOut,
   House,
-  ExternalLink
+  ExternalLink,
+  Calendar
 } from 'lucide-angular';
-import { LINK_GROUPS } from '../../../data/links.data';
+import { LINK_GROUPS } from '../../data/links.data';
 import { IUser } from '@shared/models';
-import { filter } from 'rxjs';
+import { filter, fromEvent, Subject } from 'rxjs';
 import { AuthStore } from '@core/auth/auth.store';
 import { ILinkGroup } from 'src/app/layout/types/link.type';
 import { environment } from '@env/environment';
@@ -18,15 +28,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
-  selector: 'app-mobile-nav',
-  templateUrl: './mobile-nav.html',
+  selector: 'app-mobile-menu',
+  templateUrl: './mobile-menu.html',
   imports: [LucideAngularModule, RouterModule, NgOptimizedImage]
 })
-export class MobileNav {
+export class MobileMenu implements OnDestroy {
   user = input.required<IUser | null>();
   signOut = output<void>();
   isOpen = signal<boolean>(false);
-  icons = { Menu, House, ChevronDown, LogOut, ExternalLink };
+  icons = { Menu, Calendar, House, ChevronDown, LogOut, ExternalLink };
+  #elementRef = inject(ElementRef);
+  #destroy$ = new Subject<void>();
   #router = inject(Router);
   style = input<string>();
   currentUrl = signal(this.#router.url);
@@ -57,6 +69,7 @@ export class MobileNav {
       .subscribe((event: NavigationEnd) => {
         this.currentUrl.set(event.urlAfterRedirects);
       });
+    this.setupEventListeners();
   }
 
   onToggleTab(name: string): void {
@@ -80,6 +93,15 @@ export class MobileNav {
     return 'mobile-nav-panel-' + name.toLowerCase().replace(/\s+/g, '-');
   }
 
+  setupEventListeners(): void {
+    const click$ = fromEvent(document, 'click');
+    click$.pipe(takeUntilDestroyed()).subscribe((event: Event) => {
+      const isInside = this.#elementRef.nativeElement.contains(event.target);
+      const isMenuOpen = this.isOpen();
+      if (isMenuOpen && !isInside) this.closeNav();
+    });
+  }
+
   toggleNav(): void {
     this.isOpen.update((isOpen) => !isOpen);
   }
@@ -90,5 +112,10 @@ export class MobileNav {
 
   closeNav(): void {
     this.isOpen.set(false);
+  }
+
+  ngOnDestroy(): void {
+    this.#destroy$.next();
+    this.#destroy$.complete();
   }
 }
