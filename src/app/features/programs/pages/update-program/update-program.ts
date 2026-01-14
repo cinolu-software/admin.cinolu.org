@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { IndicatorsStore } from '../../store/indicators.store';
 import { ProgramsStore } from '../../store/programs.store';
 import { ProgramCategoriesStore } from '../../store/program-categories.store';
-import { ChartColumn, SquarePen, Trash2, Funnel, Tag } from 'lucide-angular';
+import { ChartColumn, SquarePen, Trash2, Funnel, Tag, Star, Eye } from 'lucide-angular';
 import { LucideAngularModule } from 'lucide-angular';
 import { environment } from '@env/environment';
 import { UiTabs, FileUpload, UiDatepicker, UiInput } from '@shared/ui';
@@ -45,7 +45,7 @@ export class UpdateProgram {
   indicatorsCategories = signal(INDICATORS_CATEGORIES);
   selectedCategory = signal(this.indicatorsCategories()[0]);
   year = signal<Date>(new Date());
-  icons = { Trash2, Funnel, Tag, ChartColumn };
+  icons = { Trash2, Funnel, Tag, ChartColumn, Star, Eye };
   indicatorCategoryOptions = computed<SelectOption[]>(() =>
     this.indicatorsCategories().map((cat) => ({
       label: cat,
@@ -160,5 +160,17 @@ export class UpdateProgram {
       programId: program.id,
       payload: this.updateForm.value
     });
+  }
+
+  onHighlight(): void {
+    const program = this.store.program();
+    if (!program) return;
+    this.store.highlight(program.id);
+  }
+
+  onPublish(): void {
+    const program = this.store.program();
+    if (!program) return;
+    this.store.publishProgram(program.id);
   }
 }

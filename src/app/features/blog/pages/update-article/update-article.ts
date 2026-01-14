@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Images, SquarePen } from 'lucide-angular';
+import { Images, SquarePen, Star, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
 import { ArticlesStore } from '../../store/articles.store';
 import { ArticleUpdate } from '../../components/article-update-form/article-update-form';
@@ -10,7 +10,7 @@ import { ArticleGalleryComponent } from '../../components/article-gallery/articl
 @Component({
   selector: 'app-update-article',
   providers: [ArticlesStore],
-  imports: [CommonModule, UiTabs, ArticleUpdate, ArticleGalleryComponent],
+  imports: [CommonModule, UiTabs, ArticleUpdate, ArticleGalleryComponent, LucideAngularModule],
   templateUrl: './update-article.html'
 })
 export class UpdateArticle implements OnInit {
@@ -43,4 +43,12 @@ export class UpdateArticle implements OnInit {
   onDeleteImage(imgId: string): void {
     this.store.deleteImage(imgId);
   }
+
+  onShowcase(): void {
+    const article = this.store.article();
+    if (!article) return;
+    this.store.showcase(article.id);
+  }
+
+  icons = { Star };
 }

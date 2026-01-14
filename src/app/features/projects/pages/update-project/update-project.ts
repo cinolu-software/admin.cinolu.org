@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SquarePen, Images, ChartColumn } from 'lucide-angular';
+import { SquarePen, Images, ChartColumn, Star, Eye, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
 import { totalMetrics, achievementRate, metricsMap, metricsMapToDto } from '@shared/helpers';
 import { IProject } from '@shared/models';
@@ -19,7 +19,7 @@ import { UiMetricsTable } from '@shared/ui/metrics-table/metrics-table';
   templateUrl: './update-project.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [IndicatorsStore, GalleryStore, ProjectsStore, ProjectMetricsStore],
-  imports: [UiTabs, UiMetricsTable, ProjectDetails, ProjectGallery, ProjectUpdateForm, ProjectDetailsSkeleton]
+  imports: [UiTabs, UiMetricsTable, ProjectDetails, ProjectGallery, ProjectUpdateForm, ProjectDetailsSkeleton, LucideAngularModule]
 })
 export class UpdateProject implements OnInit {
   #route = inject(ActivatedRoute);
@@ -85,4 +85,18 @@ export class UpdateProject implements OnInit {
   onTabChange(tab: string): void {
     this.activeTab.set(tab);
   }
+
+  onShowcase(): void {
+    const project = this.projectStore.project();
+    if (!project) return;
+    this.projectStore.showcase(project.id);
+  }
+
+  onPublish(): void {
+    const project = this.projectStore.project();
+    if (!project) return;
+    this.projectStore.publish(project.id);
+  }
+
+  icons = { Star, Eye };
 }
