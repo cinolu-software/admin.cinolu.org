@@ -14,6 +14,14 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client
   },
   {
+    path: 'mentor-profiles/view/:id',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'ventures/view/:slug',
+    renderMode: RenderMode.Client
+  },
+  {
     path: 'projects/update/:slug',
     renderMode: RenderMode.Client
   },
