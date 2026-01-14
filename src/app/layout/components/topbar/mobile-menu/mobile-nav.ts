@@ -1,38 +1,49 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, Menu, ChevronDown, LogOut, House } from 'lucide-angular';
-import { LINKS } from '../../../data/links.data';
+import {
+  LucideAngularModule,
+  Menu,
+  ChevronDown,
+  LogOut,
+  House,
+  ExternalLink
+} from 'lucide-angular';
+import { LINK_GROUPS } from '../../../data/links.data';
 import { IUser } from '@shared/models';
 import { filter } from 'rxjs';
 import { AuthStore } from '@core/auth/auth.store';
-import { ILink } from 'src/app/layout/types/link.type';
+import { ILinkGroup } from 'src/app/layout/types/link.type';
 import { environment } from '@env/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-mobile-nav',
   templateUrl: './mobile-nav.html',
-  imports: [LucideAngularModule, RouterModule]
+  imports: [LucideAngularModule, RouterModule, NgOptimizedImage]
 })
 export class MobileNav {
   user = input.required<IUser | null>();
   signOut = output<void>();
   isOpen = signal<boolean>(false);
-  icons = { Menu, House, ChevronDown, LogOut };
+  icons = { Menu, House, ChevronDown, LogOut, ExternalLink };
   #router = inject(Router);
   style = input<string>();
   currentUrl = signal(this.#router.url);
   toggleTab = signal<string | null>(null);
   closedTab = signal<string | null>(null);
   authStore = inject(AuthStore);
-  links = signal<ILink[]>(LINKS);
+  linkGroups = signal<ILinkGroup[]>(LINK_GROUPS);
   appUrl = environment.appUrl;
+  allLinks = computed(() => this.linkGroups().flatMap((group) => group.links));
 
   activeTab = computed(() => {
     const url = this.currentUrl();
     return (
-      this.links().find(
-        (link) => link.path === url || link.children?.some((child) => child.path && url.startsWith(child.path))
+      this.allLinks().find(
+        (link) =>
+          link.path === url ||
+          link.children?.some((child) => child.path && url.startsWith(child.path))
       )?.name ?? null
     );
   });

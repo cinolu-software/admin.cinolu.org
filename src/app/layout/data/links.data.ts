@@ -9,108 +9,123 @@ import {
   User,
   UserRoundCog
 } from 'lucide-angular';
-import { ILink } from '../types/link.type';
+import { ILinkGroup } from '../types/link.type';
 
-export const LINKS: ILink[] = [
+export const LINK_GROUPS: ILinkGroup[] = [
   {
-    name: 'Dashboard',
-    path: '/dashboard',
-    exactUrl: true,
-    icon: LayoutDashboard
-  },
-  {
-    name: 'Mon compte',
-    path: '/account',
-    icon: UserCog
-  },
-  {
-    name: 'Les programmes',
-    icon: Layers,
-    children: [
+    title: 'Gestion',
+    links: [
       {
-        name: 'Tous les programmes',
-        path: '/programs'
+        name: 'Dashboard',
+        path: '/dashboard',
+        exactUrl: true,
+        icon: LayoutDashboard
       },
       {
-        name: 'Les catégories',
-        path: '/program-categories'
+        name: 'Mon compte',
+        path: '/account',
+        icon: UserCog
       }
     ]
   },
   {
-    name: 'Les projets',
-    icon: Folders,
-    children: [
+    title: 'Contenu',
+    links: [
       {
-        name: 'Tous les projets',
-        path: '/projects'
+        name: 'Les programmes',
+        icon: Layers,
+        children: [
+          {
+            name: 'Tous les programmes',
+            path: '/programs'
+          },
+          {
+            name: 'Les catégories',
+            path: '/program-categories'
+          }
+        ]
       },
       {
-        name: 'Les catégories',
-        path: '/project-categories'
+        name: 'Les projets',
+        icon: Folders,
+        children: [
+          {
+            name: 'Tous les projets',
+            path: '/projects'
+          },
+          {
+            name: 'Les catégories',
+            path: '/project-categories'
+          }
+        ]
+      },
+      {
+        name: 'Les événements',
+        icon: Calendar1,
+        children: [
+          {
+            name: 'Tous les événements',
+            path: '/events'
+          },
+          {
+            name: 'Les catégories',
+            path: '/event-categories'
+          }
+        ]
+      },
+      {
+        name: 'Les mentors',
+        icon: User,
+        children: [
+          {
+            name: 'Tous les mentors',
+            path: '/mentor-profiles'
+          },
+          {
+            name: 'Les expertises',
+            path: '/expertises'
+          }
+        ]
+      },
+      {
+        name: 'Les startups',
+        path: '/ventures',
+        icon: UserRoundCog
+      },
+      {
+        name: 'Le blog',
+        path: '/blog',
+        icon: BookOpen,
+        children: [
+          {
+            name: 'Tous les articles',
+            path: '/blog/articles'
+          },
+          {
+            name: 'Les tags',
+            path: '/blog/tags'
+          }
+        ]
       }
     ]
   },
   {
-    name: 'Les événements',
-    icon: Calendar1,
-    children: [
-      {
-        name: 'Tous les événements',
-        path: '/events'
-      },
-      {
-        name: 'Les catégories',
-        path: '/event-categories'
-      }
-    ]
-  },
-  {
-    name: 'Les mentors',
-    icon: User,
-    children: [
-      {
-        name: 'Tous les mentors',
-        path: '/mentor-profiles'
-      },
-      {
-        name: 'Les expertises',
-        path: '/expertises'
-      }
-    ]
-  },
-  {
-    name: 'Les startups',
-    path: '/ventures',
-    icon: UserRoundCog
-  },
-  {
-    name: 'Le blog',
-    path: '/blog',
-    icon: BookOpen,
-    children: [
-      {
-        name: 'Tous les articles',
-        path: '/blog/articles'
-      },
-      {
-        name: 'Les tags',
-        path: '/blog/tags'
-      }
-    ]
-  },
-  {
-    name: 'Les utilisateurs',
-    path: '/users',
-    icon: UserCheck,
-    children: [
+    title: 'Administration',
+    links: [
       {
         name: 'Les utilisateurs',
-        path: '/users'
-      },
-      {
-        name: 'Les rôles',
-        path: '/roles'
+        path: '/users',
+        icon: UserCheck,
+        children: [
+          {
+            name: 'Les utilisateurs',
+            path: '/users'
+          },
+          {
+            name: 'Les rôles',
+            path: '/roles'
+          }
+        ]
       }
     ]
   }

@@ -16,7 +16,7 @@ import { MobileNav } from './mobile-menu/mobile-nav';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../core/auth/auth.store';
 import { Calendar, LucideAngularModule } from 'lucide-angular';
-import { LINKS } from '../../data/links.data';
+// import { LINKS } from '../../data/links.data';
 
 @Component({
   selector: 'app-topbar',
@@ -26,7 +26,7 @@ import { LINKS } from '../../data/links.data';
 export class Topbar implements OnDestroy {
   #elementRef = inject(ElementRef);
   isFixed = signal(false);
-  links = signal(LINKS);
+  // links = signal(Link);
   fixed = input(false);
   mobileNav = viewChild(MobileNav);
   desktopNav = viewChild(DesktopNav);

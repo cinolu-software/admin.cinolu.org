@@ -1,33 +1,41 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, ChevronDown, House } from 'lucide-angular';
+import { LucideAngularModule, ChevronDown, House, ExternalLink } from 'lucide-angular';
 import { filter } from 'rxjs';
 import { AuthStore } from '@core/auth/auth.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LINKS } from '../../data/links.data';
-import { ILink } from '../../types/link.type';
+import { LINK_GROUPS } from '../../data/links.data';
+import { ILinkGroup } from '../../types/link.type';
 import { environment } from '@env/environment';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterModule, LucideAngularModule],
+  imports: [RouterModule, LucideAngularModule, NgOptimizedImage],
   templateUrl: './sidebar.html'
 })
 export class Sidebar {
   #router = inject(Router);
   style = input<string>();
-  icons = { ChevronDown, House };
+  icons = { ChevronDown, House, ExternalLink };
   appUrl = environment.appUrl;
   currentUrl = signal(this.#router.url);
   toggleTab = signal<string | null>(null);
   closedTab = signal<string | null>(null);
   authStore = inject(AuthStore);
-  links = signal<ILink[]>(LINKS);
+  linkGroups = signal<ILinkGroup[]>(LINK_GROUPS);
+
+  // Flattened links for active tab computation
+  allLinks = computed(() => this.linkGroups().flatMap((group) => group.links));
+
   activeTab = computed(() => {
     const url = this.currentUrl();
     return (
-      this.links().find((link) => {
-        return link.path === url || link.children?.some((child) => child.path && url.startsWith(child.path));
+      this.allLinks().find((link) => {
+        return (
+          link.path === url ||
+          link.children?.some((child) => child.path && url.startsWith(child.path))
+        );
       })?.name ?? null
     );
   });

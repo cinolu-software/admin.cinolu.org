@@ -11,3 +11,8 @@ export interface ILink {
   children?: ILink[];
   open?: boolean;
 }
+
+export interface ILinkGroup {
+  title: string;
+  links: ILink[];
+}

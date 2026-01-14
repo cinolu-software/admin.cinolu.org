@@ -21,65 +21,87 @@
     class="fixed top-0 left-0 w-[85vw] max-w-[360px] h-dvh bg-primary-900 text-primary-50 border-r border-primary-700/30 shadow-xl shadow-black/10 z-999 overflow-hidden flex flex-col transition-transform duration-300 ease-out font-satoshi"
     [class.translate-x-0]="isOpen()"
     [class.-translate-x-full]="!isOpen()">
-    <div class="px-6 pt-6 pb-4">
+    <!-- Header -->
+    <div class="px-6 pt-6 pb-4 border-b border-primary-700/30">
+      <div class="flex items-center gap-3 mb-6">
+        <img ngSrc="/images/logo/logo-w.png" alt="CINOLU Logo" width="40" height="50" class="w-10 h-auto" priority />
+        <div class="flex flex-col">
+          <h1 class="text-lg font-bold text-white leading-tight">CINOLU</h1>
+          <p class="text-xs text-gray-100 font-medium">Administration</p>
+        </div>
+      </div>
       <a
-        class="mb-6 inline-flex items-center gap-2 rounded-xl px-3 py-2 bg-primary-700/50 border border-primary-500/30 text-primary-50 hover:bg-primary-600/60 hover:border-primary-400/50 transition-all duration-200 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40"
         [href]="appUrl"
         target="_blank"
+        rel="noopener noreferrer"
+        class="group inline-flex items-center justify-between gap-2 w-full px-4 py-2.5 rounded-xl bg-primary-800/60 hover:bg-primary-700/80 text-primary-50 hover:text-white transition-all duration-200 border border-primary-700/50 hover:border-primary-600/60 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40"
         (click)="toggleNav()">
-        <i-lucide [name]="icons.House" class="size-3.5 text-inherit" />
-        Retourner au site
+        <div class="inline-flex items-center gap-2.5">
+          <i-lucide [name]="icons.House" class="size-4 text-inherit transition-transform group-hover:scale-110" />
+          <span class="text-sm font-medium">Retourner au site</span>
+        </div>
+        <i-lucide
+          [name]="icons.ExternalLink"
+          class="size-3.5 text-primary-400 group-hover:text-primary-300 transition-colors" />
       </a>
     </div>
 
-    <nav class="flex-1 overflow-y-auto px-6 pb-6">
-      <div class="flex flex-col gap-2">
-        @for (link of links(); track link.name) { @if ((link?.children?.length || 0) > 0) {
-        <button
-          class="flex justify-between items-center px-3.5 py-2.5 font-semibold rounded-xl text-primary-100 hover:bg-primary-700/40 hover:text-primary-50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40"
-          (click)="onToggleTab(link.name)"
-          [class.bg-primary-700]="isTabOpen(link.name)"
-          [class.text-white]="isTabOpen(link.name)"
-          [class.text-primary-200]="!isTabOpen(link.name)">
-          <div class="group inline-flex gap-2 items-center">
-            <i-lucide [name]="link.icon" class="size-4.5 text-inherit" />
-            {{ link.name }}
-          </div>
-          <i-lucide
-            [name]="icons.ChevronDown"
-            class="size-4 transition-transform duration-300"
-            [class.rotate-180]="isTabOpen(link.name)"
+    <!-- Navigation Links -->
+    <nav class="flex-1 overflow-y-auto px-6 pb-6 pt-4 space-y-6">
+      @for (group of linkGroups(); track group.title) {
+      <div class="space-y-2.5">
+        <h2 class="text-xs font-semibold text-primary-400/70 uppercase tracking-wider px-3.5 mb-2">
+          {{ group.title }}
+        </h2>
+        <div class="flex flex-col gap-1">
+          @for (link of group.links; track link.name) { @if ((link?.children?.length || 0) > 0) {
+          <button
+            class="flex justify-between items-center px-3.5 py-2.5 font-semibold rounded-xl text-primary-100 hover:bg-primary-700/40 hover:text-primary-50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40 active:scale-[0.99]"
+            (click)="onToggleTab(link.name)"
+            [class.bg-primary-700]="isTabOpen(link.name)"
             [class.text-white]="isTabOpen(link.name)"
-            [class.text-primary-200]="!isTabOpen(link.name)" />
-        </button>
-        @if (isTabOpen(link.name)) {
-        <div class="ml-5 pl-4 border-l-2 border-primary-600/40 flex flex-col gap-1.5" [attr.id]="panelId(link.name)">
-          @for (child of link.children; track child.name) {
+            [class.text-primary-200]="!isTabOpen(link.name)">
+            <div class="group inline-flex gap-2.5 items-center">
+              <i-lucide [name]="link.icon" class="size-4 text-inherit" />
+              <span class="text-sm">{{ link.name }}</span>
+            </div>
+            <i-lucide
+              [name]="icons.ChevronDown"
+              class="size-4 transition-transform duration-300 text-primary-400"
+              [class.rotate-180]="isTabOpen(link.name)"
+              [class.text-white]="isTabOpen(link.name)"
+              [class.text-primary-200]="!isTabOpen(link.name)" />
+          </button>
+          @if (isTabOpen(link.name)) {
+          <div class="ml-5 pl-4 border-l-2 border-primary-600/40 flex flex-col gap-1.5" [attr.id]="panelId(link.name)">
+            @for (child of link.children; track child.name) {
+            <a
+              class="group relative flex items-center gap-2.5 my-0.5 text-primary-100/90 text-sm rounded-lg hover:text-white transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40 group-[.active-link]:bg-primary-600/50 group-[.active-link]:text-white group-[.active-link]:font-medium group-[.active-link]:shadow-sm"
+              [routerLink]="child.path"
+              [routerLinkActive]="'active-link text-white'"
+              [routerLinkActiveOptions]="{ exact: child.exactUrl || false }"
+              [attr.aria-current]="currentUrl() === child.path ? 'page' : null"
+              (click)="toggleNav()">
+              <span
+                class="shrink-0 w-1.5 h-1.5 rounded-full bg-primary-400/80 group-hover:bg-primary-300 group-[.active-link]:bg-white transition-colors"></span>
+              <span class="truncate">{{ child.name }}</span>
+            </a>
+            }
+          </div>
+          } } @else {
           <a
-            class="group relative flex items-center gap-2 my-0.5 text-primary-100/90 text-sm rounded-lg hover:text-white transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40 group-[.active-link]:bg-primary-600/50 group-[.active-link]:text-white group-[.active-link]:font-medium"
-            [routerLink]="child.path"
-            [routerLinkActive]="'active-link text-white'"
-            [routerLinkActiveOptions]="{ exact: child.exactUrl || false }"
-            [attr.aria-current]="currentUrl() === child.path ? 'page' : null"
+            [routerLink]="link.path"
+            class="group inline-flex items-center gap-2.5 px-3.5 py-2.5 font-semibold rounded-xl text-primary-100 hover:bg-primary-700/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40 active:scale-[0.99]"
+            [routerLinkActiveOptions]="{ exact: link.exactUrl || false }"
+            [routerLinkActive]="'bg-primary-700/60 text-white shadow-sm shadow-black/10'"
             (click)="toggleNav()">
-            <span
-              class="shrink-0 w-1.5 h-1.5 rounded-full bg-primary-400/80 group-hover:bg-primary-300 group-[.active-link]:bg-white"></span>
-            <span class="truncate">{{ child.name }}</span>
+            <i-lucide [name]="link.icon" class="size-4 text-inherit" />
+            <span class="text-sm">{{ link.name }}</span>
           </a>
-          }
+          } }
         </div>
-        } } @else {
-        <a
-          [routerLink]="link.path"
-          class="group inline-flex items-center gap-2 px-3.5 py-2.5 font-semibold rounded-xl text-primary-100 hover:bg-primary-700/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/40"
-          [routerLinkActiveOptions]="{ exact: link.exactUrl || false }"
-          [routerLinkActive]="'bg-primary-700/60 text-white shadow-sm shadow-black/10'"
-          (click)="toggleNav()">
-          <i-lucide [name]="link.icon" class="size-4.5 text-inherit" />
-          {{ link.name }}
-        </a>
-        } }
       </div>
+      }
     </nav>
 
     <div class="mt-auto border-t border-primary-700/30 px-6 py-4">
