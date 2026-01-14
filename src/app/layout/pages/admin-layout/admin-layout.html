@@ -10,16 +10,15 @@
     <div class="hidden lg:flex justify-end">
       <div
         class="fixed top-0 right-0 left-[25vw] xl:left-[22vw] h-16 flex items-center z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200/50">
-        <nav class="flex justify-between items-center w-full px-6">
+        <nav class="relative flex justify-between items-center w-full px-6">
           @if (user) {
             <h2 class="text-gray-700 font-bold">Tableau de bord</h2>
             <div class="relative">
               <button
                 type="button"
+                data-user-menu-button
                 (click)="toggleUserMenu()"
-                class="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-150"
-                [attr.aria-expanded]="isUserMenuOpen()"
-                aria-label="Menu utilisateur">
+                class="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-150">
                 <app-ui-avatar [image]="user | apiIMG: 'user'" [label]="user.name" />
                 <div class="flex items-center gap-1.5">
                   <div class="flex flex-col items-start">

@@ -38,7 +38,9 @@ export class AdminLayout {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    if (!target.closest('[data-user-menu]') && this.isUserMenuOpen()) {
+    const isInsideMenu = target.closest('[data-user-menu]');
+    const isInsideButton = target.closest('[data-user-menu-button]');
+    if (!isInsideMenu && !isInsideButton && this.isUserMenuOpen()) {
       this.closeUserMenu();
     }
   }
