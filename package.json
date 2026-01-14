@@ -12,7 +12,7 @@
     "prepare": "husky"
   },
   "prettier": {
-    "printWidth": 120,
+    "printWidth": 100,
     "singleQuote": true,
     "bracketSameLine": true,
     "trailingComma": "none",
@@ -20,13 +20,14 @@
       {
         "files": "*.html",
         "options": {
-          "parser": "angular"
+          "parser": "angular",
+          "printWidth": 100
         }
       }
     ]
   },
   "private": true,
-  "packageManager": "pnpm@10.25.0",
+  "packageManager": "pnpm@10.28.0",
   "dependencies": {
     "@angular/common": "^21.0.0",
     "@angular/compiler": "^21.0.0",
@@ -62,6 +63,7 @@
     "husky": "^9.1.7",
     "jsdom": "^27.1.0",
     "postcss": "^8.5.3",
+    "prettier": "^3.7.4",
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
     "typescript-eslint": "8.47.0",
