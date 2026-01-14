@@ -12,13 +12,14 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
-    loadChildren: () => import('@features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes)
+    loadChildren: () =>
+      import('@features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes)
   },
   {
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     path: '',
     title: 'Les programmes',
@@ -26,7 +27,7 @@ export const routes: Routes = [
   },
   {
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     path: 'blog',
     title: 'Blog',
@@ -34,7 +35,7 @@ export const routes: Routes = [
   },
   {
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     path: '',
     title: 'Projets',
@@ -42,7 +43,7 @@ export const routes: Routes = [
   },
   {
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     path: '',
     title: 'Événements',
@@ -50,7 +51,7 @@ export const routes: Routes = [
   },
   {
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     path: '',
     title: 'Utilisateurs',
@@ -58,15 +59,16 @@ export const routes: Routes = [
   },
   {
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     path: '',
     title: 'Mentors',
-    loadChildren: () => import('@features/mentor-profiles/mentors.routes').then((m) => m.mentorsRoutes)
+    loadChildren: () =>
+      import('@features/mentor-profiles/mentors.routes').then((m) => m.mentorsRoutes)
   },
   {
     component: Layout,
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     path: '',
     title: 'Ventures',
@@ -76,7 +78,7 @@ export const routes: Routes = [
     component: Layout,
     path: 'account',
     title: 'Mon compte',
-    data: { layout: 'sidebar-layout' },
+    data: { layout: 'admin-layout' },
     canActivate: [authGuard],
     loadChildren: () => import('@features/account/account.routes').then((m) => m.accountRoutes)
   },

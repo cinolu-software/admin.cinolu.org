@@ -9,8 +9,8 @@ import { ApiImgPipe } from '../../../shared/pipes/api-img.pipe';
 import { MobileMenu } from '../../components/mobile-menu/mobile-menu';
 
 @Component({
-  selector: 'app-sidebar-layout',
-  templateUrl: './sidebar-layout.html',
+  selector: 'app-admin-layout',
+  templateUrl: './admin-layout.html',
   imports: [
     RouterModule,
     LucideAngularModule,
@@ -22,7 +22,7 @@ import { MobileMenu } from '../../components/mobile-menu/mobile-menu';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SidebarLayout {
+export class AdminLayout {
   authStore = inject(AuthStore);
   icons = { ChevronDown, LogOut, User };
   isUserMenuOpen = signal(false);
