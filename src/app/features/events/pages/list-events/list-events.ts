@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
-import { LucideAngularModule, Trash, Search, Eye, Star, Funnel, Pencil } from 'lucide-angular';
+import { LucideAngularModule, Trash, Search, Funnel, Pencil } from 'lucide-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EventsStore } from '../../store/events.store';
@@ -40,7 +40,7 @@ export class ListEvents {
   searchForm: FormGroup;
   store = inject(EventsStore);
   itemsPerPage = 20;
-  icons = { Pencil, Trash, Search, Eye, Star, Funnel };
+  icons = { Pencil, Trash, Search, Funnel };
   queryParams = signal<FilterEventsDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q'),
@@ -91,14 +91,6 @@ export class ListEvents {
   updateRoute(): void {
     const queryParams = this.queryParams();
     this.#router.navigate(['/events'], { queryParams });
-  }
-
-  onShowcase(eventId: string): void {
-    this.store.showcase(eventId);
-  }
-
-  onPublish(eventId: string): void {
-    this.store.publish(eventId);
   }
 
   onResetFilters(): void {

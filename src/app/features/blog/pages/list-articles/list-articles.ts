@@ -3,7 +3,7 @@ import { Component, computed, DestroyRef, effect, inject, signal } from '@angula
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterArticleDto } from '../../dto/filter-article.dto';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Eye, Funnel, LucideAngularModule, Pencil, Plus, Search, Star, Trash } from 'lucide-angular';
+import { Eye, Funnel, LucideAngularModule, Pencil, Plus, Search, Trash } from 'lucide-angular';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { ArticlesStore } from '../../store/articles.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -41,11 +41,12 @@ export class ListArticles {
   searchForm: FormGroup;
   store = inject(ArticlesStore);
   itemsPerPage = 20;
-  icons = { Pencil, Trash, Search, Plus, Eye, Star, Funnel };
+  icons = { Pencil, Trash, Search, Plus, Eye, Funnel };
   queryParams = signal<FilterArticleDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q'),
-    filter: (this.#route.snapshot.queryParamMap.get('filter') as FilterArticleDto['filter']) || 'all'
+    filter:
+      (this.#route.snapshot.queryParamMap.get('filter') as FilterArticleDto['filter']) || 'all'
   });
   activeTab = computed(() => this.queryParams().filter || 'all');
   currentPage = computed(() => Number(this.queryParams().page) || 1);
@@ -67,7 +68,11 @@ export class ListArticles {
 
     this.searchForm
       .get('q')
-      ?.valueChanges.pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
+      ?.valueChanges.pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.#destroyRef)
+      )
       .subscribe((searchValue: string) => {
         this.queryParams.update((qp) => ({
           ...qp,
@@ -98,10 +103,6 @@ export class ListArticles {
   updateRoute(): void {
     const queryParams = this.queryParams();
     this.#router.navigate(['/blog/articles'], { queryParams });
-  }
-
-  onShowcase(articleId: string): void {
-    this.store.showcase(articleId);
   }
 
   onResetFilters(): void {

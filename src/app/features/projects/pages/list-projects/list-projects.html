@@ -71,29 +71,14 @@
             </td>
             <td class="ui-table-cell">
               <div class="flex items-center gap-2">
-                <button
-                  (click)="onShowcase(project.id)"
-                  [class]="project.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
-                  <i-lucide [name]="icons.Star" class="size-4" [class.fill-current]="project.is_highlighted" />
-                  En avant
+                <button [routerLink]="['/projects/update', project.slug]" class="action-button-default">
+                  <i-lucide [name]="icons.Pencil" class="size-4" />
+                  Modifier
                 </button>
-                <button
-                  (click)="onPublish(project.id)"
-                  [class]="project.is_published ? 'action-button-active' : 'action-button-default'">
-                  <i-lucide [name]="icons.Eye" class="size-4" />
-                  {{ project.is_published ? 'Dépublier' : 'Publier' }}
+                <button (click)="onDelete(project.id)" class="action-button-danger">
+                  <i-lucide [name]="icons.Trash" class="size-4" />
+                  Supprimer
                 </button>
-                <div class="h-6 w-px bg-gray-200"></div>
-                <div class="flex items-center gap-1">
-                  <button [routerLink]="['/projects/update', project.slug]" class="action-button-default">
-                    <i-lucide [name]="icons.Pencil" class="size-4" />
-                    Modifier
-                  </button>
-                  <button (click)="onDelete(project.id)" class="action-button-danger">
-                    <i-lucide [name]="icons.Trash" class="size-4" />
-                    Supprimer
-                  </button>
-                </div>
               </div>
             </td>
           </tr>

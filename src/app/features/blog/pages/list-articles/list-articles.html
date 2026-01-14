@@ -66,17 +66,10 @@
             </td>
             <td class="ui-table-cell">
               <div class="flex items-center gap-1">
-                <button
-                  (click)="onShowcase(article.id)"
-                  [class]="article.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
-                  <i-lucide [img]="icons.Star" class="size-4" />
-                  En avant
-                </button>
                 <a [routerLink]="['/blog/articles/update', article.slug]" class="action-button-default">
                   <i-lucide [name]="icons.Pencil" class="size-4" />
                   Modifier
                 </a>
-                <div class="h-6 w-px bg-gray-200"></div>
                 <button (click)="onDelete(article.id)" class="action-button-danger">
                   <i-lucide [name]="icons.Trash" class="size-4" />
                   Supprimer

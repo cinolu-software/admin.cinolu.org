@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
-import { LucideAngularModule, Trash, Search, Eye, Star, Funnel, Pencil } from 'lucide-angular';
+import { LucideAngularModule, Trash, Search, Funnel, Pencil } from 'lucide-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProjectsStore } from '../../store/projects.store';
@@ -47,7 +47,7 @@ export class ListProjects {
   searchForm: FormGroup = this.#fb.group({
     q: [this.queryParams().q || '']
   });
-  icons = { Trash, Search, Eye, Star, Funnel, Pencil };
+  icons = { Trash, Search, Funnel, Pencil };
   itemsPerPage = 20;
   activeTab = computed(() => this.queryParams().filter || 'all');
   tabsConfig = signal([
@@ -93,14 +93,6 @@ export class ListProjects {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-  }
-
-  onPublish(id: string): void {
-    this.store.publish(id);
-  }
-
-  onShowcase(id: string): void {
-    this.store.showcase(id);
   }
 
   onResetFilters(): void {

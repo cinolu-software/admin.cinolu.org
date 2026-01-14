@@ -66,31 +66,14 @@
             </td>
             <td class="ui-table-cell">
               <div class="flex items-center gap-2">
-                <div class="flex items-center gap-1.5">
-                  <button
-                    (click)="onShowcase(program.id)"
-                    [class]="program.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
-                    <i-lucide [name]="icons.Star" class="size-4" [class.fill-current]="program.is_highlighted" />
-                    En avant
-                  </button>
-                  <button
-                    (click)="onPublish(program.id)"
-                    [class]="program.is_published ? 'action-button-active' : 'action-button-default'">
-                    <i-lucide [name]="icons.Eye" class="size-4" />
-                    {{ program.is_published ? 'Dépublier' : 'Publier' }}
-                  </button>
-                </div>
-                <div class="h-6 w-px bg-gray-200"></div>
-                <div class="flex items-center gap-1">
-                  <button [routerLink]="['/programs/update', program.slug]" class="action-button-default">
-                    <i-lucide [name]="icons.Pencil" class="size-4" />
-                    Modifier
-                  </button>
-                  <button (click)="onDelete(program.id)" class="action-button-danger">
-                    <i-lucide [name]="icons.Trash" class="size-4" />
-                    Supprimer
-                  </button>
-                </div>
+                <button [routerLink]="['/programs/update', program.slug]" class="action-button-default">
+                  <i-lucide [name]="icons.Pencil" class="size-4" />
+                  Modifier
+                </button>
+                <button (click)="onDelete(program.id)" class="action-button-danger">
+                  <i-lucide [name]="icons.Trash" class="size-4" />
+                  Supprimer
+                </button>
               </div>
             </td>
           </tr>
