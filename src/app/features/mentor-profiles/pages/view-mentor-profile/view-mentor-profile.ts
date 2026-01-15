@@ -16,6 +16,7 @@ import { ConfirmationService } from '@shared/services/confirmation';
 import { DatePipe } from '@angular/common';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar } from '@shared/ui';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-mentor-profile-view',
@@ -28,6 +29,7 @@ export class ViewMentorProfile implements OnInit {
   #confirmationService = inject(ConfirmationService);
   #id = this.#route.snapshot.params['id'];
   store = inject(MentorProfilesStore);
+  cvUrl = environment.apiUrl + 'uploads/mentors/cvs/';
   icons = { CircleCheckBig, CircleX, Briefcase, Calendar, Award, FileText, ExternalLink };
 
   ngOnInit(): void {
