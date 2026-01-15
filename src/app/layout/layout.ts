@@ -6,12 +6,11 @@ import { AppConfig } from '@shared/services/config/config.types';
 import { AdminLayout } from './pages/admin-layout/admin-layout';
 import { EmptyLayout } from './pages/empty-layout/empty-layout';
 import { LoadingComponent } from '@shared/ui/loading/loading';
-import { AuthCheckingComponent } from '@shared/ui/auth-checking/auth-checking';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
-  imports: [AdminLayout, EmptyLayout, LoadingComponent, AuthCheckingComponent],
+  imports: [AdminLayout, EmptyLayout, LoadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Layout implements OnInit, OnDestroy {
