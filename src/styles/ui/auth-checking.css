@@ -1,0 +1,65 @@
+.auth-checking-overlay {
+  @apply fixed inset-0 z-9999 flex items-center justify-center;
+  background: linear-gradient(135deg, theme('colors.gray.50') 0%, theme('colors.gray.100') 100%);
+}
+
+.auth-checking-content {
+  @apply flex flex-col items-center gap-6 p-8;
+  animation: fadeIn 300ms ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-checking-spinner {
+  @apply relative;
+}
+
+.auth-checking-spinner svg {
+  @apply w-16 h-16;
+}
+
+.spinner-track {
+  fill: none;
+  stroke: theme('colors.primary.100');
+  stroke-width: 4;
+}
+
+.spinner-arc {
+  fill: none;
+  stroke: theme('colors.primary.500');
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 90 150;
+  transform-origin: center;
+  animation: spinner-rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes spinner-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.auth-checking-text {
+  @apply flex flex-col items-center gap-1 text-center;
+}
+
+.auth-checking-title {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.auth-checking-subtitle {
+  @apply text-sm text-gray-500;
+}

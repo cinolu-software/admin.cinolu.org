@@ -6,6 +6,7 @@ export const unauthGuard: CanActivateFn = (route) => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
   const hasRights = authStore.hasRights();
+
   if (hasRights) {
     const redirectPath = route.queryParamMap.get('redirect') || '/dashboard';
     return router.navigate([redirectPath]);

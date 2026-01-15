@@ -1,4 +1,11 @@
-import { signalStore, withState, withMethods, patchState, withProps, withComputed } from '@ngrx/signals';
+import {
+  signalStore,
+  withState,
+  withMethods,
+  patchState,
+  withProps,
+  withComputed
+} from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, catchError, of, exhaustMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -7,19 +14,24 @@ import { ToastrService } from '../../shared/services/toast/toastr.service';
 import { Router } from '@angular/router';
 import { IUser } from '@shared/models';
 
+type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';
+
 interface IAuthStore {
   user: IUser | null;
+  status: AuthStatus;
 }
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
-  withState<IAuthStore>({ user: null }),
+  withState<IAuthStore>({ user: null, status: 'checking' }),
   withProps(() => ({
     _http: inject(HttpClient),
     _toast: inject(ToastrService),
     _router: inject(Router)
   })),
-  withComputed(({ user }) => ({
+  withComputed(({ user, status }) => ({
+    isChecking: computed(() => status() === 'checking'),
+    isAuthenticated: computed(() => status() === 'authenticated' && user() !== null),
     hasRights: computed(() => {
       const roles = user()?.roles as unknown as string[];
       return roles?.some((role) => role === 'admin' || role === 'staff');
@@ -31,10 +43,10 @@ export const AuthStore = signalStore(
         exhaustMap(() =>
           _http.get<{ data: IUser }>('auth/profile').pipe(
             tap(({ data }) => {
-              patchState(store, { user: data });
+              patchState(store, { user: data, status: 'authenticated' });
             }),
             catchError(() => {
-              patchState(store, { user: null });
+              patchState(store, { user: null, status: 'unauthenticated' });
               return of(null);
             })
           )
@@ -47,7 +59,7 @@ export const AuthStore = signalStore(
           _http.post<void>('auth/sign-out', {}).pipe(
             tap(() => {
               _router.navigate(['/']);
-              patchState(store, { user: null });
+              patchState(store, { user: null, status: 'unauthenticated' });
               _toast.showSuccess('Déconnexion réussie');
             }),
             catchError(() => {
@@ -59,7 +71,13 @@ export const AuthStore = signalStore(
       )
     ),
     setUser: (user: IUser | null) => {
-      patchState(store, { user });
+      patchState(store, {
+        user,
+        status: user ? 'authenticated' : 'unauthenticated'
+      });
+    },
+    setChecking: () => {
+      patchState(store, { status: 'checking' });
     }
   }))
 );

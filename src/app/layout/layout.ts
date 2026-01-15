@@ -1,22 +1,23 @@
 import { Component, inject, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subject, filter, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AppConfigService } from '@shared/services/config/config.service';
 import { AppConfig } from '@shared/services/config/config.types';
 import { AdminLayout } from './pages/admin-layout/admin-layout';
 import { EmptyLayout } from './pages/empty-layout/empty-layout';
+import { LoadingComponent } from '@shared/ui/loading/loading';
+import { AuthCheckingComponent } from '@shared/ui/auth-checking/auth-checking';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
-  imports: [AdminLayout, EmptyLayout],
+  imports: [AdminLayout, EmptyLayout, LoadingComponent, AuthCheckingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Layout implements OnInit, OnDestroy {
   config: AppConfig = {} as AppConfig;
   layout = 'admin-layout';
   #unsubscribeAll = new Subject();
-  #router = inject(Router);
   #activatedRoute = inject(ActivatedRoute);
   #configService = inject(AppConfigService);
 
@@ -25,14 +26,6 @@ export class Layout implements OnInit, OnDestroy {
       this.config = config as AppConfig;
       this._updateLayout();
     });
-    this.#router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        takeUntil(this.#unsubscribeAll)
-      )
-      .subscribe(() => {
-        this._updateLayout();
-      });
   }
 
   private _updateLayout(): void {

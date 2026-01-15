@@ -1,0 +1,23 @@
+.loading-bar {
+  @apply fixed top-0 left-0 right-0 h-1 z-9999 overflow-hidden;
+  background: theme('colors.primary.100');
+}
+
+.loading-progress {
+  @apply h-full;
+  background: linear-gradient(90deg, theme('colors.primary.500'), theme('colors.primary.600'));
+  animation: loading-slide 1.2s ease-in-out infinite;
+  width: 40%;
+}
+
+@keyframes loading-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
