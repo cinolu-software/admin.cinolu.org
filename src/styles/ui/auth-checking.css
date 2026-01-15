@@ -1,46 +1,66 @@
 .auth-checking-overlay {
   @apply fixed inset-0 z-9999 flex items-center justify-center;
-  background: linear-gradient(135deg, theme('colors.gray.50') 0%, theme('colors.gray.100') 100%);
+  background: radial-gradient(
+    ellipse at center,
+    theme('colors.white') 0%,
+    theme('colors.gray.50') 100%
+  );
 }
 
 .auth-checking-content {
-  @apply flex flex-col items-center gap-6 p-8;
-  animation: fadeIn 300ms ease-out;
+  @apply flex flex-col items-center gap-8 p-12 rounded-3xl;
+  animation: fadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.auth-checking-logo {
+  @apply w-12 h-14 object-contain;
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
 
 .auth-checking-spinner {
-  @apply relative;
+  @apply relative flex items-center justify-center;
 }
 
 .auth-checking-spinner svg {
-  @apply w-16 h-16;
+  @apply w-12 h-12;
+  filter: drop-shadow(0 2px 8px theme('colors.primary.200'));
 }
 
 .spinner-track {
   fill: none;
-  stroke: theme('colors.primary.100');
-  stroke-width: 4;
+  stroke: theme('colors.gray.200');
+  stroke-width: 3;
 }
 
 .spinner-arc {
   fill: none;
-  stroke: theme('colors.primary.500');
-  stroke-width: 4;
+  stroke: url(#spinner-gradient);
+  stroke-width: 3;
   stroke-linecap: round;
-  stroke-dasharray: 90 150;
+  stroke-dasharray: 80 150;
   transform-origin: center;
-  animation: spinner-rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  animation: spinner-rotate 1s linear infinite;
 }
 
 @keyframes spinner-rotate {
@@ -53,13 +73,43 @@
 }
 
 .auth-checking-text {
-  @apply flex flex-col items-center gap-1 text-center;
+  @apply flex flex-col items-center gap-2 text-center;
 }
 
 .auth-checking-title {
-  @apply text-lg font-semibold text-gray-900;
+  @apply text-base font-medium text-gray-800 tracking-tight;
 }
 
-.auth-checking-subtitle {
-  @apply text-sm text-gray-500;
+.auth-checking-dots {
+  @apply inline-flex gap-1 ml-1;
+}
+
+.auth-checking-dots span {
+  @apply w-1 h-1 rounded-full bg-gray-400;
+  animation: dot-bounce 1.4s ease-in-out infinite;
+}
+
+.auth-checking-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.auth-checking-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.auth-checking-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-bounce {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }

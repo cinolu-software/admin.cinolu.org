@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, afterNextRender } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -18,11 +18,16 @@ export class SignIn {
   form: FormGroup;
   store = inject(SignInStore);
   authStore = inject(AuthStore);
+  isCheckingAuth = signal(true);
 
   constructor() {
     this.form = this.#formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
+    });
+
+    afterNextRender(() => {
+      this.isCheckingAuth.set(this.authStore.isCheckingAuth());
     });
   }
 

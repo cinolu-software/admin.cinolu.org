@@ -2,41 +2,75 @@
   <div class="w-full max-w-md">
     <div class="mb-8 flex flex-col items-center justify-center gap-3">
       <div class="flex items-center gap-3">
-        <img ngSrc="/images/logo/logo-g.png" width="40" height="50" alt="Company Logo" />
+        <div class="relative w-8 h-10">
+          <img ngSrc="/images/logo/logo-g.png" alt="Company Logo" fill class="w-8 h-10" />
+        </div>
         <span class="font-bold text-2xl text-gray-900">Se connecter</span>
       </div>
     </div>
-    <div class="p-8 bg-white rounded-2xl shadow-xl shadow-gray-900/5 border border-gray-100 overflow-hidden">
-      <div class="mb-8 flex flex-col items-center justify-center gap-3">
-        <div class="text-red-600 font-medium rounded bg-red-50 border border-red-200 p-4">
-          <span class="text-sm"> Espace administrateur réservé aux membres autorisés de l’équipe. </span>
+    @if (isCheckingAuth()) {
+      <div class="auth-checking-overlay">
+        <div class="auth-checking-content">
+          <div class="auth-checking-spinner">
+            <svg viewBox="0 0 50 50">
+              <defs>
+                <linearGradient id="spinner-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="theme('colors.primary.400')" />
+                  <stop offset="100%" stop-color="theme('colors.primary.600')" />
+                </linearGradient>
+              </defs>
+              <circle class="spinner-track" cx="25" cy="25" r="20" />
+              <circle class="spinner-arc" cx="25" cy="25" r="20" />
+            </svg>
+          </div>
+          <div class="auth-checking-text">
+            <span class="auth-checking-title">
+              Vérification de votre session
+              <span class="auth-checking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </span>
+          </div>
         </div>
       </div>
-      <form [formGroup]="form" class="flex flex-col gap-5" (ngSubmit)="onSignIn()" novalidate>
-        <app-ui-input
-          [id]="'email'"
-          label="Adresse email"
-          type="email"
-          formControlName="email"
-          placeholder="votre@email.com"
-          [invalid]="(form.get('email')?.invalid && form.get('email')?.touched) || false" />
-        <app-ui-password
-          label="Mot de passe"
-          [id]="'password'"
-          formControlName="password"
-          placeholder="••••••••"
-          [invalid]="(form.get('password')?.invalid && form.get('password')?.touched) || false" />
-        <div class="mt-2 flex flex-col gap-10">
-          <app-ui-button
-            class="w-full"
-            type="submit"
-            [variant]="'primary'"
-            [disabled]="store.isLoading() || form.invalid"
-            [loading]="store.isLoading()">
-            Se connecter
-          </app-ui-button>
+    } @else {
+      <div
+        class="p-8 bg-white rounded-2xl shadow-xl shadow-gray-900/5 border border-gray-100 overflow-hidden">
+        <div class="mb-8 flex flex-col items-center justify-center gap-3">
+          <div class="text-red-600 font-medium rounded bg-red-50 border border-red-200 p-4">
+            <span class="text-sm">
+              Espace administrateur réservé aux membres autorisés de l'équipe.
+            </span>
+          </div>
         </div>
-      </form>
-    </div>
+        <form [formGroup]="form" class="flex flex-col gap-5" (ngSubmit)="onSignIn()" novalidate>
+          <app-ui-input
+            [id]="'email'"
+            label="Adresse email"
+            type="email"
+            formControlName="email"
+            placeholder="votre@email.com"
+            [invalid]="(form.get('email')?.invalid && form.get('email')?.touched) || false" />
+          <app-ui-password
+            label="Mot de passe"
+            [id]="'password'"
+            formControlName="password"
+            placeholder="••••••••"
+            [invalid]="(form.get('password')?.invalid && form.get('password')?.touched) || false" />
+          <div class="mt-2 flex flex-col gap-10">
+            <app-ui-button
+              class="w-full"
+              type="submit"
+              [variant]="'primary'"
+              [disabled]="store.isLoading() || form.invalid"
+              [loading]="store.isLoading()">
+              Se connecter
+            </app-ui-button>
+          </div>
+        </form>
+      </div>
+    }
   </div>
 </div>

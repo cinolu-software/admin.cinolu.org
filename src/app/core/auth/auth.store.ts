@@ -14,24 +14,20 @@ import { ToastrService } from '../../shared/services/toast/toastr.service';
 import { Router } from '@angular/router';
 import { IUser } from '@shared/models';
 
-type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';
-
 interface IAuthStore {
   user: IUser | null;
-  status: AuthStatus;
+  isCheckingAuth: boolean;
 }
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
-  withState<IAuthStore>({ user: null, status: 'checking' }),
+  withState<IAuthStore>({ user: null, isCheckingAuth: true }),
   withProps(() => ({
     _http: inject(HttpClient),
     _toast: inject(ToastrService),
     _router: inject(Router)
   })),
-  withComputed(({ user, status }) => ({
-    isChecking: computed(() => status() === 'checking'),
-    isAuthenticated: computed(() => status() === 'authenticated' && user() !== null),
+  withComputed(({ user }) => ({
     hasRights: computed(() => {
       const roles = user()?.roles as unknown as string[];
       return roles?.some((role) => role === 'admin' || role === 'staff');
@@ -40,13 +36,14 @@ export const AuthStore = signalStore(
   withMethods(({ _http, _toast, _router, ...store }) => ({
     getProfile: rxMethod<void>(
       pipe(
+        tap(() => patchState(store, { isCheckingAuth: true })),
         exhaustMap(() =>
           _http.get<{ data: IUser }>('auth/profile').pipe(
             tap(({ data }) => {
-              patchState(store, { user: data, status: 'authenticated' });
+              patchState(store, { user: data, isCheckingAuth: false });
             }),
             catchError(() => {
-              patchState(store, { user: null, status: 'unauthenticated' });
+              patchState(store, { user: null, isCheckingAuth: false });
               return of(null);
             })
           )
@@ -59,7 +56,7 @@ export const AuthStore = signalStore(
           _http.post<void>('auth/sign-out', {}).pipe(
             tap(() => {
               _router.navigate(['/']);
-              patchState(store, { user: null, status: 'unauthenticated' });
+              patchState(store, { user: null });
               _toast.showSuccess('Déconnexion réussie');
             }),
             catchError(() => {
@@ -71,13 +68,10 @@ export const AuthStore = signalStore(
       )
     ),
     setUser: (user: IUser | null) => {
-      patchState(store, {
-        user,
-        status: user ? 'authenticated' : 'unauthenticated'
-      });
+      patchState(store, { user });
     },
-    setChecking: () => {
-      patchState(store, { status: 'checking' });
+    setCheckingAuth: (isCheckingAuth: boolean) => {
+      patchState(store, { isCheckingAuth });
     }
   }))
 );

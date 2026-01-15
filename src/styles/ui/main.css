@@ -8,3 +8,5 @@
 @import './text-editor.css';
 @import './pagination.css';
 @import './confirm-dialog.css';
+@import './loading.css';
+@import './auth-checking.css';

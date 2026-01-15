@@ -20,13 +20,15 @@ export const provideApp = (): EnvironmentProviders[] => {
     provideAppInitializer(() => {
       const authStore = inject(AuthStore);
       const http = inject(HttpClient);
-      authStore.setChecking();
+      authStore.setCheckingAuth(true);
       return http.get<{ data: IUser }>('auth/profile').pipe(
         map(({ data }) => {
           authStore.setUser(data);
+          authStore.setCheckingAuth(false);
         }),
         catchError(() => {
           authStore.setUser(null);
+          authStore.setCheckingAuth(false);
           return of(null);
         })
       );
