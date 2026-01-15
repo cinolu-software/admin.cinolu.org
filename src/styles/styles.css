@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 @import './ui/main.css';
-@import './ui/loading.css';
-@import './ui/auth-checking.css';
 
 @theme {
   --font-mona: 'Mona Sans', sans-serif;
