@@ -90,14 +90,6 @@ export class ListMentorProfiles {
     this.#router.navigate(['/mentor-profiles'], { queryParams });
   }
 
-  onApprove(profileId: string): void {
-    this.store.approve(profileId);
-  }
-
-  onReject(profileId: string): void {
-    this.store.reject(profileId);
-  }
-
   onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.update((qp) => ({ ...qp, q: null, page: null, status: null }));

@@ -7,7 +7,7 @@
       Profils mentors
       @if (profileCount > 0) {
         <span
-          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
+          class="inline-flex items-center justify-center min-w-7 h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
           {{ profileCount }}
         </span>
       }
@@ -83,24 +83,12 @@
                   }
                 </td>
                 <td class="ui-table-cell">
-                  <div class="flex items-center gap-1.5">
-                    @if (profile.status === 'pending') {
-                      <button (click)="onApprove(profile.id)" class="action-button-active">
-                        <i-lucide [name]="icons.CircleCheckBig" class="size-4" />
-                        Approuver
-                      </button>
-                      <button (click)="onReject(profile.id)" class="action-button-danger">
-                        <i-lucide [name]="icons.CircleX" class="size-4" />
-                        Rejeter
-                      </button>
-                    }
-                    <a
-                      [routerLink]="['/mentor-profiles/view', profile.id]"
-                      class="action-button-default">
-                      <i-lucide [name]="icons.Eye" class="size-4" />
-                      Voir le profil
-                    </a>
-                  </div>
+                  <a
+                    [routerLink]="['/mentor-profiles/view', profile.id]"
+                    class="action-button-default">
+                    <i-lucide [name]="icons.Eye" class="size-4" />
+                    Voir le profil
+                  </a>
                 </td>
               </tr>
             }
