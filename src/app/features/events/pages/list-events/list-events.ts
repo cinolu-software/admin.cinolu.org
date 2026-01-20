@@ -7,7 +7,7 @@ import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { FilterEventsDto } from '../../dto/events/filter-events.dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { UiAvatar, UiButton, UiConfirmDialog, UiPagination, UiTabs } from '@shared/ui';
+import { UiAvatar, UiButton, UiConfirmDialog, UiPagination, UiTabs, UiBadge } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { IndicatorsStore } from '@features/programs/store/indicators.store';
@@ -28,7 +28,8 @@ import { DatePipe } from '@angular/common';
     ApiImgPipe,
     UiTabs,
     UiPagination,
-    UiTableSkeleton
+    UiTableSkeleton,
+    UiBadge
   ]
 })
 export class ListEvents {

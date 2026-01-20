@@ -3,18 +3,8 @@
 @let articles = store.articles()[0];
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl font-bold text-gray-900 mb-1">
-      Articles
-      @if (articleCount > 0) {
-        <span
-          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
-          {{ articleCount }}
-        </span>
-      }
-    </h5>
-    <a [routerLink]="'/blog/articles/add'" class="ui-button ui-button-small ui-button-primary">
-      Nouvel article
-    </a>
+    <app-ui-badge [label]="articleCount.toString() + ' Articles'" />
+    <a [routerLink]="'/blog/articles/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel article </a>
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
@@ -34,10 +24,7 @@
   </form>
 
   <div class="my-6">
-    <app-ui-tabs
-      [tabs]="tabsConfig()"
-      [activeTab]="activeTab()"
-      (tabChange)="onTabChange($event)" />
+    <app-ui-tabs [tabs]="tabsConfig()" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
   </div>
 
   <div class="mt-6">
@@ -61,8 +48,7 @@
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-3">
                     <app-ui-avatar [image]="article | apiIMG: 'article'" [label]="article.title" />
-                    <p
-                      class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2">
+                    <p class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2">
                       {{ article.title | titlecase }}
                     </p>
                   </div>
@@ -79,9 +65,7 @@
                 </td>
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-1">
-                    <a
-                      [routerLink]="['/blog/articles/update', article.slug]"
-                      class="action-button-default">
+                    <a [routerLink]="['/blog/articles/update', article.slug]" class="action-button-default">
                       <i-lucide [name]="icons.Pencil" class="size-4" />
                       Modifier
                     </a>
@@ -107,8 +91,7 @@
   </div>
   @if (articleCount === 0 && !isLoading) {
     <div class="flex flex-col items-start justify-center">
-      <div
-        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+      <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
         <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
       </div>
       <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun article trouvé</h3>

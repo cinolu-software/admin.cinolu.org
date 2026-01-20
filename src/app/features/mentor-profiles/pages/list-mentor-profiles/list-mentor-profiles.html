@@ -2,16 +2,8 @@
 @let profileCount = store.mentorProfiles()[1];
 @let profiles = store.mentorProfiles()[0];
 <div class="dashboard-main-content">
-  <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl flex items-center gap-2 font-bold text-gray-900 mb-1">
-      Profils mentors
-      @if (profileCount > 0) {
-        <span
-          class="inline-flex items-center justify-center min-w-7 h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
-          {{ profileCount }}
-        </span>
-      }
-    </h5>
+  <div class="mb-4">
+    <app-ui-badge [label]="profileCount.toString() + ' Profils mentors'" />
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
@@ -31,10 +23,7 @@
   </form>
 
   <div class="my-6">
-    <app-ui-tabs
-      [tabs]="tabsConfig()"
-      [activeTab]="activeTab()"
-      (tabChange)="onTabChange($event)" />
+    <app-ui-tabs [tabs]="tabsConfig()" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
   </div>
 
   <div class="mt-6">
@@ -83,9 +72,7 @@
                   }
                 </td>
                 <td class="ui-table-cell">
-                  <a
-                    [routerLink]="['/mentor-profiles/view', profile.id]"
-                    class="action-button-default">
+                  <a [routerLink]="['/mentor-profiles/view', profile.id]" class="action-button-default">
                     <i-lucide [name]="icons.Eye" class="size-4" />
                     Voir le profil
                   </a>
@@ -106,8 +93,7 @@
   </div>
   @if (profileCount === 0 && !isLoading) {
     <div class="flex flex-col items-start justify-center">
-      <div
-        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+      <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
         <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
       </div>
       <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun profil mentor trouvé</h3>

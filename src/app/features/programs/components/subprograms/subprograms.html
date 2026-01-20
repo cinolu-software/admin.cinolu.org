@@ -43,144 +43,154 @@
 </div>
 <div>
   @if (isLoading && subprograms.length === 0) {
-  <app-ui-table-skeleton [rows]="4" [columns]="3" />
+    <app-ui-table-skeleton [rows]="4" [columns]="3" />
   } @else if (subprograms.length === 0 && !isLoading) {
-  <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
-    <div
-      class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
-      <i-lucide [name]="icons.Plus" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+    <div class="mx-6 mt-16 flex flex-col items-center justify-center py-20 px-8">
+      <div
+        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 shadow-inner border border-primary-100">
+        <i-lucide [name]="icons.Plus" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">Aucun sous-programme</h3>
+      <p class="text-gray-500 text-center max-w-lg mb-8 text-base leading-relaxed">
+        Ajoutez votre premier sous-programme pour structurer vos initiatives au sein de ce programme.
+      </p>
+      <app-ui-button
+        (clicked)="onToggleCreation()"
+        variant="primary"
+        [outlined]="true"
+        size="small"
+        [disabled]="!program">
+        Créer un sous-programme
+      </app-ui-button>
     </div>
-    <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">Aucun sous-programme</h3>
-    <p class="text-gray-500 text-center max-w-lg mb-8 text-base leading-relaxed">
-      Ajoutez votre premier sous-programme pour structurer vos initiatives au sein de ce programme.
-    </p>
-    <app-ui-button
-      (clicked)="onToggleCreation()"
-      variant="primary"
-      [outlined]="true"
-      size="small"
-      [disabled]="!program">
-      Créer un sous-programme
-    </app-ui-button>
-  </div>
   } @else {
-  <div class="ui-table-wrapper scrollbar-hide">
-    <table class="ui-table">
-      <thead class="ui-table-head">
-        <tr class="ui-table-head-row">
-          <th class="ui-table-header">Sous-programme</th>
-          <th class="ui-table-header">Statut</th>
-          <th class="ui-table-header">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="ui-table-body">
-        @for (subprogram of subprograms; track subprogram.id) {
-        <tr class="ui-table-row">
-          <td class="ui-table-cell">
-            <div class="flex items-center gap-3">
-              <app-ui-avatar
-                [shape]="'square'"
-                [image]="subprogram | apiIMG : 'subprogram'"
-                [label]="subprogram.name" />
-              <div class="whitespace-nowrap w-32 md:w-48 line-clamp-1 md:line-clamp-2">
-                <p class="font-semibold text-gray-900">{{ subprogram.name }}</p>
-                <p class="text-xs text-gray-500 mt-0.5">Créé le {{ subprogram.created_at | date : 'dd MMM yyyy' }}</p>
-              </div>
-            </div>
-          </td>
-          <td class="ui-table-cell">
-            @if (subprogram.is_published) {
-            <app-ui-badge variant="success" [label]="'Publié'" />
-            } @else {
-            <app-ui-badge variant="default" [label]="'Brouillon'" />
+    <div class="ui-table-wrapper scrollbar-hide">
+      <table class="ui-table">
+        <thead class="ui-table-head">
+          <tr class="ui-table-head-row">
+            <th class="ui-table-header">Sous-programme</th>
+            <th class="ui-table-header">Statut</th>
+            <th class="ui-table-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="ui-table-body">
+          @for (subprogram of subprograms; track subprogram.id) {
+            <tr class="ui-table-row">
+              <td class="ui-table-cell">
+                <div class="flex items-center gap-3">
+                  <app-ui-avatar
+                    [shape]="'square'"
+                    [image]="subprogram | apiIMG: 'subprogram'"
+                    [label]="subprogram.name" />
+                  <div class="whitespace-nowrap w-32 md:w-48 line-clamp-1 md:line-clamp-2">
+                    <p class="font-semibold text-gray-900">{{ subprogram.name }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                      Créé le {{ subprogram.created_at | date: 'dd MMM yyyy' }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td class="ui-table-cell">
+                @if (subprogram.is_published) {
+                  <app-ui-badge variant="success" [label]="'Publié'" />
+                } @else {
+                  <app-ui-badge variant="default" [label]="'Brouillon'" />
+                }
+              </td>
+              <td class="ui-table-cell">
+                <div class="flex items-center gap-1">
+                  <button (click)="onEdit(subprogram)" class="action-button-default">
+                    <i-lucide [name]="icons.Pencil" class="size-4" />
+                    Modifier
+                  </button>
+                  <button (click)="onDelete(subprogram.id)" class="action-button-danger">
+                    <i-lucide [name]="icons.Trash" class="size-4" />
+                    Supprimer
+                  </button>
+                </div>
+              </td>
+            </tr>
+            @if (isEditing(subprogram.id)) {
+              <tr>
+                <td colspan="3" class="ui-table-cell">
+                  <form class="space-y-4" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
+                    <div class="grid grid-cols-1 gap-4">
+                      <div class="space-y-2">
+                        <app-ui-input
+                          [id]="'subprogram-name-update-' + subprogram.id"
+                          label="Nom du sous-programme"
+                          formControlName="name"
+                          placeholder="Nom du sous-programme" />
+                      </div>
+                      <div class="space-y-2">
+                        <app-ui-textarea
+                          [id]="'subprogram-description-update-' + subprogram.id"
+                          label="Description"
+                          formControlName="description"
+                          placeholder="Décrivez brièvement le sous-programme..." />
+                      </div>
+                    </div>
+                    @if (getEditingSubprogram()) {
+                      <div class="rounded-xl border w-full md:w-1/2 border-dashed border-gray-300 bg-white p-4">
+                        <p class="text-xs font-semibold text-gray-600 mb-3">Logo</p>
+                        <app-ui-file-upload [name]="'logo'" [url]="url + getEditingSubprogram()?.id" />
+                      </div>
+                    }
+                    @if (getEditingSubprogram()) {
+                      <div
+                        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex-1">
+                          <p class="text-sm font-medium text-gray-900">Gérer la publication et la mise en avant</p>
+                          <p class="text-xs text-gray-500 mt-1">Contrôlez la visibilité de ce sous-programme</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <button
+                            (click)="onShowcase()"
+                            [class]="
+                              getEditingSubprogram()?.is_highlighted
+                                ? 'action-button-highlight'
+                                : 'action-button-highlight-default'
+                            ">
+                            <i-lucide [name]="icons.Star" class="size-4" />
+                            {{ getEditingSubprogram()?.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
+                          </button>
+                          <button
+                            (click)="onPublishProgram()"
+                            [class]="
+                              getEditingSubprogram()?.is_published ? 'action-button-active' : 'action-button-default'
+                            ">
+                            <i-lucide [name]="icons.Eye" class="size-4" />
+                            {{ getEditingSubprogram()?.is_published ? 'Dépublier' : 'Publier' }}
+                          </button>
+                        </div>
+                      </div>
+                    }
+                    <div class="flex items-center justify-end gap-3 pt-2">
+                      <app-ui-button
+                        type="button"
+                        size="small"
+                        variant="secondary"
+                        [outlined]="true"
+                        (clicked)="onCancelUpdate()">
+                        Annuler
+                      </app-ui-button>
+                      <app-ui-button
+                        type="submit"
+                        size="small"
+                        variant="primary"
+                        [disabled]="updateForm.invalid || store.isLoading()"
+                        [loading]="store.isLoading()">
+                        Mettre à jour
+                      </app-ui-button>
+                    </div>
+                  </form>
+                </td>
+              </tr>
             }
-          </td>
-          <td class="ui-table-cell">
-            <div class="flex items-center gap-1">
-              <button (click)="onEdit(subprogram)" class="action-button-default">
-                <i-lucide [name]="icons.Pencil" class="size-4" />
-                Modifier
-              </button>
-              <button (click)="onDelete(subprogram.id)" class="action-button-danger">
-                <i-lucide [name]="icons.Trash" class="size-4" />
-                Supprimer
-              </button>
-            </div>
-          </td>
-        </tr>
-        @if (isEditing(subprogram.id)) {
-        <tr>
-          <td colspan="3" class="ui-table-cell">
-            <form class="space-y-4" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
-              <div class="grid grid-cols-1 gap-4">
-                <div class="space-y-2">
-                  <app-ui-input
-                    [id]="'subprogram-name-update-' + subprogram.id"
-                    label="Nom du sous-programme"
-                    formControlName="name"
-                    placeholder="Nom du sous-programme" />
-                </div>
-                <div class="space-y-2">
-                  <app-ui-textarea
-                    [id]="'subprogram-description-update-' + subprogram.id"
-                    label="Description"
-                    formControlName="description"
-                    placeholder="Décrivez brièvement le sous-programme..." />
-                </div>
-              </div>
-              @if (getEditingSubprogram()) {
-              <div class="rounded-xl border w-full md:w-1/2 border-dashed border-gray-300 bg-white p-4">
-                <p class="text-xs font-semibold text-gray-600 mb-3">Logo</p>
-                <app-ui-file-upload [name]="'logo'" [url]="url + getEditingSubprogram()?.id" />
-              </div>
-              }
-              @if (getEditingSubprogram()) {
-              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                <div class="flex-1">
-                  <p class="text-sm font-medium text-gray-900">Gérer la publication et la mise en avant</p>
-                  <p class="text-xs text-gray-500 mt-1">Contrôlez la visibilité de ce sous-programme</p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button
-                    (click)="onShowcase()"
-                    [class]="getEditingSubprogram()?.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
-                    <i-lucide [name]="icons.Star" class="size-4" />
-                    {{ getEditingSubprogram()?.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
-                  </button>
-                  <button
-                    (click)="onPublishProgram()"
-                    [class]="getEditingSubprogram()?.is_published ? 'action-button-active' : 'action-button-default'">
-                    <i-lucide [name]="icons.Eye" class="size-4" />
-                    {{ getEditingSubprogram()?.is_published ? 'Dépublier' : 'Publier' }}
-                  </button>
-                </div>
-              </div>
-              }
-              <div class="flex items-center justify-end gap-3 pt-2">
-                <app-ui-button
-                  type="button"
-                  size="small"
-                  variant="secondary"
-                  [outlined]="true"
-                  (clicked)="onCancelUpdate()">
-                  Annuler
-                </app-ui-button>
-                <app-ui-button
-                  type="submit"
-                  size="small"
-                  variant="primary"
-                  [disabled]="updateForm.invalid || store.isLoading()"
-                  [loading]="store.isLoading()">
-                  Mettre à jour
-                </app-ui-button>
-              </div>
-            </form>
-          </td>
-        </tr>
-        } }
-      </tbody>
-    </table>
-  </div>
+          }
+        </tbody>
+      </table>
+    </div>
   }
   <app-ui-confirm-dialog />
 </div>

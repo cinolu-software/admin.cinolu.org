@@ -7,7 +7,7 @@ import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { FilterUsersDto } from '../../dto/users/filter-users.dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { UiAvatar, UiButton, UiConfirmDialog, UiPagination } from '@shared/ui';
+import { UiAvatar, UiButton, UiConfirmDialog, UiPagination, UiBadge } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { DatePipe } from '@angular/common';
@@ -26,7 +26,8 @@ import { DatePipe } from '@angular/common';
     UiAvatar,
     ApiImgPipe,
     UiPagination,
-    UiTableSkeleton
+    UiTableSkeleton,
+    UiBadge
   ]
 })
 export class ListUsers {

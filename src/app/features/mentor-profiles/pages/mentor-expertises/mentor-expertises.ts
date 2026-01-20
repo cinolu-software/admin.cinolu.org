@@ -13,12 +13,12 @@ import { ConfirmationService } from '@shared/services/confirmation';
 import { UiInput } from '@shared/ui/form/input/input';
 
 @Component({
-  selector: 'app-expertises',
-  templateUrl: './expertises.html',
+  selector: 'app-mentor-expertises',
+  templateUrl: './mentor-expertises.html',
   providers: [ExpertisesStore, ConfirmationService],
   imports: [LucideAngularModule, UiButton, ReactiveFormsModule, UiConfirmDialog, UiPagination, UiTableSkeleton, UiInput]
 })
-export class Expertises {
+export class MentorExpertises {
   #route = inject(ActivatedRoute);
   #router = inject(Router);
   #fb = inject(FormBuilder);

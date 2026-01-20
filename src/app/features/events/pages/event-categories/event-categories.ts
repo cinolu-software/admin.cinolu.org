@@ -7,7 +7,7 @@ import { FilterEventCategoriesDto } from '../../dto/categories/filter-categories
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { CategoriesStore } from '../../store/event-categories.store';
-import { UiButton, UiConfirmDialog, UiPagination } from '@shared/ui';
+import { UiButton, UiConfirmDialog, UiPagination, UiBadge } from '@shared/ui';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiInput } from '@shared/ui/form/input/input';
@@ -16,7 +16,16 @@ import { UiInput } from '@shared/ui/form/input/input';
   selector: 'app-event-categories',
   templateUrl: './event-categories.html',
   providers: [CategoriesStore, ConfirmationService],
-  imports: [LucideAngularModule, UiButton, ReactiveFormsModule, UiConfirmDialog, UiPagination, UiTableSkeleton, UiInput]
+  imports: [
+    LucideAngularModule,
+    UiButton,
+    ReactiveFormsModule,
+    UiConfirmDialog,
+    UiPagination,
+    UiTableSkeleton,
+    UiInput,
+    UiBadge
+  ]
 })
 export class EventCategories {
   #route = inject(ActivatedRoute);

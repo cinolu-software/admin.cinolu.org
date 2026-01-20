@@ -20,6 +20,6 @@ export const mentorsRoutes: Routes = [
   {
     path: 'expertises',
     title: 'Expertises',
-    loadComponent: () => import('./pages/expertises/expertises').then((c) => c.Expertises)
+    loadComponent: () => import('./pages/mentor-expertises/mentor-expertises').then((c) => c.MentorExpertises)
   }
 ];

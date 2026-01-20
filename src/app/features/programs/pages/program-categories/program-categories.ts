@@ -7,7 +7,7 @@ import { ICategory } from '@shared/models';
 import { FilterProgramCategoriesDto } from '../../dto/categories/filter-categories.dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { UiButton, UiConfirmDialog, UiPagination } from '@shared/ui';
+import { UiButton, UiConfirmDialog, UiPagination, UiBadge } from '@shared/ui';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiInput } from '@shared/ui/form/input/input';
@@ -25,7 +25,8 @@ import { CommonModule } from '@angular/common';
     UiPagination,
     UiTableSkeleton,
     UiInput,
-    CommonModule
+    CommonModule,
+    UiBadge
   ]
 })
 export class ProgramCategories {

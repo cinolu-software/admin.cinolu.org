@@ -2,16 +2,8 @@
 @let ventureCount = store.ventures()[1];
 @let ventures = store.ventures()[0];
 <div class="dashboard-main-content">
-  <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl flex items-center gap-2 font-bold text-gray-900 mb-1">
-      Startups
-      @if (ventureCount > 0) {
-        <span
-          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
-          {{ ventureCount }}
-        </span>
-      }
-    </h5>
+  <div class="mb-4">
+    <app-ui-badge [label]="ventureCount.toString() + ' Startups'" />
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
@@ -53,11 +45,7 @@
                   <div class="flex items-center gap-3">
                     @if (venture.logo) {
                       <div class="relative size-10 rounded-lg border border-gray-200">
-                        <img
-                          [ngSrc]="venture | apiIMG: 'venture'"
-                          [alt]="venture.name"
-                          fill
-                          class="object-cover" />
+                        <img [ngSrc]="venture | apiIMG: 'venture'" [alt]="venture.name" fill class="object-cover" />
                       </div>
                     } @else {
                       <div
@@ -128,8 +116,7 @@
   </div>
   @if (ventureCount === 0 && !isLoading) {
     <div class="flex flex-col items-start justify-center">
-      <div
-        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+      <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
         <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
       </div>
       <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun venture trouvé</h3>

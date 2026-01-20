@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FilterArticlesTagsDto } from '../../dto/filter-tags.dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { UiButton, UiConfirmDialog, UiInput, UiPagination } from '@shared/ui';
+import { UiButton, UiConfirmDialog, UiInput, UiPagination, UiBadge } from '@shared/ui';
 import { ITag } from '@shared/models';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
@@ -21,7 +21,8 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
     UiInput,
     UiConfirmDialog,
     UiPagination,
-    UiTableSkeleton
+    UiTableSkeleton,
+    UiBadge
   ],
   templateUrl: './article-tags.html'
 })

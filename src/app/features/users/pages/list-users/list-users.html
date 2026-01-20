@@ -3,15 +3,7 @@
 @let users = store.users()[0];
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl flex items-center gap-2 font-bold text-gray-900 mb-1">
-      Utilisateurs
-      @if (userCount > 0) {
-        <span
-          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
-          {{ userCount }}
-        </span>
-      }
-    </h5>
+    <app-ui-badge [label]="userCount.toString() + ' Utilisateurs'" />
     <div class="flex items-center gap-2">
       <app-ui-button
         variant="primary"
@@ -22,9 +14,7 @@
         <i-lucide [name]="icons.Download" class="size-4" />
         Télécharger CSV
       </app-ui-button>
-      <a [routerLink]="'/users/add'" class="ui-button ui-button-small ui-button-primary">
-        Nouvel utilisateur
-      </a>
+      <a [routerLink]="'/users/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel utilisateur </a>
     </div>
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
@@ -67,8 +57,7 @@
                     <div class="relative">
                       <app-ui-avatar [image]="user | apiIMG: 'user'" [label]="user.name" />
                     </div>
-                    <p
-                      class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
+                    <p class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2 capitalize">
                       {{ user.name }}
                     </p>
                   </div>
@@ -107,8 +96,7 @@
   </div>
   @if (userCount === 0 && !isLoading) {
     <div class="flex flex-col items-start justify-center">
-      <div
-        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+      <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
         <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
       </div>
       <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun utilisateur trouvé</h3>

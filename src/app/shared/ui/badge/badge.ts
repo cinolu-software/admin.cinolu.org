@@ -31,7 +31,7 @@ export class UiBadge {
       dot: 'bg-blue-500'
     },
     default: {
-      container: 'bg-gray-100 text-gray-700 border-gray-200',
+      container: 'bg-gray-100 text-gray-700 border-gray-300',
       dot: 'bg-gray-400'
     }
   };

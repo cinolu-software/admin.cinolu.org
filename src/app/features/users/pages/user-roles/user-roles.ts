@@ -8,7 +8,7 @@ import { RolesStore } from '../../store/roles.store';
 import { IRole } from '@shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { UiButton, UiConfirmDialog, UiInput, UiPagination } from '@shared/ui';
+import { UiButton, UiConfirmDialog, UiInput, UiPagination, UiBadge } from '@shared/ui';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { ConfirmationService } from '@shared/services/confirmation';
 
@@ -24,7 +24,8 @@ import { ConfirmationService } from '@shared/services/confirmation';
     ReactiveFormsModule,
     UiConfirmDialog,
     UiPagination,
-    UiTableSkeleton
+    UiTableSkeleton,
+    UiBadge
   ]
 })
 export class UserRoles {
