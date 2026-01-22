@@ -3,34 +3,40 @@
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
     <app-ui-badge [label]="categoryCount.toString() + ' Catégories'" />
-    <button class="ui-button ui-button-small ui-button-primary" (click)="onToggleCreation()">
-      {{ isCreating() ? 'Fermer' : 'Nouvelle catégorie' }}
+    <button
+      class="ui-button ui-button-small ui-button-primary disabled:opacity-40 disabled:cursor-not-allowed"
+      [disabled]="isCreating()"
+      (click)="onToggleCreation()">
+      Nouvelle catégorie
     </button>
   </div>
-  <div
-    class="rounded-xl p-6 mb-8 border border-gray-200 bg-linear-to-br from-gray-50 to-white shadow-sm"
+  <form
+    class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-6 my-8"
+    [formGroup]="createForm"
+    (ngSubmit)="onCreate()"
     [class.hidden]="!isCreating()">
-    <form class="space-y-6" [formGroup]="createForm" (ngSubmit)="onCreate()">
+    <div class="flex-1">
       <app-ui-input
         [required]="true"
         [id]="'event-category-name-create'"
         formControlName="name"
         placeholder="Ex: Conférence, Atelier, Séminaire..." />
-      <div class="flex items-center justify-end gap-3 pt-6">
-        <app-ui-button type="button" size="small" variant="secondary" [outlined]="true" (clicked)="onCancelCreation()">
-          Annuler
-        </app-ui-button>
-        <app-ui-button
-          type="submit"
-          size="small"
-          variant="primary"
-          [disabled]="createForm.invalid || store.isLoading()"
-          [loading]="store.isLoading()">
-          Ajouter
-        </app-ui-button>
-      </div>
-    </form>
-  </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <app-ui-button type="button" size="small" variant="secondary" [outlined]="true" (clicked)="onCancelCreation()">
+        Annuler
+      </app-ui-button>
+      <app-ui-button
+        type="submit"
+        size="small"
+        variant="primary"
+        [disabled]="createForm.invalid || store.isLoading()"
+        [loading]="store.isLoading()">
+        Ajouter
+      </app-ui-button>
+    </div>
+  </form>
+
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
       <div class="search-input-icon">
@@ -63,54 +69,56 @@
           </thead>
           <tbody class="ui-table-body">
             @for (category of categories; track category.id) {
-              <tr class="ui-table-row">
-                <td class="ui-table-cell whitespace-nowrap">
-                  <p class="font-semibold text-gray-900 capitalize">{{ category.name }}</p>
-                </td>
-                <td class="ui-table-cell">
-                  <div class="flex items-center gap-1">
-                    <button (click)="onEdit(category)" class="action-button-default">
-                      <i-lucide [name]="icons.Pencil" class="size-4" />
-                      Modifier
-                    </button>
-                    <button (click)="onDelete(category.id)" class="action-button-danger">
-                      <i-lucide [name]="icons.Trash" class="size-4" />
-                      Supprimer
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              @if (isEditing(category.id)) {
-                <tr>
-                  <td colspan="2" class="ui-table-cell">
-                    <form class="space-y-4" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
+              @if (!isEditing(category.id)) {
+                <tr class="ui-table-row">
+                  <td class="ui-table-cell whitespace-nowrap">
+                    <p class="font-semibold text-gray-900 capitalize">{{ category.name }}</p>
+                  </td>
+                  <td class="ui-table-cell">
+                    <div class="flex items-center gap-1">
+                      <button (click)="onEdit(category)" class="action-button-default">
+                        <i-lucide [name]="icons.Pencil" class="size-4" />
+                        Modifier
+                      </button>
+                      <button (click)="onDelete(category.id)" class="action-button-danger">
+                        <i-lucide [name]="icons.Trash" class="size-4" />
+                        Supprimer
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              <tr class="border-b border-gray-200 bg-gray-50" [class.hidden]="!isEditing(category.id)">
+                <td colspan="2" class="ui-table-cell">
+                  <form class="flex items-center gap-6" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
+                    <div class="flex-1">
                       <app-ui-input
                         [required]="true"
                         [id]="'event-category-name-update-' + category.id"
                         formControlName="name"
                         placeholder="Ex: Conférence, Atelier, Séminaire..." />
-                      <div class="flex items-center justify-end gap-3 pt-2">
-                        <app-ui-button
-                          type="button"
-                          size="small"
-                          variant="secondary"
-                          [outlined]="true"
-                          (clicked)="onCancelUpdate()">
-                          Annuler
-                        </app-ui-button>
-                        <app-ui-button
-                          type="submit"
-                          size="small"
-                          variant="primary"
-                          [disabled]="updateForm.invalid || store.isLoading()"
-                          [loading]="store.isLoading()">
-                          Mettre à jour
-                        </app-ui-button>
-                      </div>
-                    </form>
-                  </td>
-                </tr>
-              }
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <app-ui-button
+                        type="button"
+                        size="small"
+                        variant="secondary"
+                        [outlined]="true"
+                        (clicked)="onCancelUpdate()">
+                        Annuler
+                      </app-ui-button>
+                      <app-ui-button
+                        type="submit"
+                        size="small"
+                        variant="primary"
+                        [disabled]="updateForm.invalid || store.isLoading()"
+                        [loading]="store.isLoading()">
+                        Mettre à jour
+                      </app-ui-button>
+                    </div>
+                  </form>
+                </td>
+              </tr>
             }
           </tbody>
         </table>
