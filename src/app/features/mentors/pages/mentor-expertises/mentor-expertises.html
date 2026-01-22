@@ -2,46 +2,40 @@
 @let expertises = store.expertises()[0];
 <div class="dashboard-main-content">
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
-    <h5 class="text-2xl flex items-center gap-2 font-bold text-gray-900 mb-1">
-      Expertises
-      @if (expertiseCount > 0) {
-        <span
-          class="inline-flex items-center justify-center min-w-[28px] h-7 px-2.5 rounded-full bg-primary-100 text-primary-700 text-sm font-semibold transition-all duration-300 scale-100">
-          {{ expertiseCount }}
-        </span>
-      }
-    </h5>
-    <button class="ui-button ui-button-small ui-button-primary" (click)="onToggleCreation()">
-      {{ isCreating() ? 'Fermer' : 'Nouvelle expertise' }}
+    <app-ui-badge [label]="expertiseCount.toString() + ' Expertises'" />
+    <button
+      class="ui-button ui-button-small ui-button-primary disabled:opacity-40 disabled:cursor-not-allowed"
+      [disabled]="isCreating()"
+      (click)="onToggleCreation()">
+      Nouvelle expertise
     </button>
   </div>
-  <div [class.hidden]="!isCreating()">
-    <form class="space-y-6 mb-10" [formGroup]="createForm" (ngSubmit)="onCreate()">
+  <form
+    class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-6 my-8"
+    [formGroup]="createForm"
+    (ngSubmit)="onCreate()"
+    [class.hidden]="!isCreating()">
+    <div class="flex-1">
       <app-ui-input
         [required]="true"
         [id]="'expertise-name-create'"
         formControlName="name"
         placeholder="Ex: Développement web, Marketing digital..." />
-      <div class="flex items-center justify-end gap-3 pt-6">
-        <app-ui-button
-          type="button"
-          size="small"
-          variant="secondary"
-          [outlined]="true"
-          (clicked)="onCancelCreation()">
-          Annuler
-        </app-ui-button>
-        <app-ui-button
-          type="submit"
-          size="small"
-          variant="primary"
-          [disabled]="createForm.invalid || store.isLoading()"
-          [loading]="store.isLoading()">
-          Ajouter
-        </app-ui-button>
-      </div>
-    </form>
-  </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <app-ui-button type="button" size="small" variant="secondary" [outlined]="true" (clicked)="onCancelCreation()">
+        Annuler
+      </app-ui-button>
+      <app-ui-button
+        type="submit"
+        size="small"
+        variant="primary"
+        [disabled]="createForm.invalid || store.isLoading()"
+        [loading]="store.isLoading()">
+        Ajouter
+      </app-ui-button>
+    </div>
+  </form>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
       <div class="search-input-icon">
@@ -74,54 +68,56 @@
           </thead>
           <tbody class="ui-table-body">
             @for (expertise of expertises; track expertise.id) {
-              <tr class="ui-table-row">
-                <td class="ui-table-cell whitespace-nowrap">
-                  <p class="font-semibold text-gray-900 capitalize">{{ expertise.name }}</p>
-                </td>
-                <td class="ui-table-cell">
-                  <div class="flex items-center gap-1">
-                    <button (click)="onEdit(expertise)" class="action-button-default">
-                      <i-lucide [name]="icons.Pencil" class="size-4" />
-                      Modifier
-                    </button>
-                    <button (click)="onDelete(expertise.id)" class="action-button-danger">
-                      <i-lucide [name]="icons.Trash" class="size-4" />
-                      Supprimer
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              @if (isEditing(expertise.id)) {
-                <tr>
-                  <td colspan="2" class="ui-table-cell">
-                    <form class="space-y-4" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
+              @if (!isEditing(expertise.id)) {
+                <tr class="ui-table-row">
+                  <td class="ui-table-cell whitespace-nowrap">
+                    <p class="font-semibold text-gray-900 capitalize">{{ expertise.name }}</p>
+                  </td>
+                  <td class="ui-table-cell">
+                    <div class="flex items-center gap-1">
+                      <button (click)="onEdit(expertise)" class="action-button-default">
+                        <i-lucide [name]="icons.Pencil" class="size-4" />
+                        Modifier
+                      </button>
+                      <button (click)="onDelete(expertise.id)" class="action-button-danger">
+                        <i-lucide [name]="icons.Trash" class="size-4" />
+                        Supprimer
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              <tr class="border-b border-gray-200 bg-gray-50" [class.hidden]="!isEditing(expertise.id)">
+                <td colspan="2" class="ui-table-cell">
+                  <form class="flex items-center gap-6" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
+                    <div class="flex-1">
                       <app-ui-input
                         [required]="true"
                         [id]="'expertise-name-update-' + expertise.id"
                         formControlName="name"
                         placeholder="Ex: Développement web, Marketing digital..." />
-                      <div class="flex items-center justify-end gap-3 pt-2">
-                        <app-ui-button
-                          type="button"
-                          size="small"
-                          variant="secondary"
-                          [outlined]="true"
-                          (clicked)="onCancelUpdate()">
-                          Annuler
-                        </app-ui-button>
-                        <app-ui-button
-                          type="submit"
-                          size="small"
-                          variant="primary"
-                          [disabled]="updateForm.invalid || store.isLoading()"
-                          [loading]="store.isLoading()">
-                          Mettre à jour
-                        </app-ui-button>
-                      </div>
-                    </form>
-                  </td>
-                </tr>
-              }
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <app-ui-button
+                        type="button"
+                        size="small"
+                        variant="secondary"
+                        [outlined]="true"
+                        (clicked)="onCancelUpdate()">
+                        Annuler
+                      </app-ui-button>
+                      <app-ui-button
+                        type="submit"
+                        size="small"
+                        variant="primary"
+                        [disabled]="updateForm.invalid || store.isLoading()"
+                        [loading]="store.isLoading()">
+                        Mettre à jour
+                      </app-ui-button>
+                    </div>
+                  </form>
+                </td>
+              </tr>
             }
           </tbody>
         </table>
@@ -136,9 +132,8 @@
     </div>
   </div>
   @if (expertiseCount === 0 && !isLoading) {
-    <div class="flex flex-col items-start justify-center">
-      <div
-        class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+    <div class="flex flex-col items-start justify-center mt-10">
+      <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
         <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
       </div>
       <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucune expertise trouvée</h3>
