@@ -4,11 +4,11 @@ import { UiButton, UiInput, UiMultiSelect, UiTextEditor } from '@shared/ui';
 import { Info, LucideAngularModule } from 'lucide-angular';
 import { IArticle } from '@shared/models';
 import { ArticlesStore } from '../../store/articles.store';
-import { TagsStore } from '../../store/tag.store';
+import { TagsStore } from '../../store/tags.store';
 
 @Component({
-  selector: 'app-article-update-form',
-  templateUrl: './article-update-form.html',
+  selector: 'app-article-update',
+  templateUrl: './article-update.html',
   providers: [ArticlesStore, TagsStore],
   imports: [ReactiveFormsModule, LucideAngularModule, UiButton, UiInput, UiMultiSelect, UiTextEditor]
 })

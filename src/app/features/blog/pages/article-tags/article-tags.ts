@@ -1,7 +1,7 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { LucideAngularModule, Plus, Search, Trash, Funnel, Pencil } from 'lucide-angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TagsStore } from '../../store/tag.store';
+import { TagsStore } from '../../store/tags.store';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FilterArticlesTagsDto } from '../../dto/filter-tags.dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

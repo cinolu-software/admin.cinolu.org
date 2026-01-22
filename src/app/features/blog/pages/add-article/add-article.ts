@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiInput, UiTextarea, UiMultiSelect, UiDatepicker, UiTextEditor } from '@shared/ui';
 import { ArticlesStore } from '../../store/articles.store';
-import { TagsStore } from '../../store/tag.store';
+import { TagsStore } from '../../store/tags.store';
 
 @Component({
   selector: 'app-article-add',

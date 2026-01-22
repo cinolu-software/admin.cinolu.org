@@ -4,16 +4,16 @@ import { ActivatedRoute } from '@angular/router';
 import { Images, SquarePen, Star, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
 import { ArticlesStore } from '../../store/articles.store';
-import { ArticleUpdate } from '../../components/article-update-form/article-update-form';
+import { ArticleUpdate } from '../../components/article-update/article-update';
 import { ArticleGalleryComponent } from '../../components/article-gallery/article-gallery';
 
 @Component({
-  selector: 'app-update-article',
+  selector: 'app-update-details',
   providers: [ArticlesStore],
   imports: [CommonModule, UiTabs, ArticleUpdate, ArticleGalleryComponent, LucideAngularModule],
-  templateUrl: './update-article.html'
+  templateUrl: './article-details.html'
 })
-export class UpdateArticle implements OnInit {
+export class ArticleDetails implements OnInit {
   #route = inject(ActivatedRoute);
   #slug = this.#route.snapshot.params['slug'];
   store = inject(ArticlesStore);

@@ -17,7 +17,7 @@ export const blogRoutes: Routes = [
       {
         path: 'update/:slug',
         title: 'Modifier un article',
-        loadComponent: () => import('./pages/update-article/update-article').then((c) => c.UpdateArticle)
+        loadComponent: () => import('./pages/article-details/article-details').then((c) => c.ArticleDetails)
       }
     ]
   },
