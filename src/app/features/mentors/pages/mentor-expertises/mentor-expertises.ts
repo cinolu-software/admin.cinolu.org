@@ -7,7 +7,7 @@ import { FilterExpertisesDto } from '../../dto/expertises/filter-expertises.dto'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ExpertisesStore } from '../../store/expertises.store';
-import { UiButton, UiConfirmDialog, UiPagination } from '@shared/ui';
+import { UiButton, UiConfirmDialog, UiPagination, UiBadge } from '@shared/ui';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiInput } from '@shared/ui/form/input/input';
@@ -16,7 +16,16 @@ import { UiInput } from '@shared/ui/form/input/input';
   selector: 'app-mentor-expertises',
   templateUrl: './mentor-expertises.html',
   providers: [ExpertisesStore, ConfirmationService],
-  imports: [LucideAngularModule, UiButton, ReactiveFormsModule, UiConfirmDialog, UiPagination, UiTableSkeleton, UiInput]
+  imports: [
+    LucideAngularModule,
+    UiButton,
+    ReactiveFormsModule,
+    UiConfirmDialog,
+    UiPagination,
+    UiTableSkeleton,
+    UiInput,
+    UiBadge
+  ]
 })
 export class MentorExpertises {
   #route = inject(ActivatedRoute);
