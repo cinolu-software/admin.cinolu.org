@@ -52,9 +52,9 @@ export class OpportunityDetails implements OnInit {
   }
 
   ngOnInit(): void {
-    const id = this.#route.snapshot.paramMap.get('id');
-    if (!id) return;
-    this.store.loadOne(id);
+    const slug = this.#route.snapshot.paramMap.get('slug');
+    if (!slug) return;
+    this.store.loadOne(slug);
   }
 
   #initForm(): FormGroup {
