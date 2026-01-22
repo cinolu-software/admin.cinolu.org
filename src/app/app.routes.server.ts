@@ -2,7 +2,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
-    path: 'programs/update/:slug',
+    path: 'programs/:slug',
     renderMode: RenderMode.Client
   },
   {
@@ -10,11 +10,11 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client
   },
   {
-    path: 'events/update/:slug',
+    path: 'events/:slug',
     renderMode: RenderMode.Client
   },
   {
-    path: 'mentor-profiles/view/:id',
+    path: 'mentors/:id',
     renderMode: RenderMode.Client
   },
   {
@@ -22,7 +22,7 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client
   },
   {
-    path: 'projects/update/:slug',
+    path: 'projects/:slug',
     renderMode: RenderMode.Client
   },
   {

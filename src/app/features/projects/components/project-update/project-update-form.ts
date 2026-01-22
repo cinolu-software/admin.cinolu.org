@@ -9,12 +9,12 @@ import { SubprogramsStore } from '@features/programs/store/subprograms.store';
 import { UsersStore } from '@features/users/store/users.store';
 
 @Component({
-  selector: 'app-project-update-form',
-  templateUrl: './project-update-form.html',
+  selector: 'app-project-update',
+  templateUrl: './project-update.html',
   providers: [ProjectsStore, UsersStore, CategoriesStore, SubprogramsStore],
   imports: [FormsModule, ReactiveFormsModule, UiInput, UiTextarea, UiSelect, UiMultiSelect, UiDatepicker, UiButton]
 })
-export class ProjectUpdateForm {
+export class ProjectUpdate {
   project = input.required<IProject>();
   #fb = inject(FormBuilder);
   categoriesStore = inject(CategoriesStore);

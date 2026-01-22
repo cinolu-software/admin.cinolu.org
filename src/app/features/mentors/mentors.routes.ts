@@ -2,18 +2,17 @@ import { Routes } from '@angular/router';
 
 export const mentorsRoutes: Routes = [
   {
-    path: 'mentor-profiles',
+    path: 'mentors',
     children: [
       {
         path: '',
         title: 'Liste des profils mentors',
-        loadComponent: () =>
-          import('./pages/list-mentor-profiles/list-mentor-profiles').then((c) => c.ListMentorProfiles)
+        loadComponent: () => import('./pages/list-mentors/list-mentors').then((c) => c.ListMentors)
       },
       {
-        path: 'view/:id',
-        title: 'Profil mentor',
-        loadComponent: () => import('./pages/view-mentor-profile/view-mentor-profile').then((c) => c.ViewMentorProfile)
+        path: ':id',
+        title: 'Détails du mentor',
+        loadComponent: () => import('./pages/mentor-details/mentor-details').then((c) => c.MentorDetails)
       }
     ]
   },

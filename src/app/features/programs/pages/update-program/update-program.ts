@@ -16,7 +16,7 @@ import { UiButton, UiSelect, UiTextarea } from '@shared/ui';
 import { SelectOption } from '@shared/ui/form/select/select';
 
 @Component({
-  selector: 'app-update-program-page',
+  selector: 'app-update-program',
   providers: [ProgramsStore, IndicatorsStore, ProgramCategoriesStore],
   imports: [
     UiTabs,

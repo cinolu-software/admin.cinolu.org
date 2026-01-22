@@ -18,11 +18,11 @@ import { UiAccordion, UiAccordionPanel, UiAccordionHeader, UiAccordionContent } 
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-event-details',
-  templateUrl: './event-details.html',
+  selector: 'app-event-sheet',
+  templateUrl: './event-sheet.html',
   imports: [UiAccordion, DatePipe, UiAccordionPanel, UiAccordionHeader, UiAccordionContent, LucideAngularModule]
 })
-export class EventDetails {
+export class EventSheet {
   event = input.required<IEvent>();
   icons = {
     FolderOpen,

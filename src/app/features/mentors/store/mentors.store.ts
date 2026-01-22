@@ -8,17 +8,17 @@ import { IMentorProfile } from '@shared/models';
 import { FilterMentorsProfileDto } from '../dto/mentors/filter-mentors-profiles.dto';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 
-interface IMentorProfilesStore {
+interface IMentorsStore {
   isLoading: boolean;
-  mentorProfiles: [IMentorProfile[], number];
-  mentorProfile: IMentorProfile | null;
+  mentors: [IMentorProfile[], number];
+  mentor: IMentorProfile | null;
 }
 
-export const MentorProfilesStore = signalStore(
-  withState<IMentorProfilesStore>({
+export const MentorsStore = signalStore(
+  withState<IMentorsStore>({
     isLoading: false,
-    mentorProfiles: [[], 0],
-    mentorProfile: null
+    mentors: [[], 0],
+    mentor: null
   }),
   withProps(() => ({
     _http: inject(HttpClient),
@@ -32,10 +32,10 @@ export const MentorProfilesStore = signalStore(
           const params = buildQueryParams(queryParams);
           return _http.get<{ data: [IMentorProfile[], number] }>('mentor-profiles/filtered', { params }).pipe(
             map(({ data }) => {
-              patchState(store, { isLoading: false, mentorProfiles: data });
+              patchState(store, { isLoading: false, mentors: data });
             }),
             catchError(() => {
-              patchState(store, { isLoading: false, mentorProfiles: [[], 0] });
+              patchState(store, { isLoading: false, mentors: [[], 0] });
               return of(null);
             })
           );
@@ -48,7 +48,7 @@ export const MentorProfilesStore = signalStore(
         switchMap((id) =>
           _http.get<{ data: IMentorProfile }>(`mentor-profiles/${id}`).pipe(
             map(({ data }) => {
-              patchState(store, { isLoading: false, mentorProfile: data });
+              patchState(store, { isLoading: false, mentor: data });
             }),
             catchError(() => {
               patchState(store, { isLoading: false });
@@ -64,10 +64,10 @@ export const MentorProfilesStore = signalStore(
         switchMap((id) =>
           _http.patch<{ data: IMentorProfile }>(`mentor-profiles/approve/${id}`, {}).pipe(
             map(({ data }) => {
-              const [list, count] = store.mentorProfiles();
+              const [list, count] = store.mentors();
               const updated = list.map((m) => (m.id === data.id ? data : m));
               _toast.showSuccess('Profil mentor approuvé');
-              patchState(store, { isLoading: false, mentorProfiles: [updated, count], mentorProfile: data });
+              patchState(store, { isLoading: false, mentors: [updated, count], mentor: data });
             }),
             catchError(() => {
               _toast.showError("Erreur lors de l'approbation");
@@ -84,10 +84,10 @@ export const MentorProfilesStore = signalStore(
         switchMap((id) =>
           _http.patch<{ data: IMentorProfile }>(`mentor-profiles/reject/${id}`, {}).pipe(
             map(({ data }) => {
-              const [list, count] = store.mentorProfiles();
+              const [list, count] = store.mentors();
               const updated = list.map((m) => (m.id === data.id ? data : m));
               _toast.showSuccess('Profil mentor rejeté');
-              patchState(store, { isLoading: false, mentorProfiles: [updated, count], mentorProfile: data });
+              patchState(store, { isLoading: false, mentors: [updated, count], mentor: data });
             }),
             catchError(() => {
               _toast.showError('Erreur lors du rejet');

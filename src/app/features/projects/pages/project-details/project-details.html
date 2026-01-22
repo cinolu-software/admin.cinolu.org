@@ -1,0 +1,51 @@
+<section class="pt-32 dashboard-main-content flex flex-col gap-4">
+  @let project = projectStore.project();
+  @if (project) {
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 mb-6">
+      <div class="flex-1">
+        <h2 class="text-xl font-bold text-gray-900">{{ project.name }}</h2>
+        <p class="text-sm text-gray-500 mt-1">Gérer les paramètres de publication et de mise en avant</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          (click)="onShowcase()"
+          [class]="project.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
+          <i-lucide [name]="icons.Star" class="size-4" />
+          {{ project.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
+        </button>
+        <button (click)="onPublish()" [class]="project.is_published ? 'action-button-active' : 'action-button-default'">
+          <i-lucide [name]="icons.Eye" class="size-4" />
+          {{ project.is_published ? 'Dépublier' : 'Publier' }}
+        </button>
+      </div>
+    </div>
+  }
+  <app-ui-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
+  @if (projectStore.isLoading()) {
+    <app-project-details-skeleton />
+  }
+  @if (activeTab() === 'details' && project) {
+    <app-project-sheet [project]="project" />
+  }
+  @if (activeTab() === 'gallery' && project) {
+    <app-project-gallery
+      [project]="project"
+      [gallery]="galleryStore.gallery()"
+      [isLoading]="projectStore.isLoading()"
+      (coverUploaded)="onCoverUploaded()"
+      (galleryUploaded)="onGalleryUploaded()"
+      (deleteImage)="onDeleteImage($event)" />
+  }
+  @if (activeTab() === 'edit' && project) {
+    <app-project-update [project]="project" />
+  }
+  @if (activeTab() === 'indicators' && project) {
+    <app-ui-metrics-table
+      [indicators]="indicatorsStore.indicators()"
+      [metricsMap]="metricsMap"
+      [existingMetrics]="project?.metrics ?? []"
+      [isLoading]="metricsStore.isLoading()"
+      (saveAll)="onSaveMetrics()" />
+  }
+</section>

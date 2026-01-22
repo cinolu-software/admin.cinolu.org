@@ -79,7 +79,7 @@ export const LINK_GROUPS: ILinkGroup[] = [
         children: [
           {
             name: 'Tous les mentors',
-            path: '/mentor-profiles'
+            path: '/mentors'
           },
           {
             name: 'Les expertises',

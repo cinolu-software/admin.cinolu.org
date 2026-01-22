@@ -1,4 +1,6 @@
-@let program = programSignal(); @let isLoading = store.isLoading(); @let subprograms = store.allSubprograms();
+@let program = programSignal();
+@let isLoading = store.isLoading();
+@let subprograms = store.allSubprograms();
 <div class="pt-6 pb-4 border-b border-gray-100">
   <div class="flex justify-end px-6">
     <app-ui-button [disabled]="!program" (clicked)="onToggleCreation()" variant="primary" size="small">

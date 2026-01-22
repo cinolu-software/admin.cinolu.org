@@ -73,9 +73,9 @@
                 </td>
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-2">
-                    <button [routerLink]="['/projects/update', project.slug]" class="action-button-default">
-                      <i-lucide [name]="icons.Pencil" class="size-4" />
-                      Modifier
+                    <button [routerLink]="['/projects', project.slug]" class="action-button-default">
+                      <i-lucide [name]="icons.Eye" class="size-4" />
+                      Détails
                     </button>
                     <button (click)="onDelete(project.id)" class="action-button-danger">
                       <i-lucide [name]="icons.Trash" class="size-4" />

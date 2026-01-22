@@ -16,11 +16,11 @@ import { UiAccordion, UiAccordionPanel, UiAccordionHeader, UiAccordionContent } 
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-project-details',
-  templateUrl: './project-details.html',
+  selector: 'app-project-sheet',
+  templateUrl: './project-sheet.html',
   imports: [UiAccordion, DatePipe, UiAccordionPanel, UiAccordionHeader, UiAccordionContent, LucideAngularModule]
 })
-export class ProjectDetails {
+export class ProjectSheet {
   project = input.required<IProject>();
   icons = { FolderOpen, User, Clock, Calendar, Flag, FileText, BookOpen, Target, SquareCheckBig };
 }

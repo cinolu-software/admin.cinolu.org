@@ -6,20 +6,28 @@ import { MetricsMap, totalMetrics, achievementRate, metricsMap, metricsMapToDto 
 import { IEvent } from '@shared/models';
 import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { EventsStore } from '../../store/events.store';
-import { EventDetails } from '../../components/event-details/event-details';
+import { EventSheet } from '../../components/event-sheet/event-sheet';
 import { EventGalleryComponent } from '../../components/event-gallery/event-gallery';
-import { EventUpdateForm } from '../../components/event-update-form/event-edit-form';
+import { EventUpdate } from '../../components/event-update/event-update';
 import { EventDetailsSkeleton } from '../../ui/event-details-skeleton/event-details-skeleton';
 import { GalleryStore } from '../../store/event-gallery.store';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
-  selector: 'app-event-update',
-  templateUrl: './update-event.html',
+  selector: 'app-event-details',
+  templateUrl: './event-details.html',
   providers: [EventsStore, IndicatorsStore, GalleryStore],
-  imports: [UiTabs, MetricsTableComponent, EventDetails, EventGalleryComponent, EventUpdateForm, EventDetailsSkeleton, LucideAngularModule]
+  imports: [
+    UiTabs,
+    MetricsTableComponent,
+    EventSheet,
+    EventGalleryComponent,
+    EventUpdate,
+    EventDetailsSkeleton,
+    LucideAngularModule
+  ]
 })
-export class UpdateEvent implements OnInit {
+export class EventDetails implements OnInit {
   #route = inject(ActivatedRoute);
   #slug = this.#route.snapshot.params['slug'];
   eventsStore = inject(EventsStore);

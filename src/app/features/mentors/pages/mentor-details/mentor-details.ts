@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MentorProfilesStore } from '../../store/mentor-profiles.store';
+import { MentorsStore } from '../../store/mentors.store';
 import {
   LucideAngularModule,
   CircleCheckBig,
@@ -19,16 +19,16 @@ import { UiAvatar } from '@shared/ui';
 import { environment } from '@env/environment';
 
 @Component({
-  selector: 'app-mentor-profile-view',
-  templateUrl: './view-mentor-profile.html',
-  providers: [MentorProfilesStore, ConfirmationService],
+  selector: 'app-mentor-details',
+  templateUrl: './mentor-details.html',
+  providers: [MentorsStore, ConfirmationService],
   imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar]
 })
-export class ViewMentorProfile implements OnInit {
+export class MentorDetails implements OnInit {
   #route = inject(ActivatedRoute);
   #confirmationService = inject(ConfirmationService);
   #id = this.#route.snapshot.params['id'];
-  store = inject(MentorProfilesStore);
+  store = inject(MentorsStore);
   cvUrl = environment.apiUrl + 'uploads/mentors/cvs/';
   icons = { CircleCheckBig, CircleX, Briefcase, Calendar, Award, FileText, ExternalLink };
 

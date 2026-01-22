@@ -16,8 +16,8 @@ export const programsRoutes: Routes = [
         loadComponent: () => import('./pages/add-program/add-program').then((c) => c.AddProgramPage)
       },
       {
-        path: 'update/:slug',
-        title: 'Modifier un programme',
+        path: ':slug',
+        title: 'Détails du programme',
         loadComponent: () => import('./pages/update-program/update-program').then((c) => c.UpdateProgram)
       }
     ]

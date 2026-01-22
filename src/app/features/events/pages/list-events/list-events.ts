@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
-import { LucideAngularModule, Trash, Search, Funnel, Pencil } from 'lucide-angular';
+import { LucideAngularModule, Trash, Search, Funnel, Eye } from 'lucide-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EventsStore } from '../../store/events.store';
@@ -41,7 +41,7 @@ export class ListEvents {
   searchForm: FormGroup;
   store = inject(EventsStore);
   itemsPerPage = 20;
-  icons = { Pencil, Trash, Search, Funnel };
+  icons = { Trash, Search, Funnel, Eye };
   queryParams = signal<FilterEventsDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q'),

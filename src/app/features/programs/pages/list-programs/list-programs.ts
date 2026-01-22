@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
-import { LucideAngularModule, Trash, Search, Funnel, Pencil } from 'lucide-angular';
+import { LucideAngularModule, Trash, Search, Funnel, Eye } from 'lucide-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProgramsStore } from '../../store/programs.store';
@@ -46,7 +46,7 @@ export class ListPrograms {
   searchForm: FormGroup = this.#fb.group({
     q: [this.queryParams().q || '']
   });
-  icons = { Trash, Search, Funnel, Pencil };
+  icons = { Trash, Search, Funnel, Eye };
   itemsPerPage = 10;
   activeTab = computed(() => this.queryParams().filter || 'all');
   tabsConfig = signal([

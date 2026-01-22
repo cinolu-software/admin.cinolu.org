@@ -2,7 +2,7 @@ import { Component, computed, DestroyRef, effect, inject, signal } from '@angula
 import { LucideAngularModule, Search, Funnel, Eye, CircleCheckBig, CircleX } from 'lucide-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MentorProfilesStore } from '../../store/mentor-profiles.store';
+import { MentorsStore } from '../../store/mentors.store';
 import { FilterMentorsProfileDto } from '../../dto/mentors/filter-mentors-profiles.dto';
 import { MentorStatus } from '../../enums/mentor.enum';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,9 +11,9 @@ import { UiButton, UiPagination, UiTabs, UiBadge } from '@shared/ui';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 
 @Component({
-  selector: 'app-mentor-profiles-list',
-  templateUrl: './list-mentor-profiles.html',
-  providers: [MentorProfilesStore],
+  selector: 'app-mentors-list',
+  templateUrl: './list-mentors.html',
+  providers: [MentorsStore],
   imports: [
     LucideAngularModule,
     UiButton,
@@ -25,13 +25,13 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
     UiBadge
   ]
 })
-export class ListMentorProfiles {
+export class ListMentors {
   #route = inject(ActivatedRoute);
   #router = inject(Router);
   #fb = inject(FormBuilder);
   #destroyRef = inject(DestroyRef);
   searchForm: FormGroup;
-  store = inject(MentorProfilesStore);
+  store = inject(MentorsStore);
   itemsPerPage = 20;
   icons = { Eye, Search, Funnel, CircleCheckBig, CircleX };
   queryParams = signal<FilterMentorsProfileDto>({

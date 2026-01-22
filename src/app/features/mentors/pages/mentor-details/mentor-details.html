@@ -1,12 +1,12 @@
-@let profile = store.mentorProfile();
+@let mentor = store.mentor();
 @let isLoading = store.isLoading();
 <div class="dashboard-main-content">
   <div class="mb-6">
     <div class="flex items-center justify-between">
       <h5 class="text-2xl font-bold text-gray-900">Profil mentor</h5>
-      @if (profile) {
+      @if (mentor) {
         <div class="flex items-center gap-2">
-          @if (profile.status === 'pending') {
+          @if (mentor.status === 'pending') {
             <button (click)="onApprove()" class="ui-button ui-button-small ui-button-primary">
               <i-lucide [name]="icons.CircleCheckBig" class="size-4" />
               Approuver
@@ -15,12 +15,12 @@
               <i-lucide [name]="icons.CircleX" class="size-4" />
               Rejeter
             </button>
-          } @else if (profile.status === 'approved') {
+          } @else if (mentor.status === 'approved') {
             <button (click)="onReject()" class="ui-button ui-button-small ui-button-danger">
               <i-lucide [name]="icons.CircleX" class="size-4" />
               Rejeter
             </button>
-          } @else if (profile.status === 'rejected') {
+          } @else if (mentor.status === 'rejected') {
             <button (click)="onApprove()" class="ui-button ui-button-small ui-button-primary">
               <i-lucide [name]="icons.CircleCheckBig" class="size-4" />
               Approuver
@@ -45,35 +45,30 @@
         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
       </div>
     </div>
-  } @else if (profile) {
-    <!-- Profile Header Card -->
+  } @else if (mentor) {
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6 overflow-hidden">
-      <!-- <div class="bg-primary-600 h-2"></div> -->
       <div class="p-6">
         <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
-          <app-ui-avatar
-            [shape]="'circle'"
-            [image]="profile.owner | apiIMG: 'user'"
-            [label]="profile.owner.name" />
+          <app-ui-avatar [shape]="'circle'" [image]="mentor.owner | apiIMG: 'user'" [label]="mentor.owner.name" />
           <div class="flex-1">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
               <div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ profile.owner.name }}</h3>
-                <p class="text-gray-600">{{ profile.owner.email }}</p>
+                <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ mentor.owner.name }}</h3>
+                <p class="text-gray-600">{{ mentor.owner.email }}</p>
               </div>
               <app-ui-badge
-                [label]="getStatusLabel(profile.status)"
-                [variant]="getStatusVariant(profile.status)"
+                [label]="getStatusLabel(mentor.status)"
+                [variant]="getStatusVariant(mentor.status)"
                 [size]="'medium'" />
             </div>
             <div class="flex flex-wrap items-center gap-6 text-sm text-gray-600">
               <div class="flex items-center gap-2">
                 <i-lucide [name]="icons.Briefcase" class="size-4 text-primary-600" />
-                <span class="font-medium">{{ profile.years_experience }} ans d'expérience</span>
+                <span class="font-medium">{{ mentor.years_experience }} ans d'expérience</span>
               </div>
-              @if (profile.cv) {
+              @if (mentor.cv) {
                 <a
-                  [href]="cvUrl + profile.cv"
+                  [href]="cvUrl + mentor.cv"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="group flex items-center gap-2 px-3 py-1.5 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-lg transition-all duration-200 border border-primary-200 hover:border-primary-300">
@@ -89,9 +84,7 @@
         </div>
       </div>
     </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Expertises Card -->
       <div class="lg:col-span-1">
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <div class="flex items-center gap-3 mb-4">
@@ -100,9 +93,9 @@
             </div>
             <h4 class="text-lg font-bold text-gray-900">Expertises</h4>
           </div>
-          @if (profile.expertises.length > 0) {
+          @if (mentor.expertises.length > 0) {
             <div class="flex flex-wrap gap-2">
-              @for (expertise of profile.expertises; track expertise.id) {
+              @for (expertise of mentor.expertises; track expertise.id) {
                 <app-ui-badge [label]="expertise.name" [variant]="'info'" [size]="'small'" />
               }
             </div>
@@ -111,8 +104,6 @@
           }
         </div>
       </div>
-
-      <!-- Experiences Card -->
       <div class="lg:col-span-2">
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <div class="flex items-center gap-3 mb-6">
@@ -121,12 +112,12 @@
             </div>
             <h4 class="text-lg font-bold text-gray-900">Expériences professionnelles</h4>
           </div>
-          @if (profile.experiences.length > 0) {
+          @if (mentor.experiences.length > 0) {
             <div class="relative">
               <div
                 class="absolute left-4 top-0 bottom-0 w-0.5 bg-linear-to-b from-primary-200 via-primary-300 to-primary-200"></div>
               <div class="space-y-6">
-                @for (experience of profile.experiences; track experience.id) {
+                @for (experience of mentor.experiences; track experience.id) {
                   <div class="relative pl-12">
                     <div
                       class="absolute left-3 top-1 w-3 h-3 rounded-full bg-primary-500 ring-4 ring-white shadow-sm border-2 border-primary-100"></div>
@@ -141,8 +132,7 @@
                         }
                       </div>
                       <div class="flex items-center gap-2 text-sm text-gray-600">
-                        <div
-                          class="flex items-center justify-center w-5 h-5 rounded-full bg-primary-100">
+                        <div class="flex items-center justify-center w-5 h-5 rounded-full bg-primary-100">
                           <i-lucide [name]="icons.Calendar" class="size-3.5 text-primary-600" />
                         </div>
                         <span class="font-medium">
@@ -161,8 +151,7 @@
             </div>
           } @else {
             <div class="text-center py-8">
-              <div
-                class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
                 <i-lucide [name]="icons.Briefcase" class="w-8 h-8 text-gray-400" />
               </div>
               <p class="text-gray-500 text-sm">Aucune expérience renseignée</p>
@@ -171,14 +160,11 @@
         </div>
       </div>
     </div>
-
-    <!-- Actions Footer -->
-    <div
-      class="mt-6 flex items-center justify-between bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+    <div class="mt-6 flex items-center justify-between bg-white rounded-xl border border-gray-200 shadow-sm p-4">
       <div class="text-sm text-gray-600">
-        <span class="font-medium">Créé le:</span> {{ profile.created_at | date: 'longDate' }}
+        <span class="font-medium">Créé le:</span> {{ mentor.created_at | date: 'longDate' }}
       </div>
-      @if (profile.status === 'pending') {
+      @if (mentor.status === 'pending') {
         <div class="flex items-center gap-2">
           <button (click)="onApprove()" class="ui-button ui-button-small ui-button-primary">
             <i-lucide [name]="icons.CircleCheckBig" class="size-4" />

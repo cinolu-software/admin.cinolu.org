@@ -68,9 +68,9 @@
                 </td>
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-2">
-                    <button [routerLink]="['/programs/update', program.slug]" class="action-button-default">
-                      <i-lucide [name]="icons.Pencil" class="size-4" />
-                      Modifier
+                    <button [routerLink]="['/programs', program.slug]" class="action-button-default">
+                      <i-lucide [name]="icons.Eye" class="size-4" />
+                      Détails
                     </button>
                     <button (click)="onDelete(program.id)" class="action-button-danger">
                       <i-lucide [name]="icons.Trash" class="size-4" />

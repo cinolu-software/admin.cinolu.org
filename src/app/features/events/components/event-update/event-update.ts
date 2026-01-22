@@ -9,12 +9,12 @@ import { CategoriesStore } from '../../store/event-categories.store';
 import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 
 @Component({
-  selector: 'app-event-edit-form',
-  templateUrl: './event-edit-form.html',
+  selector: 'app-event-update',
+  templateUrl: './event-update.html',
   providers: [EventsStore, CategoriesStore, UsersStore, SubprogramsStore],
   imports: [FormsModule, ReactiveFormsModule, UiSelect, UiMultiSelect, UiInput, UiButton, UiTextarea, UiDatepicker]
 })
-export class EventUpdateForm {
+export class EventUpdate {
   event = input.required<IEvent>();
   #fb = inject(FormBuilder);
   store = inject(EventsStore);

@@ -14,8 +14,7 @@ export const routes: Routes = [
     component: Layout,
     data: { layout: 'admin-layout' },
     canActivate: [authGuard],
-    loadChildren: () =>
-      import('@features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes)
+    loadChildren: () => import('@features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes)
   },
   {
     component: Layout,
@@ -63,8 +62,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     path: '',
     title: 'Mentors',
-    loadChildren: () =>
-      import('@features/mentor-profiles/mentors.routes').then((m) => m.mentorsRoutes)
+    loadChildren: () => import('@features/mentors/mentors.routes').then((m) => m.mentorsRoutes)
   },
   {
     component: Layout,

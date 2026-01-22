@@ -8,20 +8,28 @@ import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { GalleryStore } from '../../store/project-gallery.store';
 import { ProjectsStore } from '../../store/projects.store';
 import { ProjectMetricsStore } from '../../store/project-metrics.store';
-import { ProjectDetails } from '../../components/project-details/project-details';
+import { ProjectSheet } from '../../components/project-sheet/project-sheet';
 import { ProjectGallery } from '../../components/project-gallery/project-gallery';
-import { ProjectUpdateForm } from '../../components/project-update-form/project-update-form';
+import { ProjectUpdate } from '../../components/project-update/project-update-form';
 import { ProjectDetailsSkeleton } from '../../ui/project-details-skeleton/project-details-skeleton';
 import { UiMetricsTable } from '@shared/ui/metrics-table/metrics-table';
 
 @Component({
-  selector: 'app-project-update',
-  templateUrl: './update-project.html',
+  selector: 'app-project-details',
+  templateUrl: './project-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [IndicatorsStore, GalleryStore, ProjectsStore, ProjectMetricsStore],
-  imports: [UiTabs, UiMetricsTable, ProjectDetails, ProjectGallery, ProjectUpdateForm, ProjectDetailsSkeleton, LucideAngularModule]
+  imports: [
+    UiTabs,
+    UiMetricsTable,
+    ProjectSheet,
+    ProjectGallery,
+    ProjectUpdate,
+    ProjectDetailsSkeleton,
+    LucideAngularModule
+  ]
 })
-export class UpdateProject implements OnInit {
+export class ProjectDetails implements OnInit {
   #route = inject(ActivatedRoute);
   #slug = this.#route.snapshot.params['slug'];
   projectStore = inject(ProjectsStore);
