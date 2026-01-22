@@ -1,0 +1,112 @@
+@let isLoading = store.isLoading();
+@let opportunityCount = store.opportunities()[1];
+@let opportunities = store.opportunities()[0];
+<div class="dashboard-main-content">
+  <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
+    <app-ui-badge [label]="opportunityCount.toString() + ' Opportunités'" />
+    <a class="ui-button ui-button-small ui-button-primary" [routerLink]="'/opportunities/add'">
+      Nouvelle opportunité
+    </a>
+  </div>
+  <form [formGroup]="searchForm" class="search-input-wrapper">
+    <div class="search-input-group">
+      <div class="search-input-icon">
+        <i-lucide [name]="icons.Search" class="search-input-icon-svg" />
+      </div>
+      <label for="opportunities-search-input" class="sr-only">Rechercher des opportunités</label>
+      <input
+        id="opportunities-search-input"
+        type="text"
+        name="q"
+        formControlName="q"
+        placeholder="Rechercher une opportunité..."
+        class="search-input"
+        autocomplete="off" />
+    </div>
+  </form>
+  <div class="mt-6">
+    @if (isLoading && opportunityCount === 0) {
+      <app-ui-table-skeleton [rows]="10" [columns]="5" />
+    }
+    @if (opportunityCount > 0) {
+      <div class="ui-table-wrapper scrollbar-hide">
+        <table class="ui-table">
+          <thead class="ui-table-head">
+            <tr class="ui-table-head-row">
+              <th class="ui-table-header">Titre</th>
+              <th class="ui-table-header">Début</th>
+              <th class="ui-table-header">Fin</th>
+              <th class="ui-table-header">Tags</th>
+              <th class="ui-table-header">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="ui-table-body">
+            @for (opportunity of opportunities; track opportunity.id) {
+              <tr class="ui-table-row">
+                <td class="ui-table-cell">
+                  <p class="font-semibold capitalize text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2">
+                    {{ opportunity.title }}
+                  </p>
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  {{ opportunity.started_at | date: 'dd MMM yyyy' }}
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  {{ opportunity.ended_at | date: 'dd MMM yyyy' }}
+                </td>
+                <td class="ui-table-cell">
+                  <div class="flex flex-wrap gap-1">
+                    @for (tag of opportunity.tags; track tag.id) {
+                      <app-ui-badge [label]="tag.name" [variant]="'success'" />
+                    }
+                  </div>
+                </td>
+                <td class="ui-table-cell">
+                  <div class="flex items-center gap-2">
+                    <button [routerLink]="['/opportunities', opportunity.slug]" class="action-button-default">
+                      <i-lucide [name]="icons.Eye" class="size-4" />
+                      Détails
+                    </button>
+                    <button (click)="onDelete(opportunity.id)" class="action-button-danger">
+                      <i-lucide [name]="icons.Trash" class="size-4" />
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    <div class="flex flex-col justify-end items-end">
+      <app-ui-pagination
+        [currentPage]="currentPage()"
+        [totalItems]="opportunityCount"
+        [itemsPerPage]="itemsPerPage"
+        (pageChange)="onPageChange($event)" />
+    </div>
+  </div>
+  @if (opportunityCount === 0 && !isLoading) {
+    <div class="flex flex-col items-start">
+      <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 border border-primary-100">
+        <i-lucide [name]="icons.Search" class="w-10 h-10 stroke-[1.5] text-primary-500" />
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucune opportunité trouvée</h3>
+      <p class="text-gray-500 max-w-lg mb-8 text-base leading-relaxed">
+        Nous n'avons trouvé aucune opportunité correspondant à vos critères.<br />
+      </p>
+      <app-ui-button
+        (clicked)="onResetFilters()"
+        variant="secondary"
+        [outlined]="true"
+        styleClass="text-base font-medium px-6 py-2.5 rounded-md shadow">
+        <span class="flex items-center gap-2">
+          <i-lucide [name]="icons.Funnel" class="w-5 h-5 text-primary-500" />
+          <span>Réinitialiser les filtres</span>
+        </span>
+      </app-ui-button>
+    </div>
+  }
+  <app-ui-confirm-dialog />
+</div>

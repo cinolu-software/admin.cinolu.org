@@ -1,0 +1,130 @@
+@let opportunity = store.opportunity();
+@let isLoading = store.isLoading();
+<div class="pt-32 dashboard-main-content flex flex-col gap-4">
+  <app-ui-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
+
+  @if (opportunity) {
+    @if (activeTab() === 'edit') {
+      <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col gap-6">
+        <form [formGroup]="form" (ngSubmit)="onUpdate()">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <app-ui-input
+              [required]="true"
+              [id]="'title'"
+              label="Titre de l'opportunité"
+              formControlName="title"
+              placeholder="Ex: Stage en développement web" />
+            <app-ui-input
+              [required]="true"
+              label="Lien"
+              [id]="'link'"
+              formControlName="link"
+              placeholder="https://example.com/opportunity" />
+            <app-ui-multi-select
+              [required]="true"
+              label="Tags"
+              [id]="'tags'"
+              [options]="tagsStore.allTags()"
+              [optionLabel]="'name'"
+              [optionValue]="'id'"
+              formControlName="tags"
+              placeholder="Choisir une ou plusieurs tags" />
+            <app-ui-datepicker
+              [required]="true"
+              [id]="'started_at'"
+              label="Date de début"
+              showIcon
+              iconDisplay="input"
+              formControlName="started_at" />
+            <app-ui-datepicker
+              [required]="true"
+              [id]="'ended_at'"
+              label="Date de fin"
+              showIcon
+              iconDisplay="input"
+              formControlName="ended_at" />
+          </div>
+          <div class="grid grid-cols-1 gap-6 mt-6">
+            <app-ui-textarea
+              [required]="true"
+              [rows]="6"
+              label="Description"
+              [id]="'description'"
+              formControlName="description"
+              placeholder="Décrivez l'opportunité de manière claire et concise..." />
+          </div>
+          <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+            <app-ui-button
+              [size]="'small'"
+              [loading]="store.isLoading()"
+              [disabled]="store.isLoading() || form.invalid"
+              variant="primary"
+              type="submit">
+              Mettre à jour
+            </app-ui-button>
+          </div>
+        </form>
+      </div>
+    }
+    @if (activeTab() === 'attachments') {
+      <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col gap-6">
+        <div>
+          <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Annexes</h6>
+          <p class="text-sm text-gray-600 mb-4">Ajoutez des fichiers annexes à cette opportunité</p>
+          <div class="mb-6">
+            <label
+              for="attachment-upload"
+              class="ui-button ui-button-small ui-button-primary inline-block cursor-pointer">
+              <i-lucide [name]="icons.Paperclip" class="size-4" />
+              Ajouter une annexe
+            </label>
+            <input id="attachment-upload" type="file" class="hidden" (change)="onFileSelected($event)" accept="*/*" />
+          </div>
+        </div>
+        @if (opportunity.attachments && opportunity.attachments.length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (attachment of opportunity.attachments; track attachment.id) {
+              <div class="relative group p-4 border border-gray-200 rounded-lg hover:border-primary-400 transition">
+                <div class="flex items-start justify-between gap-2">
+                  <div class="flex-1 min-w-0">
+                    <p class="font-medium text-gray-900 truncate">{{ attachment.filename }}</p>
+                    <p class="text-xs text-gray-500 mt-1">
+                      Ajouté le {{ attachment.created_at | date: 'dd MMM yyyy' }}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="onDeleteAttachment(attachment.id)"
+                    class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                    <i-lucide [name]="icons.Trash2" class="size-4" />
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+  @if (isLoading) {
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+          <div class="h-10 w-full bg-gray-200 rounded-lg animate-pulse"></div>
+        </div>
+        <div class="space-y-2">
+          <div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+          <div class="h-32 w-full bg-gray-200 rounded-lg animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  }
+  @if (!opportunity && !isLoading) {
+    <div class="flex flex-col py-12 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 items-center">
+      <i-lucide [name]="icons.FileExclamationPoint" class="w-10 h-10 text-gray-400 mb-3" />
+      <p class="text-gray-500 text-sm">Aucune opportunité trouvée</p>
+    </div>
+  }
+  <app-ui-confirm-dialog />
+</div>
