@@ -19,7 +19,7 @@ import {
   Layers,
   SearchX
 } from 'lucide-angular';
-import { PerformanceOverview } from '../performance-overview/performance-overview';
+import { Performance } from '../performance/performance';
 import { ProgramCard } from '../../ui/program-card/program-card';
 import { PerformanceSkeleton } from '../../ui/performance-skeleton/performance-skeleton';
 import { UiDatepicker } from '@shared/ui';
@@ -28,15 +28,7 @@ import { UiDatepicker } from '@shared/ui';
   selector: 'app-admin-stats',
   templateUrl: './admin-stats.html',
   providers: [AdminReportStore, AdminStatsStore],
-  imports: [
-    RouterModule,
-    FormsModule,
-    LucideAngularModule,
-    PerformanceOverview,
-    ProgramCard,
-    PerformanceSkeleton,
-    UiDatepicker
-  ]
+  imports: [RouterModule, FormsModule, LucideAngularModule, Performance, ProgramCard, PerformanceSkeleton, UiDatepicker]
 })
 export class AdminStats {
   reportStore = inject(AdminReportStore);
