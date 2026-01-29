@@ -1,165 +1,167 @@
 <div class="border border-gray-200 rounded-lg p-4 md:bg-white md:p-6">
   @let program = store.program();
   @if (program) {
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 mb-6">
-    <div class="flex-1">
-      <h2 class="text-xl font-bold text-gray-900">{{ program.name }}</h2>
-      <p class="text-sm text-gray-500 mt-1">Gérer les paramètres de publication et de mise en avant</p>
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 mb-6">
+      <div class="flex-1">
+        <h2 class="text-xl font-bold text-gray-900">{{ program.name }}</h2>
+        <p class="text-sm text-gray-500 mt-1">Gérer les paramètres de publication et de mise en avant</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          (click)="onHighlight()"
+          [class]="program.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
+          <i-lucide [name]="icons.Star" class="size-4" />
+          {{ program.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
+        </button>
+        <button (click)="onPublish()" [class]="program.is_published ? 'action-button-active' : 'action-button-default'">
+          <i-lucide [name]="icons.Eye" class="size-4" />
+          {{ program.is_published ? 'Dépublier' : 'Publier' }}
+        </button>
+      </div>
     </div>
-    <div class="flex items-center gap-2">
-      <button
-        (click)="onHighlight()"
-        [class]="program.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
-        <i-lucide [name]="icons.Star" class="size-4" />
-        {{ program.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
-      </button>
-      <button
-        (click)="onPublish()"
-        [class]="program.is_published ? 'action-button-active' : 'action-button-default'">
-        <i-lucide [name]="icons.Eye" class="size-4" />
-        {{ program.is_published ? 'Dépublier' : 'Publier' }}
-      </button>
-    </div>
-  </div>
   }
   <div class="pt-6">
     <app-ui-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)" />
   </div>
   @if (activeTab() === 'edit') {
-  <div class="pt-6 flex flex-col gap-6">
-    <p class="text-sm font-semibold text-gray-700">Logo du programme</p>
-    <div class="w-full md:w-md">
-      @if (store.isLoading()) {
-      <div class="h-32 bg-gray-200 animate-pulse rounded-xl"></div>
-      } @else {
-      <div
-        class="p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary-400 transition-colors duration-200">
-        <app-ui-file-upload [name]="'logo'" [url]="url + program?.id" />
-      </div>
-      }
-    </div>
-    <div class="border-t border-gray-100"></div>
-    <form class="space-y-6" [formGroup]="updateForm" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-8">
-        <app-ui-select
-          [id]="'category_id'"
-          label="Catégorie"
-          [optionLabel]="'name'"
-          [optionValue]="'id'"
-          [options]="categoriesStore.allCategories()"
-          formControlName="category"
-          placeholder="Sélectionner une catégorie" />
-        <app-ui-input [id]="'name'" label="Nom du programme" formControlName="name" placeholder="Nom du programme" />
-        <app-ui-textarea
-          class="col-span-2"
-          [rows]="7"
-          [id]="'description'"
-          label="Description"
-          formControlName="description"
-          placeholder="Description détaillée du programme..." />
-      </div>
-      <div class="flex justify-end pt-4 border-t border-gray-100">
-        <app-ui-button
-          [size]="'small'"
-          type="submit"
-          [disabled]="updateForm.invalid || store.isLoading()"
-          [loading]="store.isLoading()"
-          variant="primary">
-          Mettre à jour
-        </app-ui-button>
-      </div>
-    </form>
-  </div>
-  } @if (activeTab() === 'subprograms') {
-  <div class="">
-    <app-list-subprograms [program]="program" />
-  </div>
-  } @if (activeTab() === 'indicators') {
-  <div class="pt-6 space-y-6">
-    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <app-ui-datepicker
-          [id]="'year'"
-          label="Année"
-          view="year"
-          [(ngModel)]="year"
-          placeholder="Sélectionner l'année" />
-        <app-ui-select
-          label="Catégorie d'indicateurs"
-          [id]="'indicator_category_id'"
-          [options]="indicatorsCategories()"
-          [(ngModel)]="selectedCategory"
-          placeholder="Sélectionner une catégorie" />
-      </div>
-    </div>
-    <div class="space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-gray-200">
-        <div class="flex items-center gap-2">
-          <i-lucide [name]="icons.ChartColumn" class="size-5 text-primary-600" />
-          <h4 class="text-base font-medium text-gray-900">Indicateurs de performance</h4>
-        </div>
-        <span class="px-3 py-1 text-xs font-bold bg-primary-100 text-primary-700 rounded-full">
-          {{ indicatorsTab()[selectedCategory()].length || 0 }} indicateur(s)
-        </span>
-      </div>
-      @for (ind of indicatorsTab()[selectedCategory()] ; track $index) {
-      <div
-        class="group relative bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-primary-300 hover:shadow-md transition-all duration-200">
-        <div
-          class="absolute -left-3 -top-3 w-10 h-10 bg-linear-to-br from-primary-500 to-primary-600 text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-lg">
-          {{ $index + 1 }}
-        </div>
-        <div class="flex items-start gap-4 ml-4">
-          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <app-ui-input
-              label="Nom de l'indicateur"
-              [id]="'indicator_name_' + $index * 3"
-              placeholder="Ex: Nombre de participants"
-              [(ngModel)]="ind.name" />
-            <app-ui-input
-              [id]="'indicator_target_' + $index * 2"
-              label="Objectif (KPI)"
-              type="number"
-              placeholder="Ex: 100"
-              [(ngModel)]="ind.target" />
+    <div class="pt-6 flex flex-col gap-6">
+      <p class="text-sm font-semibold text-gray-700">Logo du programme</p>
+      <div class="w-full md:w-md">
+        @if (store.isLoading()) {
+          <div class="h-32 bg-gray-200 animate-pulse rounded-xl"></div>
+        } @else {
+          <div
+            class="p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary-400 transition-colors duration-200">
+            <app-ui-file-upload [name]="'logo'" [url]="url + program?.id" />
           </div>
+        }
+      </div>
+      <div class="border-t border-gray-100"></div>
+      <form class="space-y-6" [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <app-ui-select
+            [id]="'category_id'"
+            label="Catégorie"
+            [optionLabel]="'name'"
+            [optionValue]="'id'"
+            [options]="categoriesStore.allCategories()"
+            formControlName="category"
+            placeholder="Sélectionner une catégorie" />
+          <app-ui-input [id]="'name'" label="Nom du programme" formControlName="name" placeholder="Nom du programme" />
+          <app-ui-textarea
+            class="md:col-span-2"
+            [rows]="7"
+            [id]="'description'"
+            label="Description"
+            formControlName="description"
+            placeholder="Description détaillée du programme..." />
+        </div>
+        <div class="flex justify-end pt-4 border-t border-gray-100">
           <app-ui-button
-            [disabled]="(indicatorsTab()[selectedCategory()].length || 0) <= 1"
-            (clicked)="removeIndicator($index)"
-            variant="danger"
-            size="small">
-            <i-lucide [name]="icons.Trash2" class="size-5" />
+            [size]="'small'"
+            type="submit"
+            [disabled]="updateForm.invalid || store.isLoading()"
+            [loading]="store.isLoading()"
+            variant="primary">
+            Mettre à jour
           </app-ui-button>
         </div>
-      </div>
-      } @if (!indicatorsTab()[selectedCategory()].length) {
-      <div
-        class="text-center py-16 bg-linear-to-br from-gray-50 to-gray-100/50 rounded-xl border-2 border-dashed border-gray-300">
-        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-          <i-lucide [name]="icons.ChartColumn" class="size-8 text-gray-400" />
+      </form>
+    </div>
+  }
+  @if (activeTab() === 'subprograms') {
+    <div class="">
+      <app-list-subprograms [program]="program" />
+    </div>
+  }
+  @if (activeTab() === 'indicators') {
+    <div class="pt-6 space-y-6">
+      <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <app-ui-datepicker
+            [id]="'year'"
+            label="Année"
+            view="year"
+            [(ngModel)]="year"
+            placeholder="Sélectionner l'année" />
+          <app-ui-select
+            label="Catégorie d'indicateurs"
+            [id]="'indicator_category_id'"
+            [options]="indicatorsCategories()"
+            [(ngModel)]="selectedCategory"
+            placeholder="Sélectionner une catégorie" />
         </div>
-        <h5 class="text-base font-bold text-gray-900 mb-2">Aucun indicateur</h5>
-        <p class="text-sm text-gray-500 mb-4">Commencez par ajouter votre premier indicateur de performance</p>
-        <app-ui-button type="button" (clicked)="addIndicator()" variant="primary" [outlined]="true">
+      </div>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+          <div class="flex items-center gap-2">
+            <i-lucide [name]="icons.ChartColumn" class="size-5 text-primary-600" />
+            <h4 class="text-base font-medium text-gray-900">Indicateurs de performance</h4>
+          </div>
+          <span class="px-3 py-1 text-xs font-bold bg-primary-100 text-primary-700 rounded-full">
+            {{ indicatorsTab()[selectedCategory()].length || 0 }} indicateur(s)
+          </span>
+        </div>
+        @for (ind of indicatorsTab()[selectedCategory()]; track $index) {
+          <div
+            class="group relative bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-primary-300 hover:shadow-md transition-all duration-200">
+            <div
+              class="absolute -left-3 -top-3 w-10 h-10 bg-linear-to-br from-primary-500 to-primary-600 text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-lg">
+              {{ $index + 1 }}
+            </div>
+            <div class="flex items-start gap-4 ml-4">
+              <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <app-ui-input
+                  label="Nom de l'indicateur"
+                  [id]="'indicator_name_' + $index * 3"
+                  placeholder="Ex: Nombre de participants"
+                  [(ngModel)]="ind.name" />
+                <app-ui-input
+                  [id]="'indicator_target_' + $index * 2"
+                  label="Objectif (KPI)"
+                  type="number"
+                  placeholder="Ex: 100"
+                  [(ngModel)]="ind.target" />
+              </div>
+              <app-ui-button
+                [disabled]="(indicatorsTab()[selectedCategory()].length || 0) <= 1"
+                (clicked)="removeIndicator($index)"
+                variant="danger"
+                size="small">
+                <i-lucide [name]="icons.Trash2" class="size-5" />
+              </app-ui-button>
+            </div>
+          </div>
+        }
+        @if (!indicatorsTab()[selectedCategory()].length) {
+          <div
+            class="text-center py-16 bg-linear-to-br from-gray-50 to-gray-100/50 rounded-xl border-2 border-dashed border-gray-300">
+            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <i-lucide [name]="icons.ChartColumn" class="size-8 text-gray-400" />
+            </div>
+            <h5 class="text-base font-bold text-gray-900 mb-2">Aucun indicateur</h5>
+            <p class="text-sm text-gray-500 mb-4">Commencez par ajouter votre premier indicateur de performance</p>
+            <app-ui-button type="button" (clicked)="addIndicator()" variant="primary" [outlined]="true">
+              Ajouter un indicateur
+            </app-ui-button>
+          </div>
+        }
+      </div>
+      <div class="flex flex-col md:flex-row justify-between gap-3 pt-6 border-t-2 border-gray-200">
+        <app-ui-button type="button" [size]="'small'" (clicked)="addIndicator()" variant="secondary" [outlined]="true">
           Ajouter un indicateur
         </app-ui-button>
+        <app-ui-button
+          type="button"
+          [size]="'small'"
+          [disabled]="indicatorsStore.isLoading()"
+          [loading]="indicatorsStore.isLoading()"
+          (clicked)="onSaveIndicators()"
+          variant="primary">
+          Enregistrer les indicateurs
+        </app-ui-button>
       </div>
-      }
     </div>
-    <div class="flex flex-col md:flex-row justify-between gap-3 pt-6 border-t-2 border-gray-200">
-      <app-ui-button type="button" [size]="'small'" (clicked)="addIndicator()" variant="secondary" [outlined]="true">
-        Ajouter un indicateur
-      </app-ui-button>
-      <app-ui-button
-        type="button"
-        [size]="'small'"
-        [disabled]="indicatorsStore.isLoading()"
-        [loading]="indicatorsStore.isLoading()"
-        (clicked)="onSaveIndicators()"
-        variant="primary">
-        Enregistrer les indicateurs
-      </app-ui-button>
-    </div>
-  </div>
   }
 </div>
