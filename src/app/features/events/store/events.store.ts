@@ -9,7 +9,6 @@ import { IEvent } from '@shared/models';
 import { FilterEventCategoriesDto } from '../dto/categories/filter-categories.dto';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { EventDto } from '../dto/events/event.dto';
-import { IndicatorsStore } from '@features/programs/store/indicators.store';
 
 interface IEventsStore {
   isLoading: boolean;
@@ -26,10 +25,9 @@ export const EventsStore = signalStore(
   withProps(() => ({
     _http: inject(HttpClient),
     _router: inject(Router),
-    _toast: inject(ToastrService),
-    _indicatorsStore: inject(IndicatorsStore)
+    _toast: inject(ToastrService)
   })),
-  withMethods(({ _http, _router, _toast, _indicatorsStore, ...store }) => ({
+  withMethods(({ _http, _router, _toast, ...store }) => ({
     loadAll: rxMethod<FilterEventCategoriesDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
@@ -53,10 +51,6 @@ export const EventsStore = signalStore(
         switchMap((slug) =>
           _http.get<{ data: IEvent }>(`events/slug/${slug}`).pipe(
             map(({ data }) => {
-              _indicatorsStore.loadAll({
-                programId: data.program.program.id,
-                year: new Date(data.started_at).getFullYear()
-              });
               patchState(store, { isLoading: false, event: data });
             }),
             catchError(() => {

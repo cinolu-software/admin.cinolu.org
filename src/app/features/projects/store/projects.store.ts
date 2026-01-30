@@ -9,7 +9,6 @@ import { IProject } from '@shared/models';
 import { buildQueryParams } from '@shared/helpers';
 import { FilterProjectCategoriesDto } from '../dto/categories/filter-categories.dto';
 import { ProjectDto } from '../dto/projects/project.dto';
-import { IndicatorsStore } from '@features/programs/store/indicators.store';
 
 interface IProjectsStore {
   isLoading: boolean;
@@ -26,10 +25,9 @@ export const ProjectsStore = signalStore(
   withProps(() => ({
     _http: inject(HttpClient),
     _router: inject(Router),
-    _toast: inject(ToastrService),
-    _indicatorsStore: inject(IndicatorsStore)
+    _toast: inject(ToastrService)
   })),
-  withMethods(({ _http, _router, _toast, _indicatorsStore, ...store }) => ({
+  withMethods(({ _http, _router, _toast, ...store }) => ({
     loadAll: rxMethod<FilterProjectCategoriesDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
@@ -53,10 +51,6 @@ export const ProjectsStore = signalStore(
         switchMap((slug) => {
           return _http.get<{ data: IProject }>(`projects/slug/${slug}`).pipe(
             tap(({ data }) => {
-              _indicatorsStore.loadAll({
-                programId: data.program.program.id,
-                year: new Date(data.started_at).getFullYear()
-              });
               patchState(store, { isLoading: false, project: data });
             }),
             catchError(() => {

@@ -5,13 +5,12 @@ import { EventsStore } from '../../store/events.store';
 import { SubprogramsStore } from '@features/programs/store/subprograms.store';
 import { UsersStore } from '@features/users/store/users.store';
 import { CategoriesStore } from '../../store/event-categories.store';
-import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 
 @Component({
   selector: 'app-event-add',
   templateUrl: './add-event.html',
-  providers: [EventsStore, IndicatorsStore, SubprogramsStore, UsersStore, CategoriesStore],
+  providers: [EventsStore, SubprogramsStore, UsersStore, CategoriesStore],
   imports: [UiSelect, UiMultiSelect, CommonModule, UiButton, UiTextarea, UiInput, UiDatepicker, ReactiveFormsModule]
 })
 export class AddEventComponent {

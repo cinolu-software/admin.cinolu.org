@@ -10,13 +10,12 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-list-projects',
   templateUrl: './list-projects.html',
-  providers: [ProjectsStore, IndicatorsStore],
+  providers: [ProjectsStore],
   imports: [
     LucideAngularModule,
     DatePipe,

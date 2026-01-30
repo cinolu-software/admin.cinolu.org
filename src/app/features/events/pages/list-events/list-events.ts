@@ -10,13 +10,12 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UiAvatar, UiButton, UiConfirmDialog, UiPagination, UiTabs, UiBadge } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
-import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-events-list',
   templateUrl: './list-events.html',
-  providers: [EventsStore, IndicatorsStore],
+  providers: [EventsStore],
   imports: [
     LucideAngularModule,
     DatePipe,

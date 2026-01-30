@@ -18,13 +18,12 @@ import {
   Layers,
   SearchX
 } from 'lucide-angular';
-import { UiDatepicker } from '@shared/ui';
 
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.html',
   providers: [StatsStore],
-  imports: [RouterModule, FormsModule, LucideAngularModule, UiDatepicker]
+  imports: [RouterModule, FormsModule, LucideAngularModule]
 })
 export class Stats {
   adminStatsStore = inject(StatsStore);

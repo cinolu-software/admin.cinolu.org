@@ -38,7 +38,7 @@ export class ListUsers {
   #destroyRef = inject(DestroyRef);
   searchForm: FormGroup;
   store = inject(UsersStore);
-  itemsPerPage = 20;
+  itemsPerPage = 50;
   icons = { Pencil, Trash, Search, Funnel, Download };
   queryParams = signal<FilterUsersDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
