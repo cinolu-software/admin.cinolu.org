@@ -40,12 +40,4 @@
   @if (activeTab() === 'edit' && event) {
     <app-event-update [event]="event" />
   }
-  @if (activeTab() === 'indicators') {
-    <app-ui-metrics-table
-      [indicators]="indicatorsStore.indicators()"
-      [metricsMap]="metricsMap"
-      [existingMetrics]="event?.metrics ?? []"
-      [isLoading]="indicatorsStore.isLoading()"
-      (saveAll)="onSaveMetrics()" />
-  }
 </section>

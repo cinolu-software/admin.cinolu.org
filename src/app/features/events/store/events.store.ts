@@ -67,24 +67,6 @@ export const EventsStore = signalStore(
         )
       )
     ),
-    createMetrics: rxMethod<{ id: string; metrics: { indicatorId: string; target?: number; achieved?: number }[] }>(
-      pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap((params) =>
-          _http.post<{ data: unknown }>(`events/metrics/${params.id}`, params.metrics).pipe(
-            map(() => {
-              _toast.showSuccess('Les métriques ont été ajoutées');
-              patchState(store, { isLoading: false });
-            }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite");
-              patchState(store, { isLoading: false });
-              return of(null);
-            })
-          )
-        )
-      )
-    ),
     create: rxMethod<EventDto>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),

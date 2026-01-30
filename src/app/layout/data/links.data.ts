@@ -7,8 +7,7 @@ import {
   LayoutDashboard,
   UserCog,
   User,
-  UserRoundCog,
-  Briefcase
+  UserRoundCog
 } from 'lucide-angular';
 import { ILinkGroup } from '../types/link.type';
 
@@ -100,21 +99,6 @@ export const LINK_GROUPS: ILinkGroup[] = [
           {
             name: 'Les tags',
             path: '/blog/tags'
-          }
-        ]
-      },
-      {
-        name: 'Les opportunités',
-        path: '/opportunities',
-        icon: Briefcase,
-        children: [
-          {
-            name: 'Toutes les opportunités',
-            path: '/opportunities'
-          },
-          {
-            name: 'Les tags',
-            path: '/opportunity-tags'
           }
         ]
       },

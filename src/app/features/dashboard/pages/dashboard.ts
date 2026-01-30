@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AdminStats } from '../components/admin-stats/admin-stats';
+import { Stats } from '../components/stats/stats';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  imports: [FormsModule, AdminStats]
+  imports: [FormsModule, Stats]
 })
 export class Dashboard {}

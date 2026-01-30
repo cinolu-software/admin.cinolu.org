@@ -4,7 +4,6 @@ export { UiButton } from './form/button/button';
 export { UiConfirmDialog } from './confirm-dialog/confirm-dialog';
 export { CircularProgressComponent } from './circular-progress/circular-progress';
 export { FileUpload } from './file-upload/file-upload';
-export { UiMetricsTable as MetricsTableComponent } from './metrics-table/metrics-table';
 export { UiTabs } from './tabs/tabs';
 export { UiAvatar } from './avatar/avatar';
 export * from './accordion/index';

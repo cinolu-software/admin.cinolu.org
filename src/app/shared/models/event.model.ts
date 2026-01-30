@@ -2,7 +2,6 @@ import { IBase } from './base.model';
 import { IUser } from './user.model';
 import { ICategory } from './category.model';
 import { IImage } from './image.model';
-import { IMetric } from './metric.model';
 import { ISubprogram } from './program.model';
 
 export interface IEvent extends IBase {
@@ -23,6 +22,5 @@ export interface IEvent extends IBase {
   program: ISubprogram;
   categories: ICategory[];
   gallery: IImage[];
-  metrics: IMetric[];
   participants: IUser[];
 }

@@ -3,7 +3,6 @@ import { IUser } from './user.model';
 import { ISubprogram } from './subprogram.model';
 import { ICategory } from './category.model';
 import { IImage } from './image.model';
-import { IMetric } from './metric.model';
 
 export interface IProject extends IBase {
   name: string;
@@ -14,6 +13,7 @@ export interface IProject extends IBase {
   started_at: Date;
   ended_at: Date;
   is_published: boolean;
+  participantsCount: number;
   context: string;
   objectives: string;
   duration_hours: number;
@@ -22,6 +22,5 @@ export interface IProject extends IBase {
   program: ISubprogram;
   categories: ICategory[];
   gallery: IImage[];
-  metrics: IMetric[];
   participants: IUser[];
 }

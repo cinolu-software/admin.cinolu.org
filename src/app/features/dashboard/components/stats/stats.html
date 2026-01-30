@@ -10,12 +10,8 @@
     </div>
   </div>
 }
-@if (showError()) {
-  <div class="mb-8 bg-primary-50 border border-primary-200 rounded-xl p-6">
-    <p class="text-primary-800 font-medium">Impossible de charger les statistiques. Veuillez réessayer plus tard.</p>
-  </div>
-}
-@if (showStats()) {
+
+@if (stats() && !adminStatsStore.isLoading()) {
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <div
       class="group relative bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -205,28 +201,4 @@
       <app-ui-datepicker [id]="'indicator-year'" [view]="'year'" [(ngModel)]="year" />
     </div>
   </div>
-
-  @if (reportStore.isLoading()) {
-    <app-performance-skeleton />
-  }
-  @if (reportStore.report().length) {
-    <app-performance
-      [year]="year().getFullYear()"
-      [programCount]="reportStore.report().length"
-      [averagePerformance]="averagePerformance()" />
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (program of sortedPrograms(); track $index) {
-        <app-program-card [program]="program" />
-      }
-    </div>
-  }
-  @if (reportStore.report().length === 0) {
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
-      <div class="flex items-center gap-2 mb-4">
-        <i-lucide [img]="icons.SearchX" class="size-6 text-primary-600" [strokeWidth]="2" />
-        <p class="text-primary-800 font-semibold text-xl">Aucun rapport trouvé</p>
-      </div>
-      <p class="text-sm text-gray-800">Veuillez sélectionner une année pour voir les statistiques</p>
-    </div>
-  }
 </div>

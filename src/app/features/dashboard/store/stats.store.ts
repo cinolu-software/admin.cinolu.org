@@ -5,13 +5,13 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, catchError, of, exhaustMap } from 'rxjs';
 import { IAdminStats } from '../types/stats.type';
 
-interface IAdminStatsStore {
+interface IStatsStore {
   isLoading: boolean;
   stats: IAdminStats | null;
 }
 
-export const AdminStatsStore = signalStore(
-  withState<IAdminStatsStore>({ isLoading: false, stats: null }),
+export const StatsStore = signalStore(
+  withState<IStatsStore>({ isLoading: false, stats: null }),
   withProps(() => ({
     _http: inject(HttpClient)
   })),

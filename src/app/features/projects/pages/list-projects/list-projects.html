@@ -41,6 +41,7 @@
               <th class="ui-table-header">Projet</th>
               <th class="ui-table-header">Début</th>
               <th class="ui-table-header">Fin</th>
+              <th class="ui-table-header">Participants</th>
               <th class="ui-table-header">Statut</th>
               <th class="ui-table-header">Actions</th>
             </tr>
@@ -63,6 +64,9 @@
                 </td>
                 <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
                   {{ project.ended_at | date: 'dd MMM yyyy' }}
+                </td>
+                <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
+                  <app-ui-badge [label]="project.participantsCount.toString()" />
                 </td>
                 <td class="ui-table-cell">
                   @if (project.is_published) {

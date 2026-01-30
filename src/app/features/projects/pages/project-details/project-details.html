@@ -40,12 +40,4 @@
   @if (activeTab() === 'edit' && project) {
     <app-project-update [project]="project" />
   }
-  @if (activeTab() === 'indicators' && project) {
-    <app-ui-metrics-table
-      [indicators]="indicatorsStore.indicators()"
-      [metricsMap]="metricsMap"
-      [existingMetrics]="project?.metrics ?? []"
-      [isLoading]="metricsStore.isLoading()"
-      (saveAll)="onSaveMetrics()" />
-  }
 </section>

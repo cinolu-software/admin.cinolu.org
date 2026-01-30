@@ -1,81 +1,36 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SquarePen, Images, ChartColumn, Star, Eye, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
-import { totalMetrics, achievementRate, metricsMap, metricsMapToDto } from '@shared/helpers';
-import { IProject } from '@shared/models';
-import { IndicatorsStore } from '@features/programs/store/indicators.store';
 import { GalleryStore } from '../../store/project-gallery.store';
 import { ProjectsStore } from '../../store/projects.store';
-import { ProjectMetricsStore } from '../../store/project-metrics.store';
 import { ProjectSheet } from '../../components/project-sheet/project-sheet';
 import { ProjectGallery } from '../../components/project-gallery/project-gallery';
 import { ProjectUpdate } from '../../components/project-update/project-update-form';
 import { ProjectDetailsSkeleton } from '../../ui/project-details-skeleton/project-details-skeleton';
-import { UiMetricsTable } from '@shared/ui/metrics-table/metrics-table';
 
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [IndicatorsStore, GalleryStore, ProjectsStore, ProjectMetricsStore],
-  imports: [
-    UiTabs,
-    UiMetricsTable,
-    ProjectSheet,
-    ProjectGallery,
-    ProjectUpdate,
-    ProjectDetailsSkeleton,
-    LucideAngularModule
-  ]
+  providers: [GalleryStore, ProjectsStore],
+  imports: [UiTabs, ProjectSheet, ProjectGallery, ProjectUpdate, ProjectDetailsSkeleton, LucideAngularModule]
 })
 export class ProjectDetails implements OnInit {
   #route = inject(ActivatedRoute);
   #slug = this.#route.snapshot.params['slug'];
   projectStore = inject(ProjectsStore);
   galleryStore = inject(GalleryStore);
-  metricsStore = inject(ProjectMetricsStore);
-  indicatorsStore = inject(IndicatorsStore);
-  metricsMap = {};
   activeTab = signal('details');
   tabs = [
     { label: "Fiche d'activité", name: 'details', icon: ChartColumn },
     { label: 'Mettre à jour', name: 'edit', icon: SquarePen },
-    { label: 'Galerie', name: 'gallery', icon: Images },
-    { label: 'Indicateurs', name: 'indicators', icon: ChartColumn }
+    { label: 'Galerie', name: 'gallery', icon: Images }
   ];
-  totalTargeted = computed(() => totalMetrics(this.metricsMap, 'target'));
-  totalAchieved = computed(() => totalMetrics(this.metricsMap, 'achieved'));
-  achievementPercentage = computed(() => achievementRate(this.totalTargeted(), this.totalAchieved()));
-
-  constructor() {
-    this.#watchProjectChanges();
-  }
 
   ngOnInit(): void {
     this.projectStore.loadOne(this.#slug);
     this.galleryStore.loadAll(this.#slug);
-  }
-
-  #watchProjectChanges(): void {
-    effect(() => {
-      const project = this.projectStore.project();
-      if (!project) return;
-      this.#initMetrics(project);
-    });
-  }
-
-  #initMetrics(project: IProject): void {
-    const indicators = this.indicatorsStore.indicators();
-    this.metricsMap = metricsMap(indicators, project.metrics);
-  }
-
-  onSaveMetrics(): void {
-    const project = this.projectStore.project();
-    if (!project) return;
-    const indicators = this.indicatorsStore.indicators();
-    const metrics = metricsMapToDto(this.metricsMap, indicators);
-    this.metricsStore.create({ id: project.id, metrics });
   }
 
   onCoverUploaded(): void {

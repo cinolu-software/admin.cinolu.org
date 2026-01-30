@@ -9,7 +9,6 @@ export * from './article.model';
 export * from './program.model';
 export * from './project.model';
 export * from './event.model';
-export * from './metric.model';
 export * from './venture.model';
 export * from './phase.model';
 export * from './form.model';
