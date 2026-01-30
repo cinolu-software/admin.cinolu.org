@@ -4,27 +4,32 @@
       <div class="flex-1">
         <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-4">
           <i-lucide [name]="icons.FolderOpen" class="w-4 h-4 text-white" />
-          <span class="text-sm font-medium text-white">{{ project().program.name || 'Programme' }}</span>
+          @if (project().program) {
+            <span class="text-sm font-medium text-white">{{ project().program.name }}</span>
+          } @else {
+            <span class="text-sm font-medium text-white">Programme</span>
+          }
         </div>
         <h1 class="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight">{{ project().name }}</h1>
         <div class="flex flex-wrap gap-2">
           @for (category of project().categories; track category.id) {
-          <span class="px-4 py-2 bg-white/90 text-primary-700 rounded-full text-xs md:text-sm font-semibold shadow-sm">
-            {{ category.name }}
-          </span>
+            <span
+              class="px-4 py-2 bg-white/90 text-primary-700 rounded-full text-xs md:text-sm font-semibold shadow-sm">
+              {{ category.name }}
+            </span>
           }
         </div>
       </div>
       @if (project().project_manager) {
-      <div class="hidden lg:block bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-        <div class="text-xs text-white/80 mb-2">Chef de projet</div>
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <i-lucide [img]="icons.User" class="size-5 text-white" />
+        <div class="hidden lg:block bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+          <div class="text-xs text-white/80 mb-2">Chef de projet</div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+              <i-lucide [img]="icons.User" class="size-5 text-white" />
+            </div>
+            <div class="font-semibold text-white">{{ project().project_manager?.name }}</div>
           </div>
-          <div class="font-semibold text-white">{{ project().project_manager?.name }}</div>
         </div>
-      </div>
       }
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8 border-t border-white/20">
@@ -36,7 +41,7 @@
         <div>
           <div class="text-xs text-white/70 mb-1">Date de lancement</div>
           <div class="text-sm md:text-base font-bold text-white">
-            {{ project().started_at | date : 'dd MMM yyyy' }}
+            {{ project().started_at | date: 'dd MMM yyyy' }}
           </div>
         </div>
       </div>
@@ -48,7 +53,7 @@
         <div>
           <div class="text-xs text-white/70 mb-1">Date de clôture</div>
           <div class="text-sm md:text-base font-bold text-white">
-            {{ project().ended_at | date : 'dd MMM yyyy' }}
+            {{ project().ended_at | date: 'dd MMM yyyy' }}
           </div>
         </div>
       </div>
@@ -66,8 +71,9 @@
       </div>
       <div class="text-xs font-medium text-gray-500 mb-1.5">Durée estimée</div>
       <div class="text-2xl font-semibold text-gray-900">
-        {{ project().duration_hours || '—' }} @if (project().duration_hours) {
-        <span class="text-base text-gray-500 font-normal ml-1">heures</span>
+        {{ project().duration_hours || '—' }}
+        @if (project().duration_hours) {
+          <span class="text-base text-gray-500 font-normal ml-1">heures</span>
         }
       </div>
     </div>
@@ -94,7 +100,11 @@
       </div>
       <div class="text-xs font-medium text-gray-500 mb-1.5">Programme</div>
       <div class="text-base font-semibold text-gray-900 truncate">
-        {{ project().program.name || 'Non défini' }}
+        @if (project().program) {
+          {{ project().program.name }}
+        } @else {
+          Non défini
+        }
       </div>
     </div>
   </div>
