@@ -22,12 +22,12 @@ import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar } from '@shared/ui';
 
 @Component({
-  selector: 'app-view-venture',
-  templateUrl: './view-venture.html',
+  selector: 'app-venture-details',
+  templateUrl: './venture-details.html',
   providers: [VenturesStore, ConfirmationService],
   imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar]
 })
-export class ViewVenture implements OnInit {
+export class VentureDetails implements OnInit {
   #route = inject(ActivatedRoute);
   #confirmationService = inject(ConfirmationService);
   #slug = this.#route.snapshot.params['slug'];
