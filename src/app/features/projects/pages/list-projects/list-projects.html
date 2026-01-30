@@ -66,7 +66,7 @@
                   {{ project.ended_at | date: 'dd MMM yyyy' }}
                 </td>
                 <td class="ui-table-cell text-sm text-gray-600 whitespace-nowrap">
-                  <app-ui-badge [label]="project.participantsCount.toString()" />
+                  <app-ui-badge [variant]="'info'" [label]="project.participantsCount.toString()" />
                 </td>
                 <td class="ui-table-cell">
                   @if (project.is_published) {
