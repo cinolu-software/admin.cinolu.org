@@ -55,8 +55,8 @@ export class UpdateUser implements OnInit {
   #patchForm(user: IUser): void {
     this.form.patchValue({
       ...user,
-      birth_date: user.birth_date ? parseDate(user.birth_date) : '',
-      roles: user.roles.map((role: IRole) => role.id)
+      birth_date: parseDate(user.birth_date),
+      roles: user?.roles?.map((role: IRole) => role.id) || []
     });
   }
 
