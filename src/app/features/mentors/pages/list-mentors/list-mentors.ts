@@ -30,7 +30,6 @@ export class ListMentors {
   #router = inject(Router);
   #fb = inject(FormBuilder);
   #destroyRef = inject(DestroyRef);
-  searchForm: FormGroup;
   store = inject(MentorsStore);
   itemsPerPage = 20;
   icons = { Eye, Search, Funnel, CircleCheckBig, CircleX };
@@ -41,6 +40,9 @@ export class ListMentors {
   });
   activeTab = computed(() => this.queryParams().status || 'all');
   currentPage = computed(() => Number(this.queryParams().page) || 1);
+  searchForm: FormGroup = this.#fb.group({
+    q: [this.queryParams().q || '']
+  });
   tabsConfig = signal([
     { label: 'Tous', name: 'all' },
     { label: 'En attente', name: MentorStatus.PENDING },
@@ -49,9 +51,6 @@ export class ListMentors {
   ]);
 
   constructor() {
-    this.searchForm = this.#fb.group({
-      q: [this.queryParams().q || '']
-    });
     effect(() => {
       this.store.loadAll(this.queryParams());
     });
@@ -59,21 +58,14 @@ export class ListMentors {
     searchValue?.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
-        this.queryParams.update((qp) => ({
-          ...qp,
-          q: searchValue ? searchValue.trim() : null,
-          page: null
-        }));
+        this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
         this.updateRoute();
       });
   }
 
   onTabChange(tabName: string): void {
-    this.queryParams.update((qp) => ({
-      ...qp,
-      status: tabName === 'all' ? null : (tabName as MentorStatus),
-      page: null
-    }));
+    const status = tabName as MentorStatus;
+    this.queryParams.update((qp) => ({ ...qp, status, page: null }));
     this.updateRoute();
   }
 

@@ -4,7 +4,6 @@ import { IEvent, IImage } from '@shared/models';
 import { Image, LucideAngularModule, Trash } from 'lucide-angular';
 import { FileUpload } from '@shared/ui';
 import { ApiImgPipe } from '@shared/pipes';
-import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-event-gallery',
@@ -18,8 +17,6 @@ export class EventGalleryComponent {
   coverUploaded = output<void>();
   galleryUploaded = output<void>();
   deleteImage = output<string>();
-  url = `${environment.apiUrl}events/cover/`;
-  galleryUrl = `${environment.apiUrl}events/gallery/`;
   icons = { Image, Trash };
 
   onCoverUploaded(): void {

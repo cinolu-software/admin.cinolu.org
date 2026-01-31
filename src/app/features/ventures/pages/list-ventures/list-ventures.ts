@@ -35,7 +35,6 @@ export class ListVentures {
   #router = inject(Router);
   #fb = inject(FormBuilder);
   #destroyRef = inject(DestroyRef);
-  searchForm: FormGroup;
   store = inject(VenturesStore);
   itemsPerPage = 20;
   icons = { Eye, Search, Funnel, ToggleLeft, ToggleRight };
@@ -43,12 +42,12 @@ export class ListVentures {
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q')
   });
+  searchForm: FormGroup = this.#fb.group({
+    q: [this.queryParams().q || '']
+  });
   currentPage = computed(() => Number(this.queryParams().page) || 1);
 
   constructor() {
-    this.searchForm = this.#fb.group({
-      q: [this.queryParams().q || '']
-    });
     effect(() => {
       this.store.loadAll(this.queryParams());
     });
@@ -56,11 +55,7 @@ export class ListVentures {
     searchValue?.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
-        this.queryParams.update((qp) => ({
-          ...qp,
-          q: searchValue ? searchValue.trim() : null,
-          page: null
-        }));
+        this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
         this.updateRoute();
       });
   }

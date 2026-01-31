@@ -1,11 +1,10 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProgramsStore } from '../../store/programs.store';
 import { ProgramCategoriesStore } from '../../store/program-categories.store';
 import { SquarePen, Trash2, Funnel, Tag, Star, Eye } from 'lucide-angular';
 import { LucideAngularModule } from 'lucide-angular';
-import { environment } from '@env/environment';
 import { UiTabs, FileUpload, UiInput } from '@shared/ui';
 import { IProgram } from '@shared/models';
 import { ListSubprograms } from '../../components/subprograms/subprograms';
@@ -28,12 +27,11 @@ import { UiButton, UiSelect, UiTextarea } from '@shared/ui';
   ],
   templateUrl: './update-program.html'
 })
-export class UpdateProgram {
+export class UpdateProgram implements OnInit {
   #route = inject(ActivatedRoute);
   #fb = inject(FormBuilder);
   store = inject(ProgramsStore);
   categoriesStore = inject(ProgramCategoriesStore);
-  url = environment.apiUrl + 'programs/logo/';
   activeTab = signal('edit');
   icons = { Trash2, Funnel, Tag, Star, Eye };
   tabs = [
@@ -46,26 +44,23 @@ export class UpdateProgram {
     description: ['', Validators.required],
     category: ['', Validators.required]
   });
+  slug = this.#route.snapshot.params['slug'];
 
   constructor() {
-    const slug = this.#route.snapshot.paramMap.get('slug');
-    if (!slug) return;
-    this.store.loadOne(slug);
-    this.categoriesStore.loadUnpaginated();
     effect(() => {
       const program = this.store.program();
-      if (!program) return;
-      this.#patchForm(program);
+      if (program) this.#patchForm(program);
     });
   }
 
-  #patchForm(program: IProgram): void {
-    this.updateForm.patchValue({
-      id: program.id || '',
-      name: program.name || '',
-      description: program.description || '',
-      category: program.category?.id || ''
-    });
+  ngOnInit(): void {
+    if (this.slug) this.store.loadOne(this.slug);
+    this.categoriesStore.loadUnpaginated();
+  }
+
+  #patchForm(program: IProgram | null): void {
+    if (!program) return;
+    this.updateForm.patchValue({ ...program, category: program.category?.id });
   }
 
   onTabChange(tab: string): void {
@@ -83,13 +78,11 @@ export class UpdateProgram {
 
   onShowcase(): void {
     const program = this.store.program();
-    if (!program) return;
-    this.store.highlight(program.id);
+    if (program) this.store.highlight(program.id);
   }
 
   onPublish(): void {
     const program = this.store.program();
-    if (!program) return;
-    this.store.publishProgram(program.id);
+    if (program) this.store.publishProgram(program.id);
   }
 }

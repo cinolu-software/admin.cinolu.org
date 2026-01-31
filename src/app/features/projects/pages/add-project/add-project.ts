@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectsStore } from '../../store/projects.store';
 import { CategoriesStore } from '../../store/project-categories.store';
@@ -21,9 +21,7 @@ export class AddProjectComponent {
   usersStore = inject(UsersStore);
 
   constructor() {
-    effect(() => {
-      this.programsStore.loadUnpaginated();
-    });
+    this.programsStore.loadUnpaginated();
     this.categoriesStore.loadUnpaginated();
     this.usersStore.loadStaff();
   }

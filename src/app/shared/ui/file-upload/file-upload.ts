@@ -1,6 +1,7 @@
 import { Component, input, OnInit, output, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FilePondComponent, FilePondModule, registerPlugin } from 'ngx-filepond';
 import imagePreview from 'filepond-plugin-image-preview';
+import { environment } from '@env/environment';
 registerPlugin(imagePreview);
 
 @Component({
@@ -33,7 +34,7 @@ export class FileUpload implements OnInit {
       },
       server: {
         process: {
-          url: this.url(),
+          url: environment.apiUrl + this.url(),
           method: 'POST',
           withCredentials: true
         }

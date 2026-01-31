@@ -16,7 +16,7 @@ export interface IUser extends IBase {
   city: string;
   country: string;
   gender: string;
-  birth_date: Date;
+  birth_date: string;
   google_image: string;
   profile: string;
   referral_code: string;

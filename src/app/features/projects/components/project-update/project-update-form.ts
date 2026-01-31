@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 import { IProject } from '@shared/models';
@@ -14,7 +14,7 @@ import { UsersStore } from '@features/users/store/users.store';
   providers: [ProjectsStore, UsersStore, CategoriesStore, SubprogramsStore],
   imports: [FormsModule, ReactiveFormsModule, UiInput, UiTextarea, UiSelect, UiMultiSelect, UiDatepicker, UiButton]
 })
-export class ProjectUpdate {
+export class ProjectUpdate implements OnInit {
   project = input.required<IProject>();
   #fb = inject(FormBuilder);
   categoriesStore = inject(CategoriesStore);
@@ -23,15 +23,11 @@ export class ProjectUpdate {
   updateProjectStore = inject(ProjectsStore);
   form = this.#initForm();
 
-  constructor() {
-    effect(() => {
-      const project = this.project();
-      if (!project) return;
-      this.#patchForm(project);
-      this.programsStore.loadUnpaginated();
-    });
+  ngOnInit(): void {
     this.categoriesStore.loadUnpaginated();
+    this.programsStore.loadUnpaginated();
     this.usersStore.loadStaff();
+    this.#patchForm(this.project());
   }
 
   #initForm(): FormGroup {

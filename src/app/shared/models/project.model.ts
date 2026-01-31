@@ -10,8 +10,8 @@ export interface IProject extends IBase {
   slug: string;
   cover: string;
   description: string;
-  started_at: Date;
-  ended_at: Date;
+  started_at: string;
+  ended_at: string;
   is_published: boolean;
   participantsCount: number;
   context: string;

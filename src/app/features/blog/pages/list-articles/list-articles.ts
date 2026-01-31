@@ -38,18 +38,19 @@ export class ListArticles {
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
-  searchForm: FormGroup;
   store = inject(ArticlesStore);
   itemsPerPage = 20;
   icons = { Pencil, Trash, Search, Plus, Eye, Funnel };
   queryParams = signal<FilterArticleDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q'),
-    filter:
-      (this.#route.snapshot.queryParamMap.get('filter') as FilterArticleDto['filter']) || 'all'
+    filter: (this.#route.snapshot.queryParamMap.get('filter') as FilterArticleDto['filter']) || 'all'
   });
   activeTab = computed(() => this.queryParams().filter || 'all');
   currentPage = computed(() => Number(this.queryParams().page) || 1);
+  searchForm: FormGroup = this.#fb.group({
+    q: [this.queryParams().q || '']
+  });
   tabsConfig = signal([
     { name: 'all', label: 'Tous' },
     { name: 'published', label: 'Publiés' },
@@ -58,37 +59,21 @@ export class ListArticles {
   ]);
 
   constructor() {
-    this.searchForm = this.#fb.group({
-      q: [this.queryParams().q || '']
-    });
-
     effect(() => {
       this.store.loadAll(this.queryParams());
     });
-
-    this.searchForm
-      .get('q')
-      ?.valueChanges.pipe(
-        debounceTime(1000),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.#destroyRef)
-      )
+    const searchValue = this.searchForm.get('q');
+    searchValue?.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
-        this.queryParams.update((qp) => ({
-          ...qp,
-          q: searchValue ? searchValue.trim() : null,
-          page: null
-        }));
+        this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
         this.updateRoute();
       });
   }
 
   onTabChange(tabName: string): void {
-    this.queryParams.update((qp) => ({
-      ...qp,
-      filter: tabName as FilterArticleDto['filter'],
-      page: null
-    }));
+    const filter = tabName as FilterArticleDto['filter'];
+    this.queryParams.update((qp) => ({ ...qp, filter, page: null }));
     this.updateRoute();
   }
 

@@ -37,7 +37,6 @@ export class ListEvents {
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
-  searchForm: FormGroup;
   store = inject(EventsStore);
   itemsPerPage = 20;
   icons = { Trash, Search, Funnel, Eye };
@@ -48,6 +47,9 @@ export class ListEvents {
   });
   activeTab = computed(() => this.queryParams().filter || 'all');
   currentPage = computed(() => Number(this.queryParams().page) || 1);
+  searchForm: FormGroup = this.#fb.group({
+    q: [this.queryParams().q || '']
+  });
   tabsConfig = signal([
     { label: 'Tous', name: 'all' },
     { label: 'Publiés', name: 'published' },
@@ -56,9 +58,6 @@ export class ListEvents {
   ]);
 
   constructor() {
-    this.searchForm = this.#fb.group({
-      q: [this.queryParams().q || '']
-    });
     effect(() => {
       this.store.loadAll(this.queryParams());
     });
@@ -66,11 +65,7 @@ export class ListEvents {
     searchValue?.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
-        this.queryParams.update((qp) => ({
-          ...qp,
-          q: searchValue ? searchValue.trim() : null,
-          page: null
-        }));
+        this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
         this.updateRoute();
       });
   }

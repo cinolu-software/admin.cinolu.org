@@ -1,7 +1,7 @@
 import { AbstractControl } from '@angular/forms';
 import { ICategory } from '@shared/models';
 
-export function parseDate(dateString: string | Date): Date {
+export function parseDate(dateString: string | undefined): Date {
   return dateString ? new Date(dateString) : new Date();
 }
 

@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiInput, UiMultiSelect, UiTextEditor } from '@shared/ui';
 import { Info, LucideAngularModule } from 'lucide-angular';
@@ -12,7 +12,7 @@ import { TagsStore } from '../../store/tags.store';
   providers: [ArticlesStore, TagsStore],
   imports: [ReactiveFormsModule, LucideAngularModule, UiButton, UiInput, UiMultiSelect, UiTextEditor]
 })
-export class ArticleUpdate {
+export class ArticleUpdate implements OnInit {
   article = input.required<IArticle>();
   #fb = inject(FormBuilder);
   updateStore = inject(ArticlesStore);
@@ -31,10 +31,8 @@ export class ArticleUpdate {
     });
   }
 
-  constructor() {
-    effect(() => {
-      this.#patchForm(this.article());
-    });
+  ngOnInit(): void {
+    this.#patchForm(this.article()!);
     this.tagsStore.loadUpaginated();
   }
 

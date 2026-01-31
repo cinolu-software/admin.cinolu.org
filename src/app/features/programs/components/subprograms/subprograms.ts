@@ -3,7 +3,6 @@ import { LucideAngularModule, Pencil, Trash, Eye, Star, Search, Funnel, Plus } f
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SubprogramsStore } from '../../store/subprograms.store';
 import { ISubprogram } from '@shared/models';
-import { environment } from '@env/environment';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { IProgram } from '@shared/models';
 import { ConfirmationService } from '@shared/services/confirmation';
@@ -56,7 +55,6 @@ export class ListSubprograms {
     name: ['', Validators.required],
     description: ['', Validators.required]
   });
-  url = environment.apiUrl + 'subprograms/logo/';
   icons = { Pencil, Plus, Trash, Eye, Star, Search, Funnel };
   isCreating = signal(false);
   editingSubprogramId = signal<string | null>(null);

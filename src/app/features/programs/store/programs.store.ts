@@ -61,15 +61,17 @@ export const ProgramsStore = signalStore(
     loadOne: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
-        switchMap((slug) =>
-          _http.get<{ data: IProgram }>(`programs/slug/${slug}`).pipe(
-            map(({ data }) => patchState(store, { isLoading: false, program: data })),
+        switchMap((slug) => {
+          return _http.get<{ data: IProgram }>(`programs/slug/${slug}`).pipe(
+            map(({ data }) => {
+              patchState(store, { isLoading: false, program: data });
+            }),
             catchError(() => {
               patchState(store, { isLoading: false, program: null });
               return of(null);
             })
-          )
-        )
+          );
+        })
       )
     ),
     create: rxMethod<ProgramDto>(

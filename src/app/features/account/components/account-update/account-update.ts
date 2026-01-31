@@ -1,10 +1,11 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthStore } from '@core/auth';
-import { environment } from '@env/environment';
 import { UpdateInfoStore } from '@features/account/store/update-info.store';
 import { UpdatePasswordStore } from '@features/account/store/update-password.store';
 import { GENDERS } from '@shared/data';
+import { parseDate } from '@shared/helpers';
+import { IUser } from '@shared/models';
 import { UiInput, UiDatepicker, UiTextarea, UiSelect, UiButton, FileUpload } from '@ui';
 
 @Component({
@@ -13,24 +14,20 @@ import { UiInput, UiDatepicker, UiTextarea, UiSelect, UiButton, FileUpload } fro
   providers: [UpdateInfoStore, UpdatePasswordStore],
   imports: [ReactiveFormsModule, UiInput, UiDatepicker, UiTextarea, UiSelect, UiButton, FileUpload]
 })
-export class AccountUpdate {
+export class AccountUpdate implements OnInit {
   #fb = inject(FormBuilder);
   infoStore = inject(UpdateInfoStore);
   passwordStore = inject(UpdatePasswordStore);
   authStore = inject(AuthStore);
-  url = environment.apiUrl + 'users/image-profile';
   genderOptions = GENDERS;
   infoForm: FormGroup = this.#initInfoForm();
   passwordForm: FormGroup = this.#initPasswordForm();
+  user = computed<IUser | null>(() => this.authStore.user());
 
-  constructor() {
-    effect(() => {
-      const user = this.authStore.user();
-      if (!user) return;
-      this.infoForm.patchValue({
-        ...user,
-        birth_date: user.birth_date && new Date(user.birth_date)
-      });
+  ngOnInit(): void {
+    this.infoForm.patchValue({
+      ...this.user(),
+      birth_date: parseDate(this.user()?.birth_date)
     });
   }
 

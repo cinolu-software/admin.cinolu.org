@@ -65,15 +65,11 @@ export class ListPrograms {
     effect(() => {
       this.updateRouteAndPrograms();
     });
-    const searchInput = this.searchForm.get('q');
-    searchInput?.valueChanges
+    const searchValue = this.searchForm.get('q');
+    searchValue?.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
-        const nextQ = searchValue ? searchValue.trim() : null;
-        this.queryParams.update((qp) => {
-          if (qp.q === nextQ && qp.page === null) return qp;
-          return { ...qp, page: null, q: nextQ };
-        });
+        this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
       });
   }
 

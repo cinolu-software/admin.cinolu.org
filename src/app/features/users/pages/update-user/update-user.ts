@@ -24,17 +24,16 @@ export class UpdateUser implements OnInit {
   genders = GENDERS;
   form = this.#initForm();
 
-  constructor() {
-    effect(() => {
-      const user = this.usersStore.user();
-      if (!user) return;
-      this.#patchForm(user);
-    });
+  ngOnInit(): void {
+    this.usersStore.loadOne(this.#email);
     this.rolesStore.loadUnpaginated();
   }
 
-  ngOnInit(): void {
-    this.usersStore.loadOne(this.#email);
+  constructor() {
+    effect(() => {
+      const user = this.usersStore.user();
+      if (user) this.#patchForm(user);
+    });
   }
 
   #initForm(): FormGroup {
@@ -52,7 +51,8 @@ export class UpdateUser implements OnInit {
     });
   }
 
-  #patchForm(user: IUser): void {
+  #patchForm(user: IUser | null): void {
+    if (!user) return;
     this.form.patchValue({
       ...user,
       birth_date: parseDate(user.birth_date),

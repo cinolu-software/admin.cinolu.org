@@ -16,9 +16,9 @@ export interface IEvent extends IBase {
   duration_hours: number;
   event_manager?: IUser;
   selection_criteria: string;
-  started_at: Date;
+  started_at: string;
   is_published: boolean;
-  ended_at: Date;
+  ended_at: string;
   program: ISubprogram;
   categories: ICategory[];
   gallery: IImage[];

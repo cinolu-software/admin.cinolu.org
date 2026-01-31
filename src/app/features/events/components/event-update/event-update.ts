@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IEvent } from '@shared/models';
 import { extractCategoryIds, parseDate } from '@shared/helpers/form.helper';
@@ -14,7 +14,7 @@ import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } 
   providers: [EventsStore, CategoriesStore, UsersStore, SubprogramsStore],
   imports: [FormsModule, ReactiveFormsModule, UiSelect, UiMultiSelect, UiInput, UiButton, UiTextarea, UiDatepicker]
 })
-export class EventUpdate {
+export class EventUpdate implements OnInit {
   event = input.required<IEvent>();
   #fb = inject(FormBuilder);
   store = inject(EventsStore);
@@ -23,15 +23,11 @@ export class EventUpdate {
   usersStore = inject(UsersStore);
   form = this.#initForm();
 
-  constructor() {
-    effect(() => {
-      const event = this.event();
-      if (!event) return;
-      this.#patchForm(event);
-      this.programsStore.loadUnpaginated();
-    });
-    this.categoriesStore.loadUnpaginated();
+  ngOnInit(): void {
+    this.#patchForm(this.event());
+    this.programsStore.loadUnpaginated();
     this.usersStore.loadStaff();
+    this.categoriesStore.loadUnpaginated();
   }
 
   #initForm(): FormGroup {

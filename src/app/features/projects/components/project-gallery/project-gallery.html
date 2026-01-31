@@ -6,29 +6,29 @@
         <div
           class="relative h-48 w-full bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-gray-400 transition">
           @if (project().cover) {
-          <img
-            priority
-            fill
-            [ngSrc]="project() | apiIMG : 'project'"
-            [alt]="project().name + ' cover image'"
-            class="w-full h-full object-cover" />
+            <img
+              priority
+              fill
+              [ngSrc]="project() | apiIMG: 'project'"
+              [alt]="project().name + ' cover image'"
+              class="w-full h-full object-cover" />
           } @else {
-          <div class="flex items-center justify-center h-full text-gray-400">
-            <div class="text-center">
-              <i-lucide [img]="icons.Image" class="size-6 mb-2" />
-              <p class="text-sm">Aucune image</p>
+            <div class="flex items-center justify-center h-full text-gray-400">
+              <div class="text-center">
+                <i-lucide [img]="icons.Image" class="size-6 mb-2" />
+                <p class="text-sm">Aucune image</p>
+              </div>
             </div>
-          </div>
           }
         </div>
       </div>
       <div class="lg:col-span-2">
         @if (isLoading()) {
-        <div class="h-20 bg-gray-200 animate-pulse rounded-lg w-full"></div>
+          <div class="h-20 bg-gray-200 animate-pulse rounded-lg w-full"></div>
         } @else {
-        <div class="md:w-3/5">
-          <app-ui-file-upload [name]="'cover'" [url]="url + project().id" (loaded)="onCoverUploaded()" />
-        </div>
+          <div class="md:w-3/5">
+            <app-ui-file-upload [name]="'cover'" [url]="'projects/cover' + project().id" (loaded)="onCoverUploaded()" />
+          </div>
         }
       </div>
     </div>
@@ -39,49 +39,49 @@
     <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Galerie d'images</h6>
     <div class="mb-6">
       @if (isLoading()) {
-      <div class="h-20 bg-gray-200 animate-pulse rounded-lg w-full"></div>
+        <div class="h-20 bg-gray-200 animate-pulse rounded-lg w-full"></div>
       } @else {
-      <div class="md:w-2/5">
-        <app-ui-file-upload
-          [multiple]="true"
-          [name]="'image'"
-          [url]="galleryUrl + project().id"
-          (loaded)="onGalleryUploaded()" />
-      </div>
+        <div class="md:w-2/5">
+          <app-ui-file-upload
+            [multiple]="true"
+            [name]="'image'"
+            [url]="'projects/gallery' + project().id"
+            (loaded)="onGalleryUploaded()" />
+        </div>
       }
     </div>
 
     @if (gallery().length > 0) {
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      @for (image of gallery(); track image.id) {
-      <div class="relative group">
-        <div
-          class="relative h-40 w-full bg-gray-200 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-primary-400 transition">
-          <img
-            priority
-            fill
-            [ngSrc]="image | apiIMG : 'gallery'"
-            class="w-full h-full object-cover"
-            [alt]="project().name + ' gallery image'" />
-          <div
-            class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <button
-              (click)="onDeleteImage(image.id)"
-              class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition">
-              <i-lucide [img]="icons.Trash2" class="size-5" />
-            </button>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        @for (image of gallery(); track image.id) {
+          <div class="relative group">
+            <div
+              class="relative h-40 w-full bg-gray-200 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-primary-400 transition">
+              <img
+                priority
+                fill
+                [ngSrc]="image | apiIMG: 'gallery'"
+                class="w-full h-full object-cover"
+                [alt]="project().name + ' gallery image'" />
+              <div
+                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <button
+                  (click)="onDeleteImage(image.id)"
+                  class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition">
+                  <i-lucide [img]="icons.Trash2" class="size-5" />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        }
       </div>
-      }
-    </div>
     } @else {
-    <div
-      class="flex flex-col items-start justify-center py-12 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-      <i-lucide [img]="icons.Image" class="size-10 text-gray-300 mb-3" />
-      <p class="text-gray-500 font-medium">Aucune image dans la galerie</p>
-      <p class="text-gray-400 text-sm mt-1">Commencez par ajouter des images ci-dessus</p>
-    </div>
+      <div
+        class="flex flex-col items-start justify-center py-12 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+        <i-lucide [img]="icons.Image" class="size-10 text-gray-300 mb-3" />
+        <p class="text-gray-500 font-medium">Aucune image dans la galerie</p>
+        <p class="text-gray-400 text-sm mt-1">Commencez par ajouter des images ci-dessus</p>
+      </div>
     }
   </div>
 </div>

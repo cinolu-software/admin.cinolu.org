@@ -40,27 +40,22 @@ export class ProgramCategories {
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q')
   });
-  searchForm: FormGroup;
-  createForm: FormGroup;
-  updateForm: FormGroup;
+  searchForm: FormGroup = this.#fb.group({
+    q: [this.queryParams().q || '']
+  });
+  createForm: FormGroup = this.#fb.group({
+    name: ['', Validators.required]
+  });
+  updateForm: FormGroup = this.#fb.group({
+    name: ['', Validators.required]
+  });
   icons = { Pencil, Trash, Search, Funnel };
   itemsPerPage = 10;
   isCreating = signal(false);
   editingCategoryId = signal<string | null>(null);
-
   currentPage = computed(() => Number(this.queryParams().page) || 1);
 
   constructor() {
-    this.searchForm = this.#fb.group({
-      q: [this.queryParams().q || '']
-    });
-    this.createForm = this.#fb.group({
-      name: ['', Validators.required]
-    });
-    this.updateForm = this.#fb.group({
-      name: ['', Validators.required]
-    });
-
     effect(() => {
       this.store.loadAll(this.queryParams());
     });
@@ -68,11 +63,7 @@ export class ProgramCategories {
     searchValue?.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
-        this.queryParams.update((qp) => ({
-          ...qp,
-          q: searchValue ? searchValue.trim() : null,
-          page: null
-        }));
+        this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
         this.updateRoute();
       });
   }
