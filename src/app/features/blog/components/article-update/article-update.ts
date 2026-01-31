@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiInput, UiMultiSelect, UiTextEditor } from '@shared/ui';
 import { Info, LucideAngularModule } from 'lucide-angular';
