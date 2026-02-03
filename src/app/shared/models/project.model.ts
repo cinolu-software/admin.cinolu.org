@@ -3,6 +3,7 @@ import { IUser } from './user.model';
 import { ISubprogram } from './subprogram.model';
 import { ICategory } from './category.model';
 import { IImage } from './image.model';
+import { IPhase } from './phase.model';
 
 export interface IProject extends IBase {
   name: string;
@@ -23,4 +24,5 @@ export interface IProject extends IBase {
   categories: ICategory[];
   gallery: IImage[];
   participants: IUser[];
+  phases: IPhase[];
 }
