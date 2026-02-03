@@ -9,8 +9,8 @@ import { IPhase } from '@shared/models';
 import { parseDate } from '@shared/helpers/form.helper';
 
 @Component({
-  selector: 'app-phase-manager',
-  templateUrl: './phase-manager.html',
+  selector: 'app-phases',
+  templateUrl: './phases.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [PhasesStore],
   imports: [
@@ -24,7 +24,7 @@ import { parseDate } from '@shared/helpers/form.helper';
     LucideAngularModule
   ]
 })
-export class PhaseManager implements OnInit {
+export class Phases implements OnInit {
   projectId = input.required<string>();
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
