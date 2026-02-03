@@ -27,14 +27,15 @@
           <div class="h-20 bg-gray-200 animate-pulse rounded-lg w-full"></div>
         } @else {
           <div class="md:w-3/5">
-            <app-ui-file-upload [name]="'cover'" [url]="'projects/cover' + project().id" (loaded)="onCoverUploaded()" />
+            <app-ui-file-upload
+              [name]="'cover'"
+              [url]="'projects/cover/' + project().id"
+              (loaded)="onCoverUploaded()" />
           </div>
         }
       </div>
     </div>
   </div>
-
-  <!-- Section: Galerie d'images -->
   <div>
     <h6 class="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Galerie d'images</h6>
     <div class="mb-6">
@@ -45,12 +46,11 @@
           <app-ui-file-upload
             [multiple]="true"
             [name]="'image'"
-            [url]="'projects/gallery' + project().id"
+            [url]="'projects/gallery/' + project().id"
             (loaded)="onGalleryUploaded()" />
         </div>
       }
     </div>
-
     @if (gallery().length > 0) {
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         @for (image of gallery(); track image.id) {
