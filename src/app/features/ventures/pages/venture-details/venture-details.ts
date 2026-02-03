@@ -17,7 +17,7 @@ import {
 } from 'lucide-angular';
 import { UiBadge, UiConfirmDialog } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar } from '@shared/ui';
 
@@ -25,7 +25,7 @@ import { UiAvatar } from '@shared/ui';
   selector: 'app-venture-details',
   templateUrl: './venture-details.html',
   providers: [VenturesStore, ConfirmationService],
-  imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar]
+  imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar, NgOptimizedImage]
 })
 export class VentureDetails implements OnInit {
   #route = inject(ActivatedRoute);

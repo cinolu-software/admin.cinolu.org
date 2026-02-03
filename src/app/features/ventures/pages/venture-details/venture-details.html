@@ -223,7 +223,7 @@
             <div
               class="bg-gray-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-primary-200 overflow-hidden">
               @if (product.gallery && product.gallery.length > 0) {
-                <div class="h-20 w-full overflow-hidden relative">
+                <div class="h-28 md:h-36 w-full overflow-hidden relative">
                   <img
                     [ngSrc]="product | apiIMG: 'product'"
                     [alt]="product.name"
