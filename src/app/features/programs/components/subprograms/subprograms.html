@@ -135,7 +135,7 @@
                     @if (getEditingSubprogram()) {
                       <div class="rounded-xl border w-full md:w-1/2 border-dashed border-gray-300 bg-white p-4">
                         <p class="text-xs font-semibold text-gray-600 mb-3">Logo</p>
-                        <app-ui-file-upload [name]="'logo'" [url]="'subprograms/logo' + getEditingSubprogram()?.id" />
+                        <app-ui-file-upload [name]="'logo'" [url]="'subprograms/logo/' + getEditingSubprogram()?.id" />
                       </div>
                     }
                     @if (getEditingSubprogram()) {
