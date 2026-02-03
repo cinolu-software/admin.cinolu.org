@@ -26,7 +26,7 @@
         <div class="h-20 bg-gray-200 animate-pulse rounded-lg w-full"></div>
       } @else {
         <div class="md:w-3/5">
-          <app-ui-file-upload [name]="'cover'" [url]="'events/cover' + event().id" (loaded)="onCoverUploaded()" />
+          <app-ui-file-upload [name]="'cover'" [url]="'events/cover/' + event().id" (loaded)="onCoverUploaded()" />
         </div>
       }
     </div>
@@ -43,7 +43,7 @@
         <app-ui-file-upload
           [multiple]="true"
           [name]="'image'"
-          [url]="'events/gallery' + event().id"
+          [url]="'events/gallery/' + event().id"
           (loaded)="onGalleryUploaded()" />
       </div>
     }
