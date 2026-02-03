@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LucideAngularModule, Users, Layers, Calendar } from 'lucide-angular';
 import { startWith } from 'rxjs';
-import { GroupedParticipantsStore } from '../../store/grouped-participants.store';
+import { ParticipantsStore } from '../../store/participants.store';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar, UiBadge, UiSelect } from '@shared/ui';
 import { parseDate } from '@shared/helpers/form.helper';
@@ -15,12 +15,12 @@ const UNASSIGNED_VALUE = '__unassigned__';
   selector: 'app-participants',
   templateUrl: './participants.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [GroupedParticipantsStore],
+  providers: [ParticipantsStore],
   imports: [DatePipe, ReactiveFormsModule, LucideAngularModule, ApiImgPipe, UiAvatar, UiBadge, UiSelect]
 })
 export class Participants implements OnInit {
   projectId = input.required<string>();
-  store = inject(GroupedParticipantsStore);
+  store = inject(ParticipantsStore);
   form = new FormGroup({
     phase: new FormControl<string | null>(null)
   });
