@@ -1,0 +1,106 @@
+<div class="flex flex-col gap-6">
+  @if (store.isLoading() && !store.data()) {
+    <div class="flex items-center justify-center py-12" aria-busy="true">
+      <div class="animate-pulse flex flex-col gap-4 w-full max-w-md">
+        <div class="h-12 bg-gray-200 rounded-xl"></div>
+        <div class="h-32 bg-gray-200 rounded-xl"></div>
+      </div>
+    </div>
+  }
+  @if (store.data() && !store.isLoading()) {
+    @let options = phaseOptions();
+    @if (options.length === 0) {
+      <div
+        class="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50/50 py-12 px-4"
+        role="status">
+        <div class="flex size-14 items-center justify-center rounded-full bg-primary-50 text-primary-600 mb-4">
+          <i-lucide [name]="icons.Users" class="size-7" aria-hidden="true" />
+        </div>
+        <p class="text-center text-gray-600 font-medium">Aucun participant</p>
+        <p class="text-center text-sm text-gray-500 mt-1 max-w-sm">
+          Ce projet n'a pas encore de participants assignés.
+        </p>
+      </div>
+    }
+    @if (options.length > 0) {
+      <div class="flex flex-col gap-4">
+        <div class="max-w-md" [formGroup]="form">
+          <app-ui-select
+            id="phase-filter"
+            [options]="options"
+            formControlName="phase"
+            placeholder="Sélectionner une phase" />
+        </div>
+        @let phase = currentPhase();
+        @let participants = currentParticipants();
+        <article
+          class="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden transition-shadow hover:shadow-md"
+          [class.border-amber-200]="!phase"
+          [class.bg-amber-50]="!phase"
+          [class.bg-opacity-50]="!phase">
+          <div
+            class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-gray-200"
+            [class.bg-gray-50]="phase"
+            [class.bg-amber-100]="!phase"
+            [class.bg-opacity-50]="!phase"
+            [class.border-amber-200]="!phase">
+            <div class="flex items-center gap-3 min-w-0">
+              <span
+                class="flex size-9 items-center justify-center rounded-lg shrink-0"
+                [class.bg-primary-100]="phase"
+                [class.text-primary-600]="phase"
+                [class.bg-amber-200]="!phase"
+                [class.text-amber-800]="!phase">
+                <i-lucide [name]="phase ? icons.Layers : icons.Users" class="size-5" aria-hidden="true" />
+              </span>
+              <div class="min-w-0">
+                <h4 class="font-semibold text-gray-900">
+                  {{ phase ? phase.name : 'Non assignés' }}
+                </h4>
+                @if (phase) {
+                  <p class="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
+                    <i-lucide [name]="icons.Calendar" class="size-4 shrink-0" aria-hidden="true" />
+                    {{ phase.started_at | date: 'dd MMM yyyy' }}
+                    - {{ phase.ended_at | date: 'dd MMM yyyy' }}
+                  </p>
+                }
+              </div>
+            </div>
+            <app-ui-badge [variant]="phase ? 'info' : 'default'" [label]="participants.length + ' participant(s)'" />
+          </div>
+          <ul class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" role="list">
+            @for (participant of participants; track participant.id) {
+              <li>
+                <div
+                  class="flex items-center gap-3 p-3 rounded-lg border transition-colors"
+                  [class.border-gray-100]="phase"
+                  [class.bg-gray-50]="phase"
+                  [class.bg-opacity-50]="phase"
+                  [class.hover:bg-gray-50]="phase"
+                  [class.border-amber-100]="!phase"
+                  [class.bg-white]="!phase"
+                  [class.hover:bg-amber-50]="!phase"
+                  [class.bg-opacity-50]="!phase">
+                  <app-ui-avatar [shape]="'circle'" [image]="participant | apiIMG: 'user'" [label]="participant.name" />
+                  <div class="min-w-0 flex-1">
+                    <p class="font-medium text-gray-900 truncate">
+                      {{ participant.name }}
+                    </p>
+                    @if (participant.email) {
+                      <p class="text-sm text-gray-500 truncate">
+                        {{ participant.email }}
+                      </p>
+                    }
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+          @if (participants.length === 0) {
+            <p class="px-4 pb-4 text-sm text-gray-500 italic">Aucun participant dans cette phase.</p>
+          }
+        </article>
+      </div>
+    }
+  }
+</div>
