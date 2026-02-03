@@ -37,6 +37,9 @@
       (galleryUploaded)="onGalleryUploaded()"
       (deleteImage)="onDeleteImage($event)" />
   }
+  @if (activeTab() === 'phases' && project && project.id) {
+    <app-phase-manager [projectId]="project.id" />
+  }
   @if (activeTab() === 'edit' && project) {
     <app-project-update [project]="project" />
   }
