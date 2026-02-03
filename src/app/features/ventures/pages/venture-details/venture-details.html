@@ -198,10 +198,13 @@
           @for (image of venture.gallery; track image.id) {
             <div
               class="relative group overflow-hidden rounded-lg border border-gray-200 hover:border-primary-300 transition-all duration-200">
-              <img
-                [src]="image | apiIMG: 'gallery'"
-                [alt]="venture.name"
-                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200" />
+              <div class="h-28 md:h-36 w-full overflow-hidden relative">
+                <img
+                  [ngSrc]="image | apiIMG: 'gallery'"
+                  [alt]="venture.name"
+                  class="object-cover group-hover:scale-105 transition-transform duration-200"
+                  fill />
+              </div>
             </div>
           }
         </div>
@@ -220,11 +223,12 @@
             <div
               class="bg-gray-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-primary-200 overflow-hidden">
               @if (product.gallery && product.gallery.length > 0) {
-                <div class="h-48 w-full overflow-hidden">
+                <div class="h-20 w-full overflow-hidden relative">
                   <img
-                    [src]="product.gallery | apiIMG: 'venture'"
+                    [ngSrc]="product | apiIMG: 'product'"
                     [alt]="product.name"
-                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-200" />
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                    fill />
                 </div>
               }
               <div class="p-5">
