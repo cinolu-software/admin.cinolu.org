@@ -20,7 +20,7 @@
       [filter]="true"
       [optionLabel]="'name'"
       [optionValue]="'id'"
-      [options]="programsStore.allSubprograms()"
+      [options]="programs()"
       formControlName="program"
       placeholder="Sélectionner un programme" />
     <app-ui-select
@@ -28,7 +28,7 @@
       label="Chef de projet"
       [optionLabel]="'name'"
       [optionValue]="'id'"
-      [options]="usersStore.staff()"
+      [options]="staff()"
       [filter]="true"
       formControlName="project_manager"
       placeholder="Sélectionner un chef de projet" />
@@ -38,7 +38,7 @@
       label="Catégories"
       [optionLabel]="'name'"
       [optionValue]="'id'"
-      [options]="categoriesStore.allCategories()"
+      [options]="categories()"
       formControlName="categories"
       placeholder="Choisir une ou plusieurs catégories" />
     <app-ui-datepicker [required]="true" [id]="'started_at'" label="Date de début" formControlName="started_at" />

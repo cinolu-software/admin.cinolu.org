@@ -11,12 +11,15 @@ import { ProjectUpdate } from '../../components/project-update/project-update';
 import { Phases } from '../../components/phases/phases';
 import { ProjectDetailsSkeleton } from '../../ui/project-details-skeleton/project-details-skeleton';
 import { Participants } from '@features/projects/components/participants/participants';
+import { SubprogramsStore } from '@features/programs/store/subprograms.store';
+import { CategoriesStore } from '@features/projects/store/project-categories.store';
+import { UsersStore } from '@features/users/store/users.store';
 
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [GalleryStore, PhasesStore, ProjectsStore],
+  providers: [GalleryStore, PhasesStore, ProjectsStore, CategoriesStore, SubprogramsStore, UsersStore],
   imports: [
     UiTabs,
     ProjectSheet,
@@ -34,6 +37,9 @@ export class ProjectDetails implements OnInit {
   #slug = this.#route.snapshot.params['slug'];
   projectStore = inject(ProjectsStore);
   galleryStore = inject(GalleryStore);
+  categoriesStore = inject(CategoriesStore);
+  programsStore = inject(SubprogramsStore);
+  usersStore = inject(UsersStore);
   activeTab = signal(this.#route.snapshot.queryParamMap.get('tab') || 'details');
   tabs = [
     { label: "Fiche d'activité", name: 'details', icon: ChartColumn },
@@ -46,6 +52,9 @@ export class ProjectDetails implements OnInit {
   ngOnInit(): void {
     this.projectStore.loadOne(this.#slug);
     this.galleryStore.loadAll(this.#slug);
+    this.categoriesStore.loadUnpaginated();
+    this.programsStore.loadUnpaginated();
+    this.usersStore.loadStaff();
   }
 
   onCoverUploaded(): void {

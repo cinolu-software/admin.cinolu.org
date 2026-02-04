@@ -44,6 +44,10 @@
     <app-participants [project]="project" [sortedPhases]="projectStore.sortedPhases()" />
   }
   @if (activeTab() === 'edit' && project) {
-    <app-project-update [project]="project" />
+    <app-project-update
+      [project]="project"
+      [programs]="programsStore.allSubprograms()"
+      [staff]="usersStore.staff()"
+      [categories]="categoriesStore.allCategories()" />
   }
 </section>

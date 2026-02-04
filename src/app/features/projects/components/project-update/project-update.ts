@@ -1,32 +1,26 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
-import { IProject } from '@shared/models';
+import { ICategory, IProject, ISubprogram, IUser } from '@shared/models';
 import { extractCategoryIds, parseDate } from '@shared/helpers/form.helper';
 import { ProjectsStore } from '../../store/projects.store';
-import { CategoriesStore } from '../../store/project-categories.store';
-import { SubprogramsStore } from '@features/programs/store/subprograms.store';
-import { UsersStore } from '@features/users/store/users.store';
 
 @Component({
   selector: 'app-project-update',
   templateUrl: './project-update.html',
-  providers: [ProjectsStore, UsersStore, CategoriesStore, SubprogramsStore],
+  providers: [ProjectsStore],
   imports: [FormsModule, ReactiveFormsModule, UiInput, UiTextarea, UiSelect, UiMultiSelect, UiDatepicker, UiButton]
 })
 export class ProjectUpdate implements OnInit {
   project = input.required<IProject>();
+  programs = input.required<ISubprogram[]>();
+  staff = input.required<IUser[]>();
+  categories = input.required<ICategory[]>();
   #fb = inject(FormBuilder);
-  categoriesStore = inject(CategoriesStore);
-  programsStore = inject(SubprogramsStore);
-  usersStore = inject(UsersStore);
   updateProjectStore = inject(ProjectsStore);
   form = this.#initForm();
 
   ngOnInit(): void {
-    this.categoriesStore.loadUnpaginated();
-    this.programsStore.loadUnpaginated();
-    this.usersStore.loadStaff();
     this.#patchForm(this.project());
   }
 
