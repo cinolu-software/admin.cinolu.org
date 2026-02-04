@@ -1,18 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, input, signal, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, Plus, Pencil, Trash2, Calendar, FileText } from 'lucide-angular';
-import { PhasesStore } from '../../store/phases.store';
-import { UiButton, UiDatepicker, UiInput, UiTextarea, UiConfirmDialog } from '@shared/ui';
+import { UiButton, UiDatepicker, UiInput, UiTextarea, UiConfirmDialog, UiBadge } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
-import { IPhase } from '@shared/models';
+import { IPhase, IProject } from '@shared/models';
 import { parseDate } from '@shared/helpers/form.helper';
+import { PhaseDto } from '../../dto/phases/phase.dto';
+import { PhasesStore } from '@features/projects/store/phases.store';
 
 @Component({
   selector: 'app-phases',
   templateUrl: './phases.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [PhasesStore],
   imports: [
     DatePipe,
     ReactiveFormsModule,
@@ -21,24 +21,30 @@ import { parseDate } from '@shared/helpers/form.helper';
     UiTextarea,
     UiDatepicker,
     UiConfirmDialog,
-    LucideAngularModule
+    LucideAngularModule,
+    UiBadge
   ]
 })
-export class Phases implements OnInit {
-  projectId = input.required<string>();
-  #fb = inject(FormBuilder);
+export class Phases {
+  project = input.required<IProject | null>();
+  phasesChange = output<IPhase[]>();
   #confirmationService = inject(ConfirmationService);
-  store = inject(PhasesStore);
+  #fb = inject(FormBuilder);
+  phasesStore = inject(PhasesStore);
   form: FormGroup = this.#buildForm();
   editingPhaseId = signal<string | null>(null);
   showCreateForm = signal(false);
   icons = { Plus, Pencil, Trash2, Calendar, FileText };
-  sortedPhases = computed(() =>
-    this.store.phases().sort((a, b) => parseDate(a.started_at).getTime() - parseDate(b.started_at).getTime())
-  );
 
-  ngOnInit(): void {
-    this.store.loadByProject(this.projectId());
+  constructor() {
+    effect(() => {
+      const proj = this.project();
+      if (proj?.phases) {
+        this.phasesStore.setPhases([...proj.phases]);
+      } else {
+        this.phasesStore.setPhases([]);
+      }
+    });
   }
 
   #buildForm(): FormGroup {
@@ -52,12 +58,7 @@ export class Phases implements OnInit {
 
   onCreateClick(): void {
     this.editingPhaseId.set(null);
-    this.form.reset({
-      name: '',
-      description: '',
-      started_at: null,
-      ended_at: null
-    });
+    this.form.reset();
     this.showCreateForm.set(true);
   }
 
@@ -78,13 +79,17 @@ export class Phases implements OnInit {
   }
 
   onSubmit(): void {
-    this.store.create({ ...this.form.value, id: this.projectId() });
-    this.onCancelForm();
+    const proj = this.project();
+    if (!proj?.id || this.form.invalid) return;
+    const body = this.form.value as PhaseDto;
+    this.phasesStore.create({ dto: { ...body, id: proj.id }, onSuccess: () => this.onCancelForm() });
   }
 
   onUpdate(): void {
-    this.store.update({ ...this.form.value, id: this.editingPhaseId() });
-    this.onCancelForm();
+    const id = this.editingPhaseId();
+    if (!id || this.form.invalid) return;
+    const body = this.form.value as PhaseDto;
+    this.phasesStore.update({ dto: { ...body, id }, onSuccess: () => this.onCancelForm() });
   }
 
   onDelete(phase: IPhase): void {
@@ -93,7 +98,9 @@ export class Phases implements OnInit {
       message: `Êtes-vous sûr de vouloir supprimer la phase « ${phase.name} » ?`,
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      accept: () => this.store.delete(phase.id)
+      accept: () => {
+        this.phasesStore.delete(phase.id);
+      }
     });
   }
 
