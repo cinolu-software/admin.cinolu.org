@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import type { IPhase } from '@shared/models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SquarePen, Images, ChartColumn, Star, Eye, Layers, Users, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
@@ -64,10 +63,6 @@ export class ProjectDetails implements OnInit {
   onTabChange(tab: string): void {
     this.activeTab.set(tab);
     this.#router.navigate([], { queryParams: { tab } });
-  }
-
-  onPhasesChange(phases: IPhase[]): void {
-    this.projectStore.setProjectPhases(phases);
   }
 
   onShowcase(): void {
