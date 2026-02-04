@@ -38,30 +38,17 @@ export const PhasesStore = signalStore(
         })
       )
     ),
-    loadOne: rxMethod<string>(
+    create: rxMethod<{ dto: PhaseDto & { id: string }; onSuccess: () => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
-        switchMap((slug) =>
-          _http.get<{ data: IPhase }>(`phases/${slug}`).pipe(
-            tap(({ data }) => patchState(store, { isLoading: false, phase: data })),
-            catchError(() => {
-              patchState(store, { isLoading: false, phase: null });
-              return of(null);
-            })
-          )
-        )
-      )
-    ),
-    create: rxMethod<PhaseDto & { id: string }>(
-      pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap((dto) => {
+        switchMap(({ dto, onSuccess }) => {
           const { id, ...body } = dto;
           return _http.post<{ data: IPhase }>(`phases/${id}`, body).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été créée avec succès');
               const phases = [...store.phases(), data];
               patchState(store, { isLoading: false, phases, phase: data });
+              onSuccess();
             }),
             catchError(() => {
               _toast.showError("Une erreur s'est produite lors de la création de la phase");
@@ -72,16 +59,17 @@ export const PhasesStore = signalStore(
         })
       )
     ),
-    update: rxMethod<PhaseDto & { id: string }>(
+    update: rxMethod<{ dto: PhaseDto & { id: string }; onSuccess: () => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
-        switchMap((dto) => {
+        switchMap(({ dto, onSuccess }) => {
           const { id, ...body } = dto;
           return _http.patch<{ data: IPhase }>(`phases/${id}`, body).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été mise à jour avec succès');
               const phases = store.phases().map((p) => (p.id === data.id ? data : p));
               patchState(store, { isLoading: false, phases });
+              onSuccess();
             }),
             catchError(() => {
               _toast.showError("Une erreur s'est produite lors de la mise à jour");
@@ -104,6 +92,28 @@ export const PhasesStore = signalStore(
             }),
             catchError(() => {
               _toast.showError("Une erreur s'est produite lors de la suppression");
+              patchState(store, { isLoading: false });
+              return of(null);
+            })
+          )
+        )
+      )
+    ),
+    setPhases: (phases: IPhase[]): void => {
+      patchState(store, { phases });
+    },
+    groupParticipants: rxMethod<{ ids: string[]; phaseId: string; onSuccess: () => void }>(
+      pipe(
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap(({ ids, phaseId, onSuccess }) =>
+          _http.post<void>('phases/group-participants', { ids, phaseId }).pipe(
+            map(() => {
+              _toast.showSuccess('Les participants ont été déplacés avec succès');
+              patchState(store, { isLoading: false });
+              onSuccess();
+            }),
+            catchError(() => {
+              _toast.showError("Une erreur s'est produite lors du déplacement des participants");
               patchState(store, { isLoading: false });
               return of(null);
             })

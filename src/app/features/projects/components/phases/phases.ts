@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, Plus, Pencil, Trash2, Calendar, FileText } from 'lucide-angular';
@@ -26,8 +26,8 @@ import { PhasesStore } from '@features/projects/store/phases.store';
   ]
 })
 export class Phases {
-  project = input.required<IProject | null>();
-  phasesChange = output<IPhase[]>();
+  project = input.required<IProject>();
+  sortedPhases = input.required<IPhase[]>();
   #confirmationService = inject(ConfirmationService);
   #fb = inject(FormBuilder);
   phasesStore = inject(PhasesStore);
@@ -38,12 +38,7 @@ export class Phases {
 
   constructor() {
     effect(() => {
-      const proj = this.project();
-      if (proj?.phases) {
-        this.phasesStore.setPhases([...proj.phases]);
-      } else {
-        this.phasesStore.setPhases([]);
-      }
+      this.phasesStore.setPhases([...this.sortedPhases()]);
     });
   }
 
@@ -51,8 +46,8 @@ export class Phases {
     return this.#fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', Validators.required],
-      started_at: [null as Date | null, Validators.required],
-      ended_at: [null as Date | null, Validators.required]
+      started_at: [null, Validators.required],
+      ended_at: [null, Validators.required]
     });
   }
 
@@ -79,10 +74,9 @@ export class Phases {
   }
 
   onSubmit(): void {
-    const proj = this.project();
-    if (!proj?.id || this.form.invalid) return;
+    if (!this.project().id || this.form.invalid) return;
     const body = this.form.value as PhaseDto;
-    this.phasesStore.create({ dto: { ...body, id: proj.id }, onSuccess: () => this.onCancelForm() });
+    this.phasesStore.create({ dto: { ...body, id: this.project().id }, onSuccess: () => this.onCancelForm() });
   }
 
   onUpdate(): void {
