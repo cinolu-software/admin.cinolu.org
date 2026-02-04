@@ -1,25 +1,43 @@
-@if (totalPages > 1) {
-<nav class="pagination" role="navigation" aria-label="Pagination">
-  <button
-    type="button"
-    class="pagination-button pagination-prev"
-    [disabled]="currentPage() === 1"
-    (click)="previousPage()"
-    aria-label="Page précédente">
-    <i-lucide [name]="icons.ChevronLeft" class="size-4" />
-    <span>Précédent</span>
-  </button>
-  <div class="pagination-info">
-    <span class="pagination-page-count">{{ currentPage() }} / {{ totalPages }}</span>
-  </div>
-  <button
-    type="button"
-    class="pagination-button pagination-next"
-    [disabled]="currentPage() === totalPages"
-    (click)="nextPage()"
-    aria-label="Page suivante">
-    <span>Suivant</span>
-    <i-lucide [name]="icons.ChevronRight" class="size-4" />
-  </button>
-</nav>
+@if (totalPages() > 1) {
+  <nav class="pagination" role="navigation">
+    <button
+      type="button"
+      class="pagination-nav pagination-prev"
+      [disabled]="currentPage() === 1"
+      (click)="previousPage()"
+      aria-label="Page précédente">
+      <i-lucide [name]="icons.ChevronLeft" class="size-4" aria-hidden="true" />
+    </button>
+    <ul class="pagination-pages" role="list">
+      @for (item of visibleItems(); track $index) {
+        @if (item === 'ellipsis') {
+          <li class="pagination-ellipsis" aria-hidden="true">
+            <span class="pagination-ellipsis-dot">…</span>
+          </li>
+        } @else {
+          <li>
+            <button
+              type="button"
+              class="pagination-page"
+              [class.pagination-page-active]="currentPage() === item"
+              (click)="goToPage(item)">
+              {{ item }}
+            </button>
+          </li>
+        }
+      }
+    </ul>
+    <button
+      type="button"
+      class="pagination-nav pagination-next"
+      [disabled]="currentPage() === totalPages()"
+      (click)="nextPage()"
+      aria-label="Page suivante">
+      <i-lucide [name]="icons.ChevronRight" class="size-4" aria-hidden="true" />
+    </button>
+    <div class="pagination-info" aria-live="polite">
+      <span class="pagination-page-count"> {{ currentPage() }} / {{ totalPages() }} </span>
+      <span class="pagination-item-count"> {{ startItem() }} - {{ endItem() }} sur {{ totalItems() }} </span>
+    </div>
+  </nav>
 }

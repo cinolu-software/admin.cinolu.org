@@ -1,14 +1,33 @@
-@layer utilities {
+@layer components {
   .pagination {
-    @apply flex items-center justify-center gap-6 py-4;
+    @apply flex flex-wrap tabular-nums  items-center justify-center gap-3 py-4;
   }
 
-  .pagination-button {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-sm font-medium transition-all duration-150 hover:bg-gray-50 hover:border-gray-300 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-200;
+  .pagination-nav {
+    @apply inline-flex items-center gap-2 size-10 justify-center rounded-full bg-white border border-gray-200 hover:bg-gray-300 hover:border-gray-300 text-gray-700 text-sm font-medium transition-all duration-200;
+    @apply active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed;
+  }
+
+  .pagination-pages {
+    @apply flex items-center gap-1 list-none m-0 p-0;
+  }
+
+  .pagination-page {
+    @apply size-10 px-3 rounded-full text-sm font-medium transition-all duration-200;
+    @apply bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300;
+    @apply active:scale-[0.98] aria-[current=page]:pointer-events-none;
+  }
+
+  .pagination-page-active {
+    @apply bg-primary-500 border-primary-500 text-white hover:bg-primary-600 hover:border-primary-600;
+  }
+
+  .pagination-ellipsis-dot {
+    @apply text-gray-400 text-sm font-medium select-none;
   }
 
   .pagination-info {
-    @apply flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-lg border border-gray-200;
+    @apply flex items-center gap-3 h-10 pl-4 border-l border-gray-200;
   }
 
   .pagination-page-count {
@@ -16,6 +35,6 @@
   }
 
   .pagination-item-count {
-    @apply text-xs text-gray-500 border-l border-gray-300 pl-3;
+    @apply text-xs text-gray-500;
   }
 }
