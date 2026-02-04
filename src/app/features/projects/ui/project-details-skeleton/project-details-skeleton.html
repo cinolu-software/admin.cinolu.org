@@ -1,4 +1,15 @@
-<!-- Skeleton Hero -->
+<div
+  class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 mb-6">
+  <div class="flex-1">
+    <h2 class="text-xl font-bold text-gray-900">Chargement du projet...</h2>
+    <p class="text-sm text-gray-500 mt-1">Gérer les paramètres de publication et de mise en avant</p>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <div class="w-11 h-11 bg-gray-200 rounded-xl animate-pulse"></div>
+    <div class="w-20 h-8 bg-gray-200 rounded-xl animate-pulse"></div>
+  </div>
+</div>
+
 <div
   class="relative bg-linear-to-br from-primary-500 via-primary-600 to-primary-700 rounded-2xl shadow-lg overflow-hidden">
   <div class="relative px-8 py-10">
@@ -25,11 +36,11 @@
 <!-- Skeleton Metrics -->
 <div class="grid grid-cols-1 my-6 sm:grid-cols-2 lg:grid-cols-4 gap-4">
   @for (i of [1, 2, 3, 4]; track i) {
-  <div class="relative bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-    <div class="w-11 h-11 bg-gray-200 rounded-xl mb-3 animate-pulse"></div>
-    <div class="h-4 w-20 bg-gray-200 rounded mb-2 animate-pulse"></div>
-    <div class="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
-  </div>
+    <div class="relative bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+      <div class="w-11 h-11 bg-gray-200 rounded-xl mb-3 animate-pulse"></div>
+      <div class="h-4 w-20 bg-gray-200 rounded mb-2 animate-pulse"></div>
+      <div class="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
+    </div>
   }
 </div>
 
@@ -60,14 +71,14 @@
 <!-- Skeleton Accordion -->
 <div class="space-y-4">
   @for (i of [1, 2, 3, 4]; track i) {
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-    <div class="flex items-center gap-5">
-      <div class="w-12 h-12 bg-gray-200 rounded-xl animate-pulse"></div>
-      <div class="flex-1">
-        <div class="h-5 w-48 bg-gray-200 rounded mb-2 animate-pulse"></div>
-        <div class="h-4 w-64 bg-gray-200 rounded animate-pulse"></div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+      <div class="flex items-center gap-5">
+        <div class="w-12 h-12 bg-gray-200 rounded-xl animate-pulse"></div>
+        <div class="flex-1">
+          <div class="h-5 w-48 bg-gray-200 rounded mb-2 animate-pulse"></div>
+          <div class="h-4 w-64 bg-gray-200 rounded animate-pulse"></div>
+        </div>
       </div>
     </div>
-  </div>
   }
 </div>
