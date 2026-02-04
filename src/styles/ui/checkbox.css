@@ -31,6 +31,15 @@
     @apply bg-primary-700 border-primary-700;
   }
 
+  .ui-checkbox-input:indeterminate {
+    @apply bg-primary-500 border-primary-500;
+  }
+
+  .ui-checkbox-input:indeterminate::after {
+    content: '';
+    @apply absolute inset-0 m-auto block h-0.5 w-3 rounded-full bg-white;
+  }
+
   .ui-checkbox-input.ui-checkbox-disabled {
     @apply bg-slate-100 border-slate-200 cursor-not-allowed opacity-50;
   }
