@@ -1,12 +1,12 @@
-import { patchState, signalStore, withMethods, withProps, withState } from '@ngrx/signals';
-import { inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IProject } from '@shared/models';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, parseDate } from '@shared/helpers';
 import { FilterProjectCategoriesDto } from '../dto/categories/filter-categories.dto';
 import { ProjectDto } from '../dto/projects/project.dto';
 
@@ -26,6 +26,13 @@ export const ProjectsStore = signalStore(
     _http: inject(HttpClient),
     _router: inject(Router),
     _toast: inject(ToastrService)
+  })),
+  withComputed(({ project }) => ({
+    sortedPhases: computed(() => {
+      const p = project();
+      if (!p?.phases?.length) return [];
+      return [...p.phases].sort((a, b) => parseDate(a.started_at).getTime() - parseDate(b.started_at).getTime());
+    })
   })),
   withMethods(({ _http, _router, _toast, ...store }) => ({
     loadAll: rxMethod<FilterProjectCategoriesDto>(
