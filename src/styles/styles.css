@@ -115,7 +115,7 @@
   }
 
   .search-input-icon-svg {
-    @apply size-5 text-gray-400 transition-colors duration-200;
+    @apply size-4 text-gray-400 transition-colors duration-200;
   }
 
   .search-input {
