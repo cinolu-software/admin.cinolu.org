@@ -36,15 +36,7 @@
         </div>
       </div>
     } @else {
-      <div
-        class="p-8 bg-white rounded-2xl shadow-xl shadow-gray-900/5 border border-gray-100 overflow-hidden">
-        <div class="mb-8 flex flex-col items-center justify-center gap-3">
-          <div class="text-red-600 font-medium rounded bg-red-50 border border-red-200 p-4">
-            <span class="text-sm">
-              Espace administrateur réservé aux membres autorisés de l'équipe.
-            </span>
-          </div>
-        </div>
+      <div class="p-8 bg-white rounded-2xl shadow-xl shadow-gray-900/5 border border-gray-100 overflow-hidden">
         <form [formGroup]="form" class="flex flex-col gap-5" (ngSubmit)="onSignIn()" novalidate>
           <app-ui-input
             [id]="'email'"
@@ -59,7 +51,7 @@
             formControlName="password"
             placeholder="••••••••"
             [invalid]="(form.get('password')?.invalid && form.get('password')?.touched) || false" />
-          <div class="mt-2 flex flex-col gap-10">
+          <div class="mt-2 flex flex-col gap-5">
             <app-ui-button
               class="w-full"
               type="submit"
@@ -67,6 +59,17 @@
               [disabled]="store.isLoading() || form.invalid"
               [loading]="store.isLoading()">
               Se connecter
+            </app-ui-button>
+            <div class="flex items-center">
+              <div class="flex-auto border-t border-gray-200"></div>
+              <div class="text-sm text-gray-600 mx-4">Ou</div>
+              <div class="flex-auto border-t border-gray-200"></div>
+            </div>
+            <app-ui-button [variant]="'outlined'" class="w-full" type="button" (click)="signinWithGoogle()">
+              <div class="relative h-5 w-5">
+                <img ngSrc="/images/google.svg" alt="Google" fill />
+              </div>
+              <span class="-ml-2">oogle</span>
             </app-ui-button>
           </div>
         </form>

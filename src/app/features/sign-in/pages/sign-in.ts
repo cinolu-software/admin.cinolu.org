@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UiInput, UiPassword, UiButton } from '@ui';
 import { SignInStore } from '../store/sign-in.store';
 import { AuthStore } from '@core/auth/auth.store';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-sign-in',
@@ -39,5 +40,9 @@ export class SignIn {
       redirectPath: redirectPath || '/dashboard',
       onSuccess: () => true
     });
+  }
+
+  signinWithGoogle(): void {
+    window.location.replace(environment.apiUrl + 'auth/sign-in');
   }
 }
