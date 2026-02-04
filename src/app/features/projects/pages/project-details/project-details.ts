@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import type { IPhase } from '@shared/models';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SquarePen, Images, ChartColumn, Star, Eye, Layers, Users, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
 import { GalleryStore } from '../../store/project-gallery.store';
+import { PhasesStore } from '../../store/phases.store';
 import { ProjectsStore } from '../../store/projects.store';
 import { ProjectSheet } from '../../components/project-sheet/project-sheet';
 import { ProjectGallery } from '../../components/project-gallery/project-gallery';
@@ -15,7 +17,7 @@ import { Participants } from '@features/projects/components/participants/partici
   selector: 'app-project-details',
   templateUrl: './project-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [GalleryStore, ProjectsStore],
+  providers: [GalleryStore, PhasesStore, ProjectsStore],
   imports: [
     UiTabs,
     ProjectSheet,
@@ -29,10 +31,11 @@ import { Participants } from '@features/projects/components/participants/partici
 })
 export class ProjectDetails implements OnInit {
   #route = inject(ActivatedRoute);
+  #router = inject(Router);
   #slug = this.#route.snapshot.params['slug'];
   projectStore = inject(ProjectsStore);
   galleryStore = inject(GalleryStore);
-  activeTab = signal('details');
+  activeTab = signal(this.#route.snapshot.queryParamMap.get('tab') || 'details');
   tabs = [
     { label: "Fiche d'activité", name: 'details', icon: ChartColumn },
     { label: 'Phases', name: 'phases', icon: Layers },
@@ -60,6 +63,11 @@ export class ProjectDetails implements OnInit {
 
   onTabChange(tab: string): void {
     this.activeTab.set(tab);
+    this.#router.navigate([], { queryParams: { tab } });
+  }
+
+  onPhasesChange(phases: IPhase[]): void {
+    this.projectStore.setProjectPhases(phases);
   }
 
   onShowcase(): void {
