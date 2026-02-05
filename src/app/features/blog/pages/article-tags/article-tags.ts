@@ -2,7 +2,7 @@ import { Component, computed, DestroyRef, effect, inject, signal } from '@angula
 import { LucideAngularModule, Plus, Search, Trash, Funnel, Pencil } from 'lucide-angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TagsStore } from '../../store/tags.store';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FilterArticlesTagsDto } from '../../dto/filter-tags.dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -28,7 +28,6 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 })
 export class ArticleTags {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
@@ -61,7 +60,6 @@ export class ArticleTags {
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
         this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
-        this.updateRoute();
       });
   }
 
@@ -70,12 +68,6 @@ export class ArticleTags {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-    this.updateRoute();
-  }
-
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/blog/tags'], { queryParams });
   }
 
   onResetFilters(): void {
@@ -85,7 +77,6 @@ export class ArticleTags {
       q: null,
       page: null
     }));
-    this.updateRoute();
   }
 
   onDelete(id: string): void {

@@ -38,10 +38,10 @@
       (deleteImage)="onDeleteImage($event)" />
   }
   @if (activeTab() === 'phases' && project) {
-    <app-phases [project]="project" [sortedPhases]="projectStore.sortedPhases()" />
+    <app-phases [projectId]="project.id" />
   }
   @if (activeTab() === 'participants' && project) {
-    <app-participants [project]="project" [sortedPhases]="projectStore.sortedPhases()" />
+    <app-participations [project]="project" [sortedPhases]="projectStore.sortedPhases()" />
   }
   @if (activeTab() === 'edit' && project) {
     <app-project-update

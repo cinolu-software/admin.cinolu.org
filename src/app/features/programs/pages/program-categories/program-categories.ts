@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { LucideAngularModule, Trash, Search, Funnel, Pencil } from 'lucide-angular';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProgramCategoriesStore } from '../../store/program-categories.store';
 import { ICategory } from '@shared/models';
@@ -31,7 +31,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ProgramCategories {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
@@ -64,7 +63,6 @@ export class ProgramCategories {
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
         this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
-        this.updateRoute();
       });
   }
 
@@ -73,7 +71,6 @@ export class ProgramCategories {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-    this.updateRoute();
   }
 
   onResetFilters(): void {
@@ -83,12 +80,6 @@ export class ProgramCategories {
       q: null,
       page: null
     }));
-    this.updateRoute();
-  }
-
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/program-categories'], { queryParams });
   }
 
   onToggleCreation(): void {

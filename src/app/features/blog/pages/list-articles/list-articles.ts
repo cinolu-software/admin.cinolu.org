@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterArticleDto } from '../../dto/filter-article.dto';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Eye, Funnel, LucideAngularModule, Pencil, Plus, Search, Trash } from 'lucide-angular';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { ArticlesStore } from '../../store/articles.store';
@@ -34,7 +34,6 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 })
 export class ListArticles {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
@@ -67,14 +66,12 @@ export class ListArticles {
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
         this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
-        this.updateRoute();
       });
   }
 
   onTabChange(tabName: string): void {
     const filter = tabName as FilterArticleDto['filter'];
     this.queryParams.update((qp) => ({ ...qp, filter, page: null }));
-    this.updateRoute();
   }
 
   onPageChange(currentPage: number): void {
@@ -82,12 +79,6 @@ export class ListArticles {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-    this.updateRoute();
-  }
-
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/blog/articles'], { queryParams });
   }
 
   onResetFilters(): void {
@@ -98,7 +89,6 @@ export class ListArticles {
       page: null,
       filter: 'all'
     }));
-    this.updateRoute();
   }
 
   onDelete(articleId: string): void {

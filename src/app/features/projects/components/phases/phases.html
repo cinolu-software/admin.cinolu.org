@@ -65,6 +65,35 @@
       </form>
     </div>
   }
+  @if (isLoading) {
+    <ol class="relative space-y-0 border-l-2 border-gray-200 pl-6 md:pl-8">
+      @for (i of [1, 2, 3]; track i) {
+        <li class="relative pb-8 last:pb-0" role="listitem">
+          <span
+            class="absolute -left-[1.45rem] top-2 flex size-4 items-center justify-center rounded-full bg-gray-200 ring-4 ring-white animate-pulse"></span>
+          <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+              <div class="min-w-0 flex-1 space-y-2">
+                <div class="h-5 w-48 max-w-full bg-gray-200 rounded animate-pulse"></div>
+                <div class="flex items-center gap-1">
+                  <div class="size-4 bg-gray-100 rounded animate-pulse"></div>
+                  <div class="h-4 w-40 bg-gray-100 rounded animate-pulse"></div>
+                </div>
+                <div class="mt-2 space-y-1">
+                  <div class="h-3 w-full bg-gray-100 rounded animate-pulse"></div>
+                  <div class="h-3 w-4/5 bg-gray-100 rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <div class="h-9 w-24 bg-gray-100 rounded-lg animate-pulse"></div>
+                <div class="h-9 w-24 bg-gray-100 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </li>
+      }
+    </ol>
+  }
   @if (sortedPhases.length > 0 && !isLoading) {
     <ol class="relative space-y-0 border-l-2 border-gray-200 pl-6 md:pl-8" role="list" aria-label="Phases du projet">
       @for (phase of sortedPhases; track phase.id) {

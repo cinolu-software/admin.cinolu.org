@@ -1,16 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SquarePen, Images, ChartColumn, Star, Eye, Layers, Users, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
 import { GalleryStore } from '../../store/project-gallery.store';
-import { PhasesStore } from '../../store/phases.store';
 import { ProjectsStore } from '../../store/projects.store';
 import { ProjectSheet } from '../../components/project-sheet/project-sheet';
 import { ProjectGallery } from '../../components/project-gallery/project-gallery';
 import { ProjectUpdate } from '../../components/project-update/project-update';
 import { Phases } from '../../components/phases/phases';
 import { ProjectDetailsSkeleton } from '../../ui/project-details-skeleton/project-details-skeleton';
-import { Participants } from '@features/projects/components/participants/participants';
+import { Participations } from '@features/projects/components/participations/participations';
 import { SubprogramsStore } from '@features/programs/store/subprograms.store';
 import { CategoriesStore } from '@features/projects/store/project-categories.store';
 import { UsersStore } from '@features/users/store/users.store';
@@ -19,21 +18,20 @@ import { UsersStore } from '@features/users/store/users.store';
   selector: 'app-project-details',
   templateUrl: './project-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [GalleryStore, PhasesStore, ProjectsStore, CategoriesStore, SubprogramsStore, UsersStore],
+  providers: [GalleryStore, ProjectsStore, CategoriesStore, SubprogramsStore, UsersStore],
   imports: [
     UiTabs,
     ProjectSheet,
     ProjectGallery,
     ProjectUpdate,
     Phases,
-    Participants,
+    Participations,
     ProjectDetailsSkeleton,
     LucideAngularModule
   ]
 })
 export class ProjectDetails implements OnInit {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #slug = this.#route.snapshot.params['slug'];
   projectStore = inject(ProjectsStore);
   galleryStore = inject(GalleryStore);
@@ -71,7 +69,6 @@ export class ProjectDetails implements OnInit {
 
   onTabChange(tab: string): void {
     this.activeTab.set(tab);
-    this.#router.navigate([], { queryParams: { tab } });
   }
 
   onShowcase(): void {

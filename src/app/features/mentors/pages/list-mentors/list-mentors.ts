@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { LucideAngularModule, Search, Funnel, Eye, CircleCheckBig, CircleX } from 'lucide-angular';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MentorsStore } from '../../store/mentors.store';
 import { FilterMentorsProfileDto } from '../../dto/mentors/filter-mentors-profiles.dto';
@@ -27,7 +27,6 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 })
 export class ListMentors {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #fb = inject(FormBuilder);
   #destroyRef = inject(DestroyRef);
   store = inject(MentorsStore);
@@ -59,14 +58,12 @@ export class ListMentors {
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
         this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
-        this.updateRoute();
       });
   }
 
   onTabChange(tabName: string): void {
     const status = tabName as MentorStatus;
     this.queryParams.update((qp) => ({ ...qp, status, page: null }));
-    this.updateRoute();
   }
 
   onPageChange(currentPage: number): void {
@@ -74,17 +71,10 @@ export class ListMentors {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-    this.updateRoute();
-  }
-
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/mentor-profiles'], { queryParams });
   }
 
   onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.update((qp) => ({ ...qp, q: null, page: null, status: null }));
-    this.updateRoute();
   }
 }

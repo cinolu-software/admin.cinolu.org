@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { LucideAngularModule, Trash, Download, Search, Funnel, Pencil } from 'lucide-angular';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UsersStore } from '../../store/users.store';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
@@ -32,7 +32,6 @@ import { DatePipe } from '@angular/common';
 })
 export class ListUsers {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
@@ -62,7 +61,6 @@ export class ListUsers {
           q: searchValue ? searchValue.trim() : null,
           page: null
         }));
-        this.updateRoute();
       });
   }
 
@@ -71,18 +69,11 @@ export class ListUsers {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-    this.updateRoute();
-  }
-
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/users'], { queryParams });
   }
 
   onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.update((qp) => ({ ...qp, q: null, page: null }));
-    this.updateRoute();
   }
 
   onDownloadUsers(): void {

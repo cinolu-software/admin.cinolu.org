@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, Plus, Pencil, Trash2, Calendar, FileText } from 'lucide-angular';
 import { UiButton, UiDatepicker, UiInput, UiTextarea, UiConfirmDialog, UiBadge } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
-import { IPhase, IProject } from '@shared/models';
+import { IPhase } from '@shared/models';
 import { parseDate } from '@shared/helpers/form.helper';
 import { PhaseDto } from '../../dto/phases/phase.dto';
 import { PhasesStore } from '@features/projects/store/phases.store';
@@ -13,6 +13,7 @@ import { PhasesStore } from '@features/projects/store/phases.store';
   selector: 'app-phases',
   templateUrl: './phases.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [PhasesStore],
   imports: [
     DatePipe,
     ReactiveFormsModule,
@@ -25,9 +26,8 @@ import { PhasesStore } from '@features/projects/store/phases.store';
     UiBadge
   ]
 })
-export class Phases {
-  project = input.required<IProject>();
-  sortedPhases = input.required<IPhase[]>();
+export class Phases implements OnInit {
+  projectId = input.required<string>();
   #confirmationService = inject(ConfirmationService);
   #fb = inject(FormBuilder);
   phasesStore = inject(PhasesStore);
@@ -36,10 +36,8 @@ export class Phases {
   showCreateForm = signal(false);
   icons = { Plus, Pencil, Trash2, Calendar, FileText };
 
-  constructor() {
-    effect(() => {
-      this.phasesStore.setPhases([...this.sortedPhases()]);
-    });
+  ngOnInit(): void {
+    this.phasesStore.loadAll(this.projectId());
   }
 
   #buildForm(): FormGroup {
@@ -74,9 +72,9 @@ export class Phases {
   }
 
   onSubmit(): void {
-    if (!this.project().id || this.form.invalid) return;
+    if (this.form.invalid) return;
     const body = this.form.value as PhaseDto;
-    this.phasesStore.create({ dto: { ...body, id: this.project().id }, onSuccess: () => this.onCancelForm() });
+    this.phasesStore.create({ dto: { ...body, id: this.projectId() }, onSuccess: () => this.onCancelForm() });
   }
 
   onUpdate(): void {

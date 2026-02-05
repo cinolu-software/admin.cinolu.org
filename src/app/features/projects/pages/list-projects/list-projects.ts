@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { LucideAngularModule, Trash, Search, Funnel, Eye } from 'lucide-angular';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProjectsStore } from '../../store/projects.store';
 import { FilterProjectsDto } from '../../dto/projects/filter-projects.dto';
@@ -33,7 +33,6 @@ import { DatePipe } from '@angular/common';
 })
 export class ListProjects {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
   #fb = inject(FormBuilder);
@@ -111,13 +110,7 @@ export class ListProjects {
     });
   }
 
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/projects'], { queryParams });
-  }
-
   updateRouteAndProjects(): void {
-    this.updateRoute();
     this.store.loadAll(this.queryParams());
   }
 }

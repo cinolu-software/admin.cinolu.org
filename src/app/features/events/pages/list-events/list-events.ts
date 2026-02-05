@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { LucideAngularModule, Trash, Search, Funnel, Eye } from 'lucide-angular';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EventsStore } from '../../store/events.store';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
@@ -33,7 +33,6 @@ import { DatePipe } from '@angular/common';
 })
 export class ListEvents {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
@@ -66,13 +65,11 @@ export class ListEvents {
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
         this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
-        this.updateRoute();
       });
   }
 
   onTabChange(tabName: string): void {
     this.queryParams.update((qp) => ({ ...qp, filter: tabName, page: null }));
-    this.updateRoute();
   }
 
   onPageChange(currentPage: number): void {
@@ -80,18 +77,11 @@ export class ListEvents {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-    this.updateRoute();
-  }
-
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/events'], { queryParams });
   }
 
   onResetFilters(): void {
     this.searchForm.patchValue({ q: '' });
     this.queryParams.update((qp) => ({ ...qp, q: null, page: null, filter: 'all' }));
-    this.updateRoute();
   }
 
   onDelete(eventId: string): void {

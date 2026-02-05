@@ -1,0 +1,313 @@
+<div class="flex flex-col gap-6">
+  @let totalFiltered = filteredParticipations().length;
+  @let totalCount = totalParticipations();
+  @if (project()) {
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-wrap items-center gap-2" [attr.aria-busy]="projectsStore.isImportingCsv()">
+        <input
+          #csvFileInput
+          [id]="'participants-csv-input'"
+          type="file"
+          accept=".csv"
+          class="sr-only"
+          (change)="onCsvFileSelected($event)"
+          [disabled]="projectsStore.isImportingCsv()" />
+        <app-ui-button
+          type="button"
+          variant="outlined"
+          size="small"
+          [loading]="projectsStore.isImportingCsv()"
+          [disabled]="projectsStore.isImportingCsv()"
+          (clicked)="triggerCsvFileSelect()">
+          <span class="flex items-center gap-2">
+            <i-lucide [name]="icons.Upload" class="size-4 shrink-0" />
+            @if (selectedCsvFile()) {
+              Changer le fichier
+            } @else {
+              Choisir un fichier CSV
+            }
+          </span>
+        </app-ui-button>
+        @if (selectedCsvFile()) {
+          <span class="text-gray-600 truncate max-w-48 font-medium text-sm" [title]="selectedCsvFile()?.name">
+            {{ selectedCsvFile()?.name }}
+          </span>
+          <app-ui-button
+            type="button"
+            variant="primary"
+            size="small"
+            [disabled]="projectsStore.isImportingCsv()"
+            [loading]="projectsStore.isImportingCsv()"
+            (clicked)="importCsv()">
+            Importer
+          </app-ui-button>
+          <app-ui-button type="button" variant="outlined" size="small" (clicked)="clearCsvSelection()">
+            Annuler
+          </app-ui-button>
+        }
+      </div>
+      @if (totalCount > 0) {
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-wrap gap-3 text-gray-600">
+            <button
+              type="button"
+              (click)="selectPhase(null)"
+              class="font-medium text-sm flex items-center bg-opacity-50 gap-2 rounded-lg border border-gray-200 px-4 py-2.5 text-left transition-colors"
+              [class.border-primary-200]="!selectedPhase()"
+              [class.bg-primary-50]="!selectedPhase()"
+              [class.text-primary-800]="!selectedPhase()">
+              <i-lucide [name]="icons.Users" class="size-4 shrink-0" />
+              Tous
+              <span
+                class="size-6 flex font-semibold tabular-nums items-center justify-center bg-gray-100/90 rounded-full">
+                {{ totalCount }}
+              </span>
+            </button>
+
+            @for (phase of sortedPhases(); track phase.id) {
+              <button
+                type="button"
+                (click)="selectPhase(phase.id)"
+                class="flex text-sm font-medium items-center bg-opacity-50 gap-2 rounded-lg border border-gray-200 px-4 py-2.5 text-left transition-colors"
+                [class.border-primary-200]="selectedPhase() === phase.id"
+                [class.bg-primary-50]="selectedPhase() === phase.id"
+                [class.text-primary-800]="selectedPhase() === phase.id">
+                {{ phase.name }}
+                <span
+                  class="size-6 flex font-semibold tabular-nums items-center justify-center bg-gray-100/90 rounded-full">
+                  {{ phaseCounts().get(phase.id) ?? 0 }}
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+        <form class="flex flex-col sm:flex-row sm:items-end gap-4 mb-4 w-full" [formGroup]="form">
+          <div class="search-input-wrapper w-full">
+            <div class="search-input-group">
+              <div class="search-input-icon">
+                <i-lucide [name]="icons.Search" class="search-input-icon-svg" />
+              </div>
+              <label for="participants-search-input" class="sr-only">Rechercher un participant</label>
+              <input
+                type="text"
+                id="participants-search-input"
+                formControlName="search"
+                placeholder="Nom ou email…"
+                class="search-input"
+                autocomplete="off" />
+            </div>
+          </div>
+        </form>
+      }
+      @if (projectsStore.isLoadingParticipations()) {
+        <div
+          class="rounded-xl border border-gray-200 bg-white shadow-sm"
+          role="status"
+          aria-label="Chargement des participations">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-gray-200">
+            <div class="flex items-center gap-2">
+              <div class="size-5 rounded border border-gray-200 bg-gray-100 animate-pulse"></div>
+              <div class="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            <div class="h-6 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+          </div>
+          <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+              <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-100 bg-gray-50/50">
+                <div class="size-5 rounded border border-gray-200 bg-gray-100 shrink-0 animate-pulse"></div>
+                <div class="size-10 rounded-full bg-gray-200 shrink-0 animate-pulse"></div>
+                <div class="min-w-0 flex-1 space-y-2">
+                  <div class="h-4 w-3/4 max-w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div class="h-3 w-1/2 max-w-40 bg-gray-100 rounded animate-pulse"></div>
+                  <div class="flex gap-1 mt-1">
+                    <div class="h-5 w-14 bg-gray-100 rounded-full animate-pulse"></div>
+                    <div class="h-5 w-16 bg-gray-100 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+                <div class="size-8 rounded-lg bg-gray-200 shrink-0 animate-pulse"></div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+      @if (!projectsStore.isLoadingParticipations() && totalFiltered === 0) {
+        <div
+          class="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50/50 py-12 px-4">
+          <div class="flex size-14 items-center justify-center rounded-full bg-primary-50 text-primary-600 mb-4">
+            <i-lucide [name]="icons.Users" class="size-7" />
+          </div>
+          <p class="text-center text-gray-600 font-medium">Aucune participation</p>
+          <p class="text-center text-sm text-gray-500 mt-1 max-w-sm">
+            @if (currentPhase()) {
+              Aucune participation dans cette phase ou aucun résultat pour la recherche.
+            } @else {
+              Ce projet n'a pas encore de participations.
+            }
+          </p>
+        </div>
+      }
+      @if (!projectsStore.isLoadingParticipations() && totalFiltered > 0) {
+        <div class="rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-gray-200">
+            <div class="flex items-center gap-5 min-w-0">
+              <label class="ui-checkbox-wrapper flex items-center gap-2 cursor-pointer shrink-0">
+                <div class="ui-checkbox-container relative">
+                  <input
+                    type="checkbox"
+                    [checked]="isAllFilteredSelected()"
+                    (change)="toggleSelectAll()"
+                    class="ui-checkbox-input" />
+                  @if (isAllFilteredSelected()) {
+                    <div class="ui-checkbox-checkmark">
+                      <i-lucide [name]="icons.Check" class="size-4 shrink-0" />
+                    </div>
+                  }
+                </div>
+                <span class="ui-checkbox-label text-gray-600 sr-only sm:not-sr-only">
+                  <span class="font-semibold text-gray-900 shrink-0 tabular-nums text-sm">
+                    ({{ selectedCount() }})
+                  </span>
+                  Tout sélectionner
+                </span>
+              </label>
+            </div>
+            <app-ui-badge
+              [variant]="currentPhase() ? 'info' : 'default'"
+              [label]="totalFiltered + ' participation(s)'" />
+          </div>
+          <div class="flex flex-col gap-4 py-6 px-4 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
+              <div class="min-w-0 sm:w-56 shrink-0">
+                <label for="operation-type-select" class="sr-only">Type d'opérationn</label>
+                <app-ui-select
+                  id="operation-type-select"
+                  [options]="operationTypeOptions"
+                  [formControl]="operationTypeControl"
+                  placeholder="Opération" />
+              </div>
+              @if (operationTypeControl.value === operationMove) {
+                <div class="min-w-0 sm:w-64 shrink-0">
+                  <app-ui-select
+                    id="move-phase-select"
+                    [options]="movePhaseOptions()"
+                    [formControl]="moveTargetPhaseControl"
+                    placeholder="Déplacer vers la phase" />
+                </div>
+                <app-ui-button
+                  type="button"
+                  variant="primary"
+                  size="small"
+                  [loading]="phasesStore.isLoading()"
+                  [disabled]="!moveTargetPhaseControl.value || phasesStore.isLoading()"
+                  (clicked)="moveToPhase()">
+                  <span class="flex items-center gap-2">
+                    @if (!phasesStore.isLoading()) {
+                      <i-lucide [name]="icons.CircleArrowRight" class="size-4 shrink-0" />
+                    }
+                    Déplacer
+                  </span>
+                </app-ui-button>
+              }
+              @if (operationTypeControl.value === operationRemove) {
+                <div class="min-w-0 sm:w-64 shrink-0">
+                  <app-ui-select
+                    id="remove-phase-select"
+                    [options]="movePhaseOptions()"
+                    [formControl]="removeTargetPhaseControl"
+                    placeholder="Retirer de la phase" />
+                </div>
+                <app-ui-button
+                  type="button"
+                  variant="outlined"
+                  size="small"
+                  [loading]="phasesStore.isLoading()"
+                  [disabled]="!removeTargetPhaseControl.value || phasesStore.isLoading()"
+                  (clicked)="removeFromPhase()">
+                  <span class="flex items-center gap-2">
+                    @if (!phasesStore.isLoading()) {
+                      <i-lucide [name]="icons.Trash2" class="size-4 shrink-0" />
+                    }
+                    Retirer
+                  </span>
+                </app-ui-button>
+              }
+              <button
+                type="button"
+                class="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 border border-gray-200"
+                (click)="clearSelection()">
+                <i-lucide [name]="icons.X" class="size-4 shrink-0" />
+                Annuler
+              </button>
+            </div>
+          </div>
+          <ul class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" role="list">
+            @for (participation of paginatedParticipations(); track participationKey(participation)) {
+              <li>
+                <div
+                  class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-primary-300 transition-all select-none"
+                  [class.bg-primary-50]="isSelected(participation)"
+                  [class.border-primary-300]="isSelected(participation)">
+                  <div class="ui-checkbox-container relative shrink-0">
+                    <input
+                      type="checkbox"
+                      [checked]="isSelected(participation)"
+                      (change)="toggleSelect(participationKey(participation))"
+                      (click)="$event.stopPropagation()"
+                      class="ui-checkbox-input" />
+                    @if (isSelected(participation)) {
+                      <div class="ui-checkbox-checkmark">
+                        <i-lucide [name]="icons.Check" class="size-4 shrink-0" />
+                      </div>
+                    }
+                  </div>
+                  <app-ui-avatar
+                    [shape]="'circle'"
+                    [image]="participation.user | apiIMG: 'user'"
+                    [label]="participation.user.name" />
+                  <div class="min-w-0 flex-1">
+                    <p class="font-medium text-gray-900 truncate">
+                      {{ participation.user.name }}
+                    </p>
+                    @if (participation.user.email) {
+                      <p class="text-sm text-gray-500 truncate">
+                        {{ participation.user.email }}
+                      </p>
+                    }
+                    @if (participation.venture) {
+                      <p class="text-xs text-gray-500 truncate mt-0.5">
+                        {{ participation.venture.name }}
+                      </p>
+                    }
+                    @if (participation.phase.length) {
+                      <div class="flex flex-wrap gap-1 mt-1">
+                        @for (ph of participation.phase; track ph.id) {
+                          <app-ui-badge [label]="ph.name" variant="default" size="small" />
+                        }
+                      </div>
+                    }
+                  </div>
+                  <button
+                    type="button"
+                    class="shrink-0 rounded-lg p-2 text-gray-500"
+                    (click)="openDetail(participation)">
+                    <i-lucide [name]="icons.Eye" class="size-4" />
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+          @if (totalFiltered > pageSize) {
+            <div class="border-t border-gray-200 px-4 py-3 flex justify-end">
+              <app-ui-pagination
+                [currentPage]="currentPage()"
+                [totalItems]="totalFiltered"
+                [itemsPerPage]="pageSize"
+                (pageChange)="onPageChange($event)" />
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+<app-participation-detail-overlay [participation]="selectedParticipationForDetail()" (closed)="closeDetail()" />

@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { LucideAngularModule, Trash, Search, Funnel, Pencil } from 'lucide-angular';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IExpertise } from '@shared/models';
 import { FilterExpertisesDto } from '../../dto/expertises/filter-expertises.dto';
@@ -29,7 +29,6 @@ import { UiInput } from '@shared/ui/form/input/input';
 })
 export class MentorExpertises {
   #route = inject(ActivatedRoute);
-  #router = inject(Router);
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #destroyRef = inject(DestroyRef);
@@ -62,7 +61,6 @@ export class MentorExpertises {
       .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
       .subscribe((searchValue: string) => {
         this.queryParams.update((qp) => ({ ...qp, q: searchValue, page: null }));
-        this.updateRoute();
       });
   }
 
@@ -71,7 +69,6 @@ export class MentorExpertises {
       ...qp,
       page: currentPage === 1 ? null : currentPage.toString()
     }));
-    this.updateRoute();
   }
 
   onResetFilters(): void {
@@ -81,12 +78,6 @@ export class MentorExpertises {
       q: null,
       page: null
     }));
-    this.updateRoute();
-  }
-
-  updateRoute(): void {
-    const queryParams = this.queryParams();
-    this.#router.navigate(['/expertises'], { queryParams });
   }
 
   onToggleCreation(): void {

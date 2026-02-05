@@ -11,6 +11,7 @@ export * from './project.model';
 export * from './event.model';
 export * from './venture.model';
 export * from './phase.model';
+export * from './participation.model';
 export * from './form.model';
 export * from './expertise.model';
 export * from './mentor-profile.model';

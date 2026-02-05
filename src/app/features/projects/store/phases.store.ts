@@ -1,11 +1,13 @@
-import { patchState, signalStore, withMethods, withProps, withState } from '@ngrx/signals';
-import { inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IPhase } from '@shared/models';
 import { PhaseDto } from '../dto/phases/phase.dto';
+import { MoveParticipationsDto } from '../dto/phases/move-participations.dto';
 import { HttpClient } from '@angular/common/http';
+import { parseDate } from '@shared/helpers';
 
 interface IPhasesStore {
   isLoading: boolean;
@@ -23,12 +25,17 @@ export const PhasesStore = signalStore(
     _http: inject(HttpClient),
     _toast: inject(ToastrService)
   })),
+  withComputed(({ phases }) => ({
+    sortedPhases: computed(() =>
+      phases().sort((a, b) => parseDate(a.started_at).getTime() - parseDate(b.started_at).getTime())
+    )
+  })),
   withMethods(({ _http, _toast, ...store }) => ({
-    loadByProject: rxMethod<string>(
+    loadAll: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
-        switchMap((projectId) => {
-          return _http.get<{ data: IPhase[] }>(`phases/${projectId}`).pipe(
+        switchMap((slug) => {
+          return _http.get<{ data: IPhase[] }>(`phases/all/${slug}`).pipe(
             tap(({ data }) => patchState(store, { isLoading: false, phases: data })),
             catchError(() => {
               patchState(store, { isLoading: false, phases: [] });
@@ -102,11 +109,11 @@ export const PhasesStore = signalStore(
     setPhases: (phases: IPhase[]): void => {
       patchState(store, { phases });
     },
-    groupParticipants: rxMethod<{ ids: string[]; phaseId: string; onSuccess: () => void }>(
+    moveParticipations: rxMethod<{ dto: MoveParticipationsDto; onSuccess: () => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
-        switchMap(({ ids, phaseId, onSuccess }) =>
-          _http.post<void>('phases/group-participants', { ids, phaseId }).pipe(
+        switchMap(({ dto, onSuccess }) =>
+          _http.post<void>('phases/move/participants', dto).pipe(
             map(() => {
               _toast.showSuccess('Les participants ont été déplacés avec succès');
               patchState(store, { isLoading: false });
@@ -114,6 +121,25 @@ export const PhasesStore = signalStore(
             }),
             catchError(() => {
               _toast.showError("Une erreur s'est produite lors du déplacement des participants");
+              patchState(store, { isLoading: false });
+              return of(null);
+            })
+          )
+        )
+      )
+    ),
+    removeParticipations: rxMethod<{ dto: MoveParticipationsDto; onSuccess: () => void }>(
+      pipe(
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap(({ dto, onSuccess }) =>
+          _http.post<void>('phases/remove/participants', dto).pipe(
+            map(() => {
+              _toast.showSuccess('Les participants ont été retirés avec succès');
+              patchState(store, { isLoading: false });
+              onSuccess();
+            }),
+            catchError(() => {
+              _toast.showError("Une erreur s'est produite lors du retrait des participants");
               patchState(store, { isLoading: false });
               return of(null);
             })
