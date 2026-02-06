@@ -34,8 +34,8 @@ export const PhasesStore = signalStore(
     loadAll: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
-        switchMap((slug) => {
-          return _http.get<{ data: IPhase[] }>(`phases/all/${slug}`).pipe(
+        switchMap((id) => {
+          return _http.get<{ data: IPhase[] }>(`phases/all/${id}`).pipe(
             tap(({ data }) => patchState(store, { isLoading: false, phases: data })),
             catchError(() => {
               patchState(store, { isLoading: false, phases: [] });

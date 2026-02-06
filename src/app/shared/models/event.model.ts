@@ -3,7 +3,7 @@ import { IUser } from './user.model';
 import { ICategory } from './category.model';
 import { IImage } from './image.model';
 import { ISubprogram } from './program.model';
-import { EventParticipation } from './participation.model';
+import { IEventParticipation } from './participation.model';
 
 export interface IEvent extends IBase {
   name: string;
@@ -23,5 +23,5 @@ export interface IEvent extends IBase {
   program: ISubprogram;
   categories: ICategory[];
   gallery: IImage[];
-  participations: EventParticipation[];
+  participations: IEventParticipation[];
 }

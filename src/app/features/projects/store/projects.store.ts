@@ -1,12 +1,12 @@
-import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
-import { computed, inject } from '@angular/core';
+import { patchState, signalStore, withMethods, withProps, withState } from '@ngrx/signals';
+import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastrService } from '@shared/services/toast/toastr.service';
-import { IProject, ProjectParticipation } from '@shared/models';
-import { buildQueryParams, parseDate } from '@shared/helpers';
+import { IProject, IProjectParticipation } from '@shared/models';
+import { buildQueryParams } from '@shared/helpers';
 import { FilterProjectCategoriesDto } from '../dto/categories/filter-categories.dto';
 import { ProjectDto } from '../dto/projects/project.dto';
 
@@ -16,7 +16,7 @@ interface IProjectsStore {
   isLoadingParticipations: boolean;
   projects: [IProject[], number];
   project: IProject | null;
-  participations: ProjectParticipation[];
+  participations: IProjectParticipation[];
 }
 
 export const ProjectsStore = signalStore(
@@ -32,13 +32,6 @@ export const ProjectsStore = signalStore(
     _http: inject(HttpClient),
     _router: inject(Router),
     _toast: inject(ToastrService)
-  })),
-  withComputed(({ project }) => ({
-    sortedPhases: computed(() => {
-      const phases = project()?.phases;
-      if (!phases) return [];
-      return phases.sort((a, b) => parseDate(a.started_at).getTime() - parseDate(b.started_at).getTime());
-    })
   })),
   withMethods(({ _http, _router, _toast, ...store }) => ({
     loadAll: rxMethod<FilterProjectCategoriesDto>(
@@ -78,7 +71,7 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoadingParticipations: true, participations: [] })),
         switchMap((projectId) =>
-          _http.get<{ data: ProjectParticipation[] }>(`projects/${projectId}/participations`).pipe(
+          _http.get<{ data: IProjectParticipation[] }>(`projects/${projectId}/participations`).pipe(
             map(({ data }) => patchState(store, { participations: data ?? [], isLoadingParticipations: false })),
             catchError(() => {
               patchState(store, { participations: [], isLoadingParticipations: false });

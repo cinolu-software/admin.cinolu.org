@@ -42,7 +42,7 @@ export class ProjectDetails implements OnInit {
   tabs = [
     { label: "Fiche d'activité", name: 'details', icon: ChartColumn },
     { label: 'Phases', name: 'phases', icon: Layers },
-    { label: 'Participants', name: 'participants', icon: Users },
+    { label: 'Participations', name: 'participations', icon: Users },
     { label: 'Mettre à jour', name: 'edit', icon: SquarePen },
     { label: 'Galerie', name: 'gallery', icon: Images }
   ];

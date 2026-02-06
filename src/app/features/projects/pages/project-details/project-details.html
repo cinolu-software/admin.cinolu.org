@@ -40,8 +40,8 @@
   @if (activeTab() === 'phases' && project) {
     <app-phases [projectId]="project.id" />
   }
-  @if (activeTab() === 'participants' && project) {
-    <app-participations [project]="project" [sortedPhases]="projectStore.sortedPhases()" />
+  @if (activeTab() === 'participations' && project) {
+    <app-participations [project]="project" />
   }
   @if (activeTab() === 'edit' && project) {
     <app-project-update

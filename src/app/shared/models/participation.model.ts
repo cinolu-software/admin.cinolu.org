@@ -5,14 +5,14 @@ import { IProject } from './project.model';
 import { IUser } from './user.model';
 import { IVenture } from './venture.model';
 
-export interface ProjectParticipation extends IBase {
+export interface IProjectParticipation extends IBase {
   user: IUser;
   project: IProject;
   venture: IVenture | null;
   phase: IPhase[];
 }
 
-export interface EventParticipation extends IBase {
+export interface IEventParticipation extends IBase {
   user: IUser;
   event: IEvent;
 }

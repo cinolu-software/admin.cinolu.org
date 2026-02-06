@@ -6,7 +6,7 @@ import type { IEvent } from './event.model';
 import type { IArticle } from './article.model';
 import type { IComment } from './article.model';
 import { IMentorProfile } from './mentor-profile.model';
-import { ProjectParticipation } from './participation.model';
+import { IProjectParticipation } from './participation.model';
 
 export interface IUser extends IBase {
   email: string;
@@ -26,7 +26,7 @@ export interface IUser extends IBase {
   referrals: IUser[];
   ventures: IVenture[];
   roles: IRole[];
-  participations: ProjectParticipation[];
+  participations: IProjectParticipation[];
   managed_projects: IProject[];
   managed_events: IEvent[];
   articles: IArticle[];
