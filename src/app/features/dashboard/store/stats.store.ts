@@ -1,41 +1,63 @@
-import { HttpClient } from '@angular/common/http';
+import { patchState, signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { inject } from '@angular/core';
-import { signalStore, withState, withMethods, patchState, withProps, withHooks } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, tap, catchError, of, exhaustMap } from 'rxjs';
-import { IAdminStats } from '../types/stats.type';
+import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import type { IAdminStatsGeneral, IAdminStatsByYear } from '../types/stats.type';
 
 interface IStatsStore {
-  isLoading: boolean;
-  stats: IAdminStats | null;
+  isLoadingGeneral: boolean;
+  isLoadingByYear: boolean;
+  general: IAdminStatsGeneral | null;
+  byYear: IAdminStatsByYear | null;
+  selectedYear: number;
 }
 
+const currentYear = new Date().getFullYear();
+
 export const StatsStore = signalStore(
-  withState<IStatsStore>({ isLoading: false, stats: null }),
+  withState<IStatsStore>({
+    isLoadingGeneral: false,
+    isLoadingByYear: false,
+    general: null,
+    byYear: null,
+    selectedYear: currentYear
+  }),
   withProps(() => ({
     _http: inject(HttpClient)
   })),
   withMethods(({ _http, ...store }) => ({
-    getAdminStats: rxMethod<void>(
+    loadGeneral: rxMethod<void>(
       pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        exhaustMap(() => {
-          return _http.get<{ data: IAdminStats }>('stats/admin').pipe(
-            tap(({ data }) => {
-              patchState(store, { isLoading: false, stats: data });
-            }),
+        tap(() => patchState(store, { isLoadingGeneral: true })),
+        switchMap(() =>
+          _http.get<{ data: IAdminStatsGeneral } | IAdminStatsGeneral>('stats/admin/general').pipe(
+            map((res) => ('data' in res ? res.data : res)),
+            tap((data) => patchState(store, { isLoadingGeneral: false, general: data })),
             catchError(() => {
-              patchState(store, { isLoading: false, stats: null });
+              patchState(store, { isLoadingGeneral: false, general: null });
               return of(null);
             })
-          );
-        })
+          )
+        )
+      )
+    ),
+    loadByYear: rxMethod<number>(
+      pipe(
+        tap((year) => patchState(store, { isLoadingByYear: true, selectedYear: year })),
+        switchMap((year) =>
+          _http
+            .get<{ data: IAdminStatsByYear } | IAdminStatsByYear>(`stats/admin/by-year/${year}`)
+            .pipe(
+              map((res) => ('data' in res ? res.data : res)),
+              tap((data) => patchState(store, { isLoadingByYear: false, byYear: data })),
+              catchError(() => {
+                patchState(store, { isLoadingByYear: false, byYear: null });
+                return of(null);
+              })
+            )
+        )
       )
     )
-  })),
-  withHooks({
-    onInit({ getAdminStats }) {
-      getAdminStats();
-    }
-  })
+  }))
 );
