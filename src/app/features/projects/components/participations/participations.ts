@@ -10,7 +10,20 @@ import {
   viewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Users, Search, CircleArrowRight, X, Check, Upload, Eye, Trash2 } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Users,
+  Search,
+  CircleArrowRight,
+  X,
+  Check,
+  Upload,
+  Eye,
+  Trash2,
+  LayoutList,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-angular';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar, UiBadge, UiButton, UiPagination, UiSelect } from '@shared/ui';
 import { IPhase, IProject, IProjectParticipation } from '@shared/models';
@@ -51,14 +64,14 @@ export class Participations {
   searchQuery = signal('');
   currentPage = signal(1);
   selectedIds = signal<Set<string>>(new Set());
-  selectedParticipationForDetail = signal<IProjectParticipation | null>(null);
+  expandedParticipationKey = signal<string | null>(null);
   operationType = signal(OPERATION_MOVE);
   moveTargetPhase = signal<string | null>(null);
   removeTargetPhase = signal<string | null>(null);
   selectedCsvFile = signal<File | null>(null);
   csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   sortedPhases = signal<IPhase[]>([]);
-  icons = { Users, Search, CircleArrowRight, X, Check, Upload, Eye, Trash2 };
+  icons = { Users, Search, CircleArrowRight, X, Check, Upload, Eye, Trash2, LayoutList, ChevronDown, ChevronUp };
   pageSize = PAGE_SIZE;
   operationMove = OPERATION_MOVE;
   operationRemove = OPERATION_REMOVE;
@@ -165,12 +178,13 @@ export class Participations {
     return this.selectedIds().has(getParticipationKey(p));
   }
 
-  openDetail(p: IProjectParticipation): void {
-    this.selectedParticipationForDetail.set(p);
+  toggleDetail(p: IProjectParticipation): void {
+    const key = getParticipationKey(p);
+    this.expandedParticipationKey.update((current) => (current === key ? null : key));
   }
 
-  closeDetail(): void {
-    this.selectedParticipationForDetail.set(null);
+  isDetailExpanded(p: IProjectParticipation): boolean {
+    return this.expandedParticipationKey() === getParticipationKey(p);
   }
 
   moveToPhase(): void {
