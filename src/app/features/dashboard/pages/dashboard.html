@@ -8,7 +8,7 @@
     @if (isLoadingGeneral && !generalData) {
       <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         @for (i of [1, 2, 3, 4]; track i) {
-          <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
+          <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
             <div class="h-10 w-10 rounded-xl bg-gray-200 mb-4"></div>
             <div class="h-8 w-16 bg-gray-200 rounded mb-2"></div>
             <div class="h-4 w-24 bg-gray-100 rounded"></div>
@@ -19,7 +19,7 @@
     @if (generalData; as g) {
       <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <div
-          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
           <div
             class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
             aria-hidden="true">
@@ -29,7 +29,7 @@
           <p class="text-sm font-medium text-gray-500 mt-0.5">Utilisateurs</p>
         </div>
         <div
-          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
           <div
             class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
             aria-hidden="true">
@@ -39,7 +39,7 @@
           <p class="text-sm font-medium text-gray-500 mt-0.5">Projets</p>
         </div>
         <div
-          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
           <div
             class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
             aria-hidden="true">
@@ -49,7 +49,7 @@
           <p class="text-sm font-medium text-gray-500 mt-0.5">Événements</p>
         </div>
         <div
-          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
           <div
             class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
             aria-hidden="true">
@@ -64,7 +64,7 @@
 
   <div class="space-y-6">
     <div
-      class="flex flex-col md:flex-row md:items-center justify-between gap-4 border bg-white/90 border-gray-200 px-8 py-6 rounded-2xl">
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 border bg-white/90 border-gray-200 px-8 py-6 rounded-lg">
       <h2 class="text-lg font-bold text-gray-900">Participations par année</h2>
       <app-ui-select
         id="stats-year-select"
@@ -73,14 +73,14 @@
         [(ngModel)]="selectedYear" />
     </div>
     @if (isLoadingByYear && !byYearData) {
-      <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
+      <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
         <div class="h-24 bg-gray-100 rounded-xl mb-6"></div>
         <div class="h-64 bg-gray-100 rounded-xl"></div>
       </div>
     }
     @if (byYearData; as data) {
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
           <div class="flex items-center gap-3">
             <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
               <i-lucide [name]="icons.ChartBar" class="size-5" />
@@ -91,7 +91,7 @@
             </div>
           </div>
         </div>
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
           <div class="flex items-center gap-3">
             <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
               <i-lucide [name]="icons.FolderKanban" class="size-5" />
@@ -102,7 +102,7 @@
             </div>
           </div>
         </div>
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
           <div class="flex items-center gap-3">
             <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
               <i-lucide [name]="icons.CalendarDays" class="size-5" />
@@ -116,7 +116,7 @@
       </div>
 
       @if (data.detailedParticipations.programs.length > 0) {
-        <div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div class="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
           <div class="px-6 py-4">
             <h3 class="text-base font-semibold text-gray-900 flex items-center gap-2">
               <i-lucide [name]="icons.LayoutList" class="size-4 text-gray-500" />
@@ -161,7 +161,7 @@
           </div>
         </div>
       } @else {
-        <div class="rounded-2xl border border-gray-200 bg-white p-12 text-center text-gray-500">
+        <div class="rounded-lg border border-gray-200 bg-white p-12 text-center text-gray-500">
           <i-lucide [name]="icons.LayoutList" class="size-12 mx-auto mb-3 text-gray-300" aria-hidden="true" />
           <p class="font-medium">Aucune participation pour l'année {{ data.year }}</p>
         </div>
