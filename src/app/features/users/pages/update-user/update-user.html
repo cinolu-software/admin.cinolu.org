@@ -2,7 +2,7 @@
   @let user = usersStore.user();
   @if (user) {
     <form class="border border-gray-200 rounded-lg p-4 md:bg-white md:p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <app-ui-input
           label="Email"
           [id]="'email'"
@@ -44,7 +44,7 @@
           [options]="rolesStore.allRoles()"
           formControlName="roles"
           placeholder="Sélectionner un ou plusieurs rôles" />
-        <div class="col-span-2">
+        <div class="lg:col-span-2">
           <app-ui-textarea
             label="Biographie"
             [id]="'biography'"
