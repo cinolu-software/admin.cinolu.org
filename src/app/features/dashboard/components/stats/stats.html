@@ -64,11 +64,13 @@
 
   <div class="space-y-6">
     <div
-      class="flex flex-wrap items-center justify-between gap-4 border bg-white border-gray-200 px-8 py-6 rounded-2xl">
-      <h2 id="stats-by-year-heading" class="text-lg font-bold text-gray-900">Participations par année</h2>
-      <div class="w-32">
-        <app-ui-select id="stats-year-select" [options]="yearSelectOptions()" [formControl]="yearControl" />
-      </div>
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 border bg-white/90 border-gray-200 px-8 py-6 rounded-2xl">
+      <h2 class="text-lg font-bold text-gray-900">Participations par année</h2>
+      <app-ui-select
+        id="stats-year-select"
+        class="w-full md:w-32"
+        [options]="yearSelectOptions()"
+        [formControl]="yearControl" />
     </div>
     @if (isLoadingByYear && !byYearData) {
       <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
