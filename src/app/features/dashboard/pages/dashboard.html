@@ -1,3 +1,171 @@
-<section class="w-full">
-  <app-stats />
-</section>
+<div class="space-y-8">
+  @let isLoadingGeneral = store.isLoadingGeneral();
+  @let generalData = store.general();
+  @let isLoadingByYear = store.isLoadingByYear();
+  @let byYearData = store.byYear();
+  <div aria-labelledby="stats-general-heading">
+    <h2 id="stats-general-heading" class="sr-only">Statistiques générales</h2>
+    @if (isLoadingGeneral && !generalData) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
+            <div class="h-10 w-10 rounded-xl bg-gray-200 mb-4"></div>
+            <div class="h-8 w-16 bg-gray-200 rounded mb-2"></div>
+            <div class="h-4 w-24 bg-gray-100 rounded"></div>
+          </div>
+        }
+      </div>
+    }
+    @if (generalData; as g) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div
+          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div
+            class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
+            aria-hidden="true">
+            <i-lucide [name]="icons.Users" class="size-6" />
+          </div>
+          <p class="text-2xl font-bold text-gray-900 tabular-nums">{{ g.totalUsers }}</p>
+          <p class="text-sm font-medium text-gray-500 mt-0.5">Utilisateurs</p>
+        </div>
+        <div
+          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div
+            class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
+            aria-hidden="true">
+            <i-lucide [name]="icons.FolderKanban" class="size-6" />
+          </div>
+          <p class="text-2xl font-bold text-gray-900 tabular-nums">{{ g.totalProjects }}</p>
+          <p class="text-sm font-medium text-gray-500 mt-0.5">Projets</p>
+        </div>
+        <div
+          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div
+            class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
+            aria-hidden="true">
+            <i-lucide [name]="icons.CalendarDays" class="size-6" />
+          </div>
+          <p class="text-2xl font-bold text-gray-900 tabular-nums">{{ g.totalEvents }}</p>
+          <p class="text-sm font-medium text-gray-500 mt-0.5">Événements</p>
+        </div>
+        <div
+          class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div
+            class="inline-flex size-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 mb-4"
+            aria-hidden="true">
+            <i-lucide [name]="icons.Rocket" class="size-6" />
+          </div>
+          <p class="text-2xl font-bold text-gray-900 tabular-nums">{{ g.totalVentures }}</p>
+          <p class="text-sm font-medium text-gray-500 mt-0.5">Ventures</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="space-y-6">
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 border bg-white/90 border-gray-200 px-8 py-6 rounded-2xl">
+      <h2 class="text-lg font-bold text-gray-900">Participations par année</h2>
+      <app-ui-select
+        id="stats-year-select"
+        class="w-full md:w-32"
+        [options]="yearSelectOptions()"
+        [(ngModel)]="selectedYear" />
+    </div>
+    @if (isLoadingByYear && !byYearData) {
+      <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
+        <div class="h-24 bg-gray-100 rounded-xl mb-6"></div>
+        <div class="h-64 bg-gray-100 rounded-xl"></div>
+      </div>
+    }
+    @if (byYearData; as data) {
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+              <i-lucide [name]="icons.ChartBar" class="size-5" />
+            </div>
+            <div>
+              <p class="text-xl font-bold text-gray-900 tabular-nums">{{ data.summary.totalParticipations }}</p>
+              <p class="text-xs font-medium text-gray-500">Total participations</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+              <i-lucide [name]="icons.FolderKanban" class="size-5" />
+            </div>
+            <div>
+              <p class="text-xl font-bold text-gray-900 tabular-nums">{{ data.summary.totalProjectParticipations }}</p>
+              <p class="text-xs font-medium text-gray-500">Projets</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+              <i-lucide [name]="icons.CalendarDays" class="size-5" />
+            </div>
+            <div>
+              <p class="text-xl font-bold text-gray-900 tabular-nums">{{ data.summary.totalEventParticipations }}</p>
+              <p class="text-xs font-medium text-gray-500">Événements</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (data.detailedParticipations.programs.length > 0) {
+        <div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div class="px-6 py-4">
+            <h3 class="text-base font-semibold text-gray-900 flex items-center gap-2">
+              <i-lucide [name]="icons.LayoutList" class="size-4 text-gray-500" />
+              Détail par programme
+            </h3>
+          </div>
+          <div class="ui-table-wrapper overflow-x-auto">
+            <table class="ui-table">
+              <thead class="ui-table-head">
+                <tr class="ui-table-head-row">
+                  <th class="ui-table-header" scope="col">Programmes</th>
+                  <th class="ui-table-header" scope="col">Participations</th>
+                  <th class="ui-table-header" scope="col">Sous-programmes</th>
+                </tr>
+              </thead>
+              <tbody class="ui-table-body">
+                @for (program of data.detailedParticipations.programs; track program.id) {
+                  <tr class="ui-table-row">
+                    <td class="ui-table-cell">
+                      <span class="font-medium text-gray-900">{{ program.name }}</span>
+                    </td>
+                    <td class="ui-table-cell">
+                      <span class="tabular-nums text-gray-700">{{ program.participations }}</span>
+                    </td>
+                    <td class="ui-table-cell">
+                      @if (program.subprograms.length > 0) {
+                        <ul class="flex flex-wrap gap-1.5">
+                          @for (sub of program.subprograms; track sub.id) {
+                            <li>
+                              <app-ui-badge [label]="sub.name + ' (' + sub.participations + ')'" size="small" />
+                            </li>
+                          }
+                        </ul>
+                      } @else {
+                        <span class="text-sm text-gray-400">—</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      } @else {
+        <div class="rounded-2xl border border-gray-200 bg-white p-12 text-center text-gray-500">
+          <i-lucide [name]="icons.LayoutList" class="size-12 mx-auto mb-3 text-gray-300" aria-hidden="true" />
+          <p class="font-medium">Aucune participation pour l'année {{ data.year }}</p>
+        </div>
+      }
+    }
+  </div>
+</div>
