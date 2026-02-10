@@ -1,128 +1,105 @@
-@if (participation(); as p) {
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="participation-detail-title"
-    tabindex="0"
-    (click)="emitClose()"
-    (keydown)="onOverlayKeydown($event)">
-    <div
-      class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-      (click)="onPanelClick($event)"
-      (keydown)="onPanelKeydown($event)"
-      tabindex="0">
-      <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <h2 id="participation-detail-title" class="text-lg font-semibold text-gray-900">Détail de la participation</h2>
-        <button
-          type="button"
-          class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          (click)="emitClose()"
-          aria-label="Fermer">
-          <i-lucide [name]="iconX" class="size-5" />
-        </button>
-      </div>
-      <div class="p-6 space-y-6">
-        <section aria-labelledby="detail-user-heading">
-          <h3 id="detail-user-heading" class="text-sm font-semibold text-gray-700 mb-3">Participant</h3>
-          <div class="flex items-start gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100">
-            <app-ui-avatar
-              [shape]="'circle'"
-              [image]="p.user | apiIMG: 'user'"
-              [label]="p.user.name" />
-            <div class="min-w-0 flex-1 space-y-1">
-              <p class="font-medium text-gray-900">{{ p.user.name }}</p>
-              @if (p.user.email) {
-                <p class="text-sm text-gray-600">
-                  <span class="font-medium">Email :</span>
-                  <a [href]="'mailto:' + p.user.email" class="text-primary-600 hover:underline">
-                    {{ p.user.email }}
-                  </a>
-                </p>
-              }
-              @if (p.user.phone_number) {
-                <p class="text-sm text-gray-600">
-                  <span class="font-medium">Téléphone :</span>
-                  {{ p.user.phone_number }}
-                </p>
-              }
-              @if (p.user.city || p.user.country) {
-                <p class="text-sm text-gray-600">
-                  <span class="font-medium">Lieu :</span>
-                  {{ p.user.city }}{{ p.user.city && p.user.country ? ', ' : '' }}{{ p.user.country }}
-                </p>
-              }
-              @if (p.user.biography) {
-                <p class="text-sm text-gray-600 mt-2 line-clamp-3">{{ p.user.biography }}</p>
-              }
-            </div>
-          </div>
-        </section>
-        @if (p.venture) {
-          <section aria-labelledby="detail-venture-heading">
-            <h3 id="detail-venture-heading" class="text-sm font-semibold text-gray-700 mb-3">Projet</h3>
-            <div class="flex items-start gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100">
-              <app-ui-avatar
-                [shape]="'square'"
-                [image]="p.venture | apiIMG: 'venture'"
-                [label]="p.venture.name" />
-              <div class="min-w-0 flex-1 space-y-1">
-                <p class="font-medium text-gray-900">{{ p.venture.name }}</p>
-                @if (p.venture.description) {
-                  <p class="text-sm text-gray-600 line-clamp-3">{{ p.venture.description }}</p>
-                }
-                @if (p.venture.sector) {
-                  <p class="text-sm text-gray-600">
-                    <span class="font-medium">Secteur :</span>
-                    {{ p.venture.sector }}
-                  </p>
-                }
-                @if (p.venture.stage) {
-                  <p class="text-sm text-gray-600">
-                    <span class="font-medium">Étape :</span>
-                    {{ p.venture.stage }}
-                  </p>
-                }
-                @if (p.venture.email) {
-                  <p class="text-sm text-gray-600">
-                    <span class="font-medium">Email :</span>
-                    <a [href]="'mailto:' + p.venture.email" class="text-primary-600 hover:underline">
-                      {{ p.venture.email }}
-                    </a>
-                  </p>
-                }
-                @if (p.venture.website) {
-                  <p class="text-sm text-gray-600">
-                    <span class="font-medium">Site :</span>
-                    <a
-                      [href]="p.venture.website"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-primary-600 hover:underline truncate block">
-                      {{ p.venture.website }}
-                    </a>
-                  </p>
-                }
-              </div>
-            </div>
-          </section>
-        } @else {
-          <section aria-labelledby="detail-venture-heading">
-            <h3 id="detail-venture-heading" class="text-sm font-semibold text-gray-700 mb-3">Projet</h3>
-            <p class="text-sm text-gray-500 italic">Aucun projet associé</p>
-          </section>
+@let p = participation();
+@let id = participationId();
+<div class="px-6 py-5 space-y-6 max-h-[500px] overflow-y-auto">
+  <div class="rounded-2xl bg-white/80 p-5 shadow-sm ring-1 ring-gray-100/80 ring-inset">
+    <h4 [id]="'detail-user-heading-' + id" class="text-sm font-medium text-gray-500 mb-3 tracking-wide">Participant</h4>
+    <div class="flex items-start gap-4">
+      <app-ui-avatar
+        [shape]="'circle'"
+        [image]="p.user | apiIMG: 'user'"
+        [label]="p.user.name"
+        class="ring-2 ring-white shadow-sm" />
+      <div class="min-w-0 flex-1 space-y-2">
+        <p class="font-medium text-gray-800">{{ p.user.name }}</p>
+        @if (p.user.email) {
+          <p class="text-sm text-gray-600">
+            <span class="text-gray-400">Email</span>
+            <a [href]="'mailto:' + p.user.email" class="text-primary-500 hover:text-primary-600 transition-colors">
+              {{ p.user.email }}
+            </a>
+          </p>
         }
-        @if (p.phase.length) {
-          <section aria-labelledby="detail-phases-heading">
-            <h3 id="detail-phases-heading" class="text-sm font-semibold text-gray-700 mb-3">Phases</h3>
-            <div class="flex flex-wrap gap-2">
-              @for (ph of p.phase; track ph.id) {
-                <app-ui-badge [label]="ph.name" variant="info" />
-              }
-            </div>
-          </section>
+        @if (p.user.phone_number) {
+          <p class="text-sm text-gray-600">
+            <span class="text-gray-400">Téléphone</span>
+            {{ p.user.phone_number }}
+          </p>
+        }
+        @if (p.user.city || p.user.country) {
+          <p class="text-sm text-gray-600">
+            <span class="text-gray-400">Lieu</span>
+            {{ p.user.city }}{{ p.user.city && p.user.country ? ', ' : '' }}{{ p.user.country }}
+          </p>
+        }
+        @if (p.user.biography) {
+          <p class="text-sm text-gray-500 mt-3 leading-relaxed line-clamp-3">{{ p.user.biography }}</p>
         }
       </div>
     </div>
   </div>
-}
+  @if (p.venture) {
+    <div class="rounded-2xl bg-white/80 p-5 shadow-sm ring-1 ring-gray-100/80 ring-inset">
+      <h4 [id]="'detail-venture-heading-' + id" class="text-sm font-medium text-gray-500 mb-3 tracking-wide">Projet</h4>
+      <div class="flex items-start gap-4">
+        <app-ui-avatar
+          [shape]="'square'"
+          [image]="p.venture | apiIMG: 'venture'"
+          [label]="p.venture.name"
+          class="ring-2 ring-white shadow-sm rounded-xl" />
+        <div class="min-w-0 flex-1 space-y-2">
+          <p class="font-medium text-gray-800">{{ p.venture.name }}</p>
+          @if (p.venture.description) {
+            <p class="text-sm text-gray-500 leading-relaxed line-clamp-3">{{ p.venture.description }}</p>
+          }
+          @if (p.venture.sector) {
+            <p class="text-sm text-gray-600">
+              <span class="text-gray-400">Secteur</span>
+              {{ p.venture.sector }}
+            </p>
+          }
+          @if (p.venture.stage) {
+            <p class="text-sm text-gray-600">
+              <span class="text-gray-400">Étape</span>
+              {{ p.venture.stage }}
+            </p>
+          }
+          @if (p.venture.email) {
+            <p class="text-sm text-gray-600">
+              <span class="text-gray-400">Email</span>
+              <a [href]="'mailto:' + p.venture.email" class="text-primary-500 hover:text-primary-600 transition-colors">
+                {{ p.venture.email }}
+              </a>
+            </p>
+          }
+          @if (p.venture.website) {
+            <p class="text-sm text-gray-600">
+              <span class="text-gray-400">Site</span>
+              <a
+                [href]="p.venture.website"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary-500 hover:text-primary-600 transition-colors truncate block">
+                {{ p.venture.website }}
+              </a>
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="rounded-2xl bg-white/60 p-5 ring-1 ring-gray-100/60 ring-inset">
+      <h4 [id]="'detail-venture-heading-' + id" class="text-sm font-medium text-gray-500 mb-2 tracking-wide">Projet</h4>
+      <p class="text-sm text-gray-400 italic">Aucun projet associé</p>
+    </div>
+  }
+  @if (p.phase.length) {
+    <div class="rounded-2xl bg-white/80 p-5 shadow-sm ring-1 ring-gray-100/80 ring-inset">
+      <h4 [id]="'detail-phases-heading-' + id" class="text-sm font-medium text-gray-500 mb-3 tracking-wide">Phases</h4>
+      <div class="flex flex-wrap gap-2">
+        @for (ph of p.phase; track ph.id) {
+          <app-ui-badge [label]="ph.name" variant="info" />
+        }
+      </div>
+    </div>
+  }
+</div>
