@@ -323,9 +323,9 @@
                       }
                     </td>
                     <td class="ui-table-cell">
-                      @if (participation.phase.length > 0) {
+                      @if (participation.phases.length > 0) {
                         <ul class="flex flex-wrap gap-1.5" role="list">
-                          @for (ph of participation.phase; track ph.id) {
+                          @for (ph of participation.phases; track ph.id) {
                             <li>
                               <app-ui-badge [label]="ph.name" size="small" />
                             </li>

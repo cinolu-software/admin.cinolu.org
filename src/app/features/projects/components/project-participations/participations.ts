@@ -91,7 +91,7 @@ export class Participations {
     const list = this.rawParticipations();
     const phaseId = this.selectedPhase();
     if (!phaseId) return list;
-    return list.filter((p) => p.phase?.some((ph) => ph.id === phaseId) ?? false);
+    return list.filter((p) => p.phases?.some((ph) => ph.id === phaseId) ?? false);
   });
   filteredParticipations = computed(() => {
     const list = this.participationsByPhase();
@@ -119,7 +119,7 @@ export class Participations {
   phaseCounts = computed(() => {
     const phases = this.sortedPhases();
     const list = this.rawParticipations();
-    return new Map(phases.map((ph) => [ph.id, list.filter((p) => p.phase?.some((x) => x.id === ph.id)).length]));
+    return new Map(phases.map((ph) => [ph.id, list.filter((p) => p.phases?.some((x) => x.id === ph.id)).length]));
   });
 
   constructor() {
