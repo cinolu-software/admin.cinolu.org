@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SquarePen, Images, ChartColumn, Star, Eye, Layers, Users, LucideAngularModule } from 'lucide-angular';
+import { SquarePen, Images, ChartColumn, Star, Eye, Layers, Users, Bell, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
 import { GalleryStore } from '../../store/project-gallery.store';
 import { ProjectsStore } from '../../store/projects.store';
 import { ProjectSheet } from '../../components/project-sheet/project-sheet';
 import { ProjectGallery } from '../../components/project-gallery/project-gallery';
 import { ProjectUpdate } from '../../components/project-update/project-update';
-import { Phases } from '../../components/phases/phases';
+import { Phases } from '../../components/project-phases/phases';
 import { ProjectDetailsSkeleton } from '../../ui/project-details-skeleton/project-details-skeleton';
-import { Participations } from '@features/projects/components/participations/participations';
+import { Participations } from '@features/projects/components/project-participations/participations';
+import { ProjectNotifications } from '@features/projects/components/project-notifications/project-notifications';
 import { SubprogramsStore } from '@features/programs/store/subprograms.store';
 import { CategoriesStore } from '@features/projects/store/project-categories.store';
 import { UsersStore } from '@features/users/store/users.store';
@@ -26,6 +27,7 @@ import { UsersStore } from '@features/users/store/users.store';
     ProjectUpdate,
     Phases,
     Participations,
+    ProjectNotifications,
     ProjectDetailsSkeleton,
     LucideAngularModule
   ]
@@ -43,6 +45,7 @@ export class ProjectDetails implements OnInit {
     { label: "Fiche d'activité", name: 'details', icon: ChartColumn },
     { label: 'Phases', name: 'phases', icon: Layers },
     { label: 'Participations', name: 'participations', icon: Users },
+    { label: 'Notifications', name: 'notifications', icon: Bell },
     { label: 'Mettre à jour', name: 'edit', icon: SquarePen },
     { label: 'Galerie', name: 'gallery', icon: Images }
   ];

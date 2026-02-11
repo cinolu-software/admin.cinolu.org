@@ -17,3 +17,4 @@ export * from './expertise.model';
 export * from './mentor-profile.model';
 export * from './opportunity.model';
 export * from './attachment.model';
+export * from './notification.model';
