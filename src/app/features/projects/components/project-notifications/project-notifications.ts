@@ -125,7 +125,7 @@ export class ProjectNotifications implements OnInit {
 
   onSelectNotification(notification: INotification): void {
     this.isEditing.set(true);
-    this.wizardStep.set(2);
+    this.wizardStep.set(1);
     this.notificationsStore.setActiveNotification(notification);
     this.notificationsStore.clearError();
     this.form.patchValue({
@@ -179,6 +179,18 @@ export class ProjectNotifications implements OnInit {
     const dto = this.#buildNotifyDto();
     this.notificationsStore.create({
       projectId: this.projectId(),
+      dto,
+      onSuccess: () => this.wizardStep.set(2)
+    });
+  }
+
+  /** Step 1 action: update existing notification (API) */
+  onStep1Update(): void {
+    const current = this.activeNotification();
+    if (!current || this.form.invalid || this.notificationsStore.isSaving()) return;
+    const dto = this.#buildNotifyDto();
+    this.notificationsStore.update({
+      id: current.id,
       dto,
       onSuccess: () => this.wizardStep.set(2)
     });

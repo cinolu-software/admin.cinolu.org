@@ -115,9 +115,9 @@ export const NotificationsStore = signalStore(
         )
       )
     ),
-    update: rxMethod<{ id: string; dto: Pick<NotifyParticipantsDto, 'title' | 'body'>; onSuccess?: () => void }>(
+    update: rxMethod<{ id: string; dto: NotifyParticipantsDto; onSuccess?: () => void }>(
       pipe(
-        tap(() => patchState(store, { isSaving: true })),
+        tap(() => patchState(store, { isSaving: true, error: null })),
         switchMap(({ id, dto, onSuccess }) =>
           _http.patch<{ data: INotification }>(`notifications/${id}`, dto).pipe(
             map(({ data }) => {
@@ -278,7 +278,7 @@ export const NotificationsStore = signalStore(
     ),
     updateWithAttachments: rxMethod<{
       id: string;
-      dto: Pick<NotifyParticipantsDto, 'title' | 'body'>;
+      dto: NotifyParticipantsDto;
       attachments?: File[];
       onSuccess?: () => void;
     }>(

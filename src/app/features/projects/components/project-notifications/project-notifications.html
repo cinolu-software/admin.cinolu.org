@@ -280,18 +280,33 @@
           </div>
           <div class="flex gap-2">
             @if (currentStep() === 1) {
-              <app-ui-button
-                type="button"
-                variant="primary"
-                size="small"
-                [disabled]="form.invalid || notificationsStore.isSaving()"
-                [loading]="notificationsStore.isSaving()"
-                (clicked)="onStep1Create()">
-                <span class="flex items-center gap-2">
-                  <i-lucide [name]="icons.Plus" class="size-4" />
-                  Créer
-                </span>
-              </app-ui-button>
+              @if (isEditing()) {
+                <app-ui-button
+                  type="button"
+                  variant="primary"
+                  size="small"
+                  [disabled]="form.invalid || notificationsStore.isSaving()"
+                  [loading]="notificationsStore.isSaving()"
+                  (clicked)="onStep1Update()">
+                  <span class="flex items-center gap-2">
+                    <i-lucide [name]="icons.Pencil" class="size-4" />
+                    Mettre à jour
+                  </span>
+                </app-ui-button>
+              } @else {
+                <app-ui-button
+                  type="button"
+                  variant="primary"
+                  size="small"
+                  [disabled]="form.invalid || notificationsStore.isSaving()"
+                  [loading]="notificationsStore.isSaving()"
+                  (clicked)="onStep1Create()">
+                  <span class="flex items-center gap-2">
+                    <i-lucide [name]="icons.Plus" class="size-4" />
+                    Créer
+                  </span>
+                </app-ui-button>
+              }
             } @else if (currentStep() === 2) {
               <app-ui-button
                 type="button"
