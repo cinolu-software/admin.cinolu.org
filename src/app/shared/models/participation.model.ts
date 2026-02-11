@@ -9,7 +9,7 @@ export interface IProjectParticipation extends IBase {
   user: IUser;
   project: IProject;
   venture: IVenture | null;
-  phase: IPhase[];
+  phases: IPhase[];
 }
 
 export interface IEventParticipation extends IBase {
