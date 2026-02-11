@@ -105,7 +105,7 @@
     <div class="xl:col-span-2">
       <form class="rounded-2xl border border-gray-200 bg-white p-5 md:p-6" [formGroup]="form">
         <!-- Stepper: 1. Create, 2. Update / attachments, 3. Send -->
-        <nav class="flex items-center gap-2 mb-6" aria-label="Étapes de création de notification">
+        <nav class="flex items-center gap-2 mb-6">
           <ol class="flex items-center gap-2 flex-wrap" role="list">
             <li class="flex items-center gap-2">
               <span
@@ -121,7 +121,7 @@
                   1
                 }
               </span>
-              <span class="text-sm font-medium" [class.text-gray-500]="currentStep() > 1">Créer</span>
+              <span class="text-sm font-medium" [class.text-gray-500]="currentStep() > 1">Rédiger la notification</span>
             </li>
             <li class="flex items-center gap-2 text-gray-300" aria-hidden="true">
               <i-lucide [name]="icons.ChevronRight" class="size-4" />
@@ -163,30 +163,6 @@
           </ol>
         </nav>
 
-        <div class="flex flex-col gap-1 mb-6">
-          <h4 class="text-base font-semibold text-gray-900">
-            @switch (currentStep()) {
-              @case (1) {
-                Étape 1 — Rédiger la notification
-              }
-              @case (2) {
-                Étape 2 — Pièces jointes (facultatif)
-              }
-              @case (3) {
-                Étape 3 — Envoyer
-              }
-            }
-          </h4>
-          @if (currentStep() === 1) {
-            <p class="text-sm text-gray-500">Ciblez un groupe précis en sélectionnant une phase, ou laissez "Tous".</p>
-          } @else if (currentStep() === 2) {
-            <p class="text-sm text-gray-500">Facultatif. Vous pouvez continuer sans pièces jointes.</p>
-          }
-          @if (currentStep() >= 2 && activeNotification()) {
-            <span class="text-xs text-gray-500">ID: {{ activeNotification()?.id }}</span>
-          }
-        </div>
-
         @if (currentStep() === 1) {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <app-ui-select
@@ -195,6 +171,8 @@
               [options]="phaseOptions()"
               formControlName="phase_id"
               placeholder="Tous les participants" />
+          </div>
+          <div class="mb-4">
             <app-ui-input
               [id]="'title'"
               label="Objet"
@@ -286,9 +264,7 @@
         }
 
         @if (notificationsStore.error()) {
-          <div
-            class="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
-            role="alert">
+          <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
             <span class="font-medium">Erreur</span>
             {{ notificationsStore.error() }}
           </div>
