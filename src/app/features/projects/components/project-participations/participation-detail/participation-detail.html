@@ -92,11 +92,11 @@
       <p class="text-sm text-gray-400 italic">Aucun projet associé</p>
     </div>
   }
-  @if (p.phase.length) {
+  @if (p.phases.length) {
     <div class="rounded-2xl bg-white/80 p-5 shadow-sm ring-1 ring-gray-100/80 ring-inset">
       <h4 [id]="'detail-phases-heading-' + id" class="text-sm font-medium text-gray-500 mb-3 tracking-wide">Phases</h4>
       <div class="flex flex-wrap gap-2">
-        @for (ph of p.phase; track ph.id) {
+        @for (ph of p.phases; track ph.id) {
           <app-ui-badge [label]="ph.name" variant="info" />
         }
       </div>
