@@ -1,7 +1,7 @@
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { computed, inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { concatMap, catchError, map, of, pipe, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, exhaustMap, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { INotification, INotificationAttachment } from '@shared/models';
@@ -41,294 +41,242 @@ export const NotificationsStore = signalStore(
     total: computed(() => notifications()[1]),
     list: computed(() => notifications()[0])
   })),
-  withMethods(({ _http, _toast, ...store }) => ({
-    loadAll: rxMethod<{ projectId: string; filters: FilterProjectNotificationsDto }>(
-      pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap(({ projectId, filters }) => {
-          const params = buildQueryParams(filters);
-          return _http.get<{ data: [INotification[], number] }>(`notifications/project/${projectId}`, { params }).pipe(
-            tap(({ data }) => patchState(store, { isLoading: false, notifications: data })),
-            catchError(() => {
-              patchState(store, { isLoading: false, notifications: [[], 0] });
-              return of(null);
-            })
-          );
-        })
-      )
-    ),
-    /** Load project notifications and optionally set active to the notification with the given id (e.g. after create/update with attachments). */
-    loadAllAndSelectNotification: rxMethod<{
-      projectId: string;
-      filters: FilterProjectNotificationsDto;
-      notificationId: string;
-    }>(
-      pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap(({ projectId, filters, notificationId }) => {
-          const params = buildQueryParams(filters);
-          return _http.get<{ data: [INotification[], number] }>(`notifications/project/${projectId}`, { params }).pipe(
-            tap(({ data }) => {
-              const [list] = data;
-              const active = list.find((n) => n.id === notificationId) ?? null;
-              patchState(store, {
-                isLoading: false,
-                notifications: data,
-                activeNotification: active
-              });
-            }),
-            catchError(() => {
-              patchState(store, { isLoading: false, notifications: [[], 0] });
-              return of(null);
-            })
-          );
-        })
-      )
-    ),
-    create: rxMethod<{
-      projectId: string;
-      dto: NotifyParticipantsDto;
-      attachments?: File[];
-      onSuccess?: (data: INotification) => void;
-    }>(
-      pipe(
-        tap(() => patchState(store, { isSaving: true, error: null })),
-        switchMap((input) => {
-          const { projectId, dto, attachments = [], onSuccess } = input;
-          return _http.post<{ data: INotification }>(`projects/${projectId}/notification`, dto).pipe(
-            concatMap((createRes) => {
-              const data = createRes.data;
-              const [list, count] = store.notifications();
-              patchState(store, {
-                notifications: [[data, ...list], count + 1],
-                activeNotification: data
-              });
-              if (attachments.length === 0) {
-                patchState(store, { isSaving: false, error: null });
+  withMethods(({ _http, _toast, ...store }) => {
+    const emptyNotifications: [INotification[], number] = [[], 0];
+    const upsertNotificationState = (
+      notification: INotification
+    ): Pick<NotificationsState, 'notifications' | 'activeNotification'> => {
+      const [list, count] = store.notifications();
+      const exists = list.some((item) => item.id === notification.id);
+      const nextList = exists
+        ? list.map((item) => (item.id === notification.id ? notification : item))
+        : [notification, ...list];
+      return {
+        notifications: [nextList, exists ? count : count + 1],
+        activeNotification: notification
+      };
+    };
+    const clearNotificationsState = (): Pick<NotificationsState, 'notifications' | 'activeNotification'> => ({
+      notifications: emptyNotifications,
+      activeNotification: null
+    });
+    const failSaving = (message: string) => {
+      patchState(store, { isSaving: false, error: message });
+      return of(null);
+    };
+    const uploadAttachments = (notificationId: string, attachments: File[]) => {
+      const formData = new FormData();
+      attachments.forEach((file) => formData.append('attachments', file));
+      return _http
+        .post<{ data: INotification }>(`notifications/${notificationId}/attachments`, formData)
+        .pipe(map(({ data }) => data));
+    };
+    const loadNotifications = (projectId: string, filters: FilterProjectNotificationsDto) => {
+      const params = buildQueryParams(filters);
+      return _http.get<{ data: [INotification[], number] }>(`notifications/project/${projectId}`, { params });
+    };
+    return {
+      loadAll: rxMethod<{ projectId: string; filters: FilterProjectNotificationsDto }>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true })),
+          switchMap(({ projectId, filters }) =>
+            loadNotifications(projectId, filters).pipe(
+              tap(({ data }) => patchState(store, { isLoading: false, notifications: data })),
+              catchError(() => {
+                patchState(store, { isLoading: false, ...clearNotificationsState() });
+                return of(null);
+              })
+            )
+          )
+        )
+      ),
+      loadAllAndSelectNotification: rxMethod<{
+        projectId: string;
+        filters: FilterProjectNotificationsDto;
+        notificationId: string;
+      }>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true })),
+          switchMap(({ projectId, filters, notificationId }) =>
+            loadNotifications(projectId, filters).pipe(
+              tap(({ data }) => {
+                const [list] = data;
+                patchState(store, {
+                  isLoading: false,
+                  notifications: data,
+                  activeNotification: list.find((item) => item.id === notificationId) ?? null
+                });
+              }),
+              catchError(() => {
+                patchState(store, { isLoading: false, ...clearNotificationsState() });
+                return of(null);
+              })
+            )
+          )
+        )
+      ),
+      create: rxMethod<{
+        projectId: string;
+        dto: NotifyParticipantsDto;
+        attachments?: File[];
+        onSuccess?: (data: INotification) => void;
+      }>(
+        pipe(
+          tap(() => patchState(store, { isSaving: true, error: null })),
+          exhaustMap(({ projectId, dto, attachments = [], onSuccess }) =>
+            _http.post<{ data: INotification }>(`projects/${projectId}/notification`, dto).pipe(
+              map(({ data }) => data),
+              tap((notification) => patchState(store, upsertNotificationState(notification))),
+              concatMap((notification) => {
+                if (attachments.length === 0) {
+                  patchState(store, { isSaving: false, error: null });
+                  onSuccess?.(notification);
+                  return of(notification);
+                }
+                return uploadAttachments(notification.id, attachments).pipe(
+                  tap((notificationWithAttachments) => {
+                    patchState(store, {
+                      isSaving: false,
+                      error: null,
+                      ...upsertNotificationState(notificationWithAttachments)
+                    });
+                    onSuccess?.(notificationWithAttachments);
+                  }),
+                  catchError(() => failSaving("Une erreur s'est produite lors de l'ajout des pièces jointes"))
+                );
+              }),
+              catchError(() => failSaving("Une erreur s'est produite lors de la création de la notification"))
+            )
+          )
+        )
+      ),
+      send: rxMethod<{ notificationId: string; onSuccess?: (data: INotification) => void }>(
+        pipe(
+          tap(() => patchState(store, { isSaving: true, error: null })),
+          exhaustMap(({ notificationId, onSuccess }) =>
+            _http.post<{ data: INotification }>(`projects/notify/${notificationId}`, {}).pipe(
+              tap(({ data }) => {
+                patchState(store, { isSaving: false, error: null, ...upsertNotificationState(data) });
                 onSuccess?.(data);
-                return of(data);
-              }
-              const formData = new FormData();
-              attachments.forEach((file) => formData.append('attachments', file));
-              return _http.post<{ data: INotification }>(`notifications/${data.id}/attachments`, formData).pipe(
-                map((res) => res.data),
-                tap((notificationWithAttachments) => {
-                  const [listAfter, countAfter] = store.notifications();
-                  const updated = listAfter.map((item) =>
-                    item.id === notificationWithAttachments.id ? notificationWithAttachments : item
-                  );
-                  patchState(store, {
-                    isSaving: false,
-                    error: null,
-                    notifications: [updated, countAfter],
-                    activeNotification: notificationWithAttachments
-                  });
-                  onSuccess?.(notificationWithAttachments);
-                }),
-                catchError(() => {
-                  patchState(store, {
-                    isSaving: false,
-                    error: "Une erreur s'est produite lors de l'ajout des pièces jointes"
-                  });
-                  return of(null);
-                })
-              );
-            }),
-            catchError(() => {
-              patchState(store, {
-                isSaving: false,
-                error: "Une erreur s'est produite lors de la création de la notification"
-              });
-              return of(null);
-            })
-          );
-        })
-      )
-    ),
-    send: rxMethod<{ notificationId: string; onSuccess?: (data: INotification) => void }>(
-      pipe(
-        tap(() => patchState(store, { isSaving: true, error: null })),
-        switchMap(({ notificationId, onSuccess }) =>
-          _http.post<{ data: INotification }>(`projects/notify/${notificationId}`, {}).pipe(
-            tap(({ data }) => {
-              const [list, count] = store.notifications();
-              const updated = list.map((item) => (item.id === data.id ? data : item));
-              patchState(store, {
-                isSaving: false,
-                error: null,
-                notifications: [updated, count],
-                activeNotification: data
-              });
-              onSuccess?.(data);
-            }),
-            catchError(() => {
-              patchState(store, {
-                isSaving: false,
-                error: "Une erreur s'est produite lors de l'envoi de la notification"
-              });
-              return of(null);
-            })
+              }),
+              catchError(() => failSaving("Une erreur s'est produite lors de l'envoi de la notification"))
+            )
+          )
+        )
+      ),
+      delete: rxMethod<{ id: string }>(
+        pipe(
+          tap(() => patchState(store, { isSaving: true })),
+          exhaustMap(({ id }) =>
+            _http.delete<void>(`notifications/${id}`).pipe(
+              tap(() => {
+                _toast.showSuccess('La notification a été supprimée');
+                const [list, count] = store.notifications();
+                const active = store.activeNotification();
+                patchState(store, {
+                  isSaving: false,
+                  notifications: [list.filter((item) => item.id !== id), Math.max(0, count - 1)],
+                  activeNotification: active?.id === id ? null : active
+                });
+              }),
+              catchError(() => {
+                _toast.showError("Une erreur s'est produite lors de la suppression");
+                patchState(store, { isSaving: false });
+                return of(null);
+              })
+            )
+          )
+        )
+      ),
+      deleteAttachments: rxMethod<{ id: string; onSuccess?: () => void }>(
+        pipe(
+          tap(() => patchState(store, { isUploading: true })),
+          exhaustMap(({ id, onSuccess }) =>
+            _http.delete<void>(`notifications/${id}/attachments`).pipe(
+              tap(() => {
+                _toast.showSuccess('Les pièces jointes ont été supprimées');
+                const [list, count] = store.notifications();
+                const active = store.activeNotification();
+                patchState(store, {
+                  isUploading: false,
+                  notifications: [
+                    list.map((item) =>
+                      item.id === id ? { ...item, attachments: [] as INotificationAttachment[] } : item
+                    ),
+                    count
+                  ],
+                  activeNotification: active?.id === id ? { ...active, attachments: [] } : active
+                });
+                onSuccess?.();
+              }),
+              catchError(() => {
+                _toast.showError("Une erreur s'est produite lors de la suppression des pièces jointes");
+                patchState(store, { isUploading: false });
+                return of(null);
+              })
+            )
+          )
+        )
+      ),
+      setActiveNotification: (notification: INotification | null): void => {
+        patchState(store, { activeNotification: notification });
+      },
+      clearError: (): void => {
+        patchState(store, { error: null });
+      },
+      createNotifyAndSend: rxMethod<{
+        projectId: string;
+        dto: NotifyParticipantsDto;
+        attachments?: File[];
+        onSuccess?: () => void;
+      }>(
+        pipe(
+          tap(() => patchState(store, { isSaving: true, error: null })),
+          exhaustMap(({ projectId, dto, attachments = [], onSuccess }) =>
+            _http.post<{ data: INotification }>(`projects/${projectId}/notification`, dto).pipe(
+              map(({ data }) => data),
+              tap((notification) => patchState(store, upsertNotificationState(notification))),
+              concatMap((notification) => {
+                if (attachments.length === 0) return of(notification);
+                return uploadAttachments(notification.id, attachments);
+              }),
+              concatMap((notification) =>
+                _http.post<{ data: INotification }>(`projects/notify/${notification.id}`, {})
+              ),
+              tap(({ data }) => {
+                patchState(store, { isSaving: false, error: null, ...upsertNotificationState(data) });
+                onSuccess?.();
+              }),
+              catchError(() => failSaving("Une erreur s'est produite lors de l'envoi"))
+            )
+          )
+        )
+      ),
+      updateWithAttachments: rxMethod<{
+        id: string;
+        dto: NotifyParticipantsDto;
+        attachments?: File[];
+        onSuccess?: () => void;
+      }>(
+        pipe(
+          tap(() => patchState(store, { isSaving: true, error: null })),
+          exhaustMap(({ id, dto, attachments = [], onSuccess }) =>
+            _http.patch<{ data: INotification }>(`notifications/${id}`, dto).pipe(
+              map(({ data }) => data),
+              tap((notification) => patchState(store, upsertNotificationState(notification))),
+              concatMap((notification) => {
+                if (attachments.length === 0) return of(notification);
+                return uploadAttachments(id, attachments);
+              }),
+              tap((notification) => {
+                patchState(store, { isSaving: false, error: null, ...upsertNotificationState(notification) });
+                onSuccess?.();
+              }),
+              catchError(() => failSaving("Une erreur s'est produite lors de la mise à jour"))
+            )
           )
         )
       )
-    ),
-    delete: rxMethod<{ id: string }>(
-      pipe(
-        tap(() => patchState(store, { isSaving: true })),
-        switchMap(({ id }) =>
-          _http.delete<void>(`notifications/${id}`).pipe(
-            tap(() => {
-              _toast.showSuccess('La notification a été supprimée');
-              const [list, count] = store.notifications();
-              const filtered = list.filter((item) => item.id !== id);
-              const active = store.activeNotification();
-              patchState(store, {
-                isSaving: false,
-                notifications: [filtered, Math.max(0, count - 1)],
-                activeNotification: active?.id === id ? null : active
-              });
-            }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors de la suppression");
-              patchState(store, { isSaving: false });
-              return of(null);
-            })
-          )
-        )
-      )
-    ),
-    deleteAttachments: rxMethod<{ id: string; onSuccess?: () => void }>(
-      pipe(
-        tap(() => patchState(store, { isUploading: true })),
-        switchMap(({ id, onSuccess }) =>
-          _http.delete<void>(`notifications/${id}/attachments`).pipe(
-            tap(() => {
-              _toast.showSuccess('Les pièces jointes ont été supprimées');
-              const [list, count] = store.notifications();
-              const updated = list.map((item) =>
-                item.id === id ? { ...item, attachments: [] as INotificationAttachment[] } : item
-              );
-              const active = store.activeNotification();
-              patchState(store, {
-                isUploading: false,
-                notifications: [updated, count],
-                activeNotification: active?.id === id ? { ...active, attachments: [] } : active
-              });
-              onSuccess?.();
-            }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors de la suppression des pièces jointes");
-              patchState(store, { isUploading: false });
-              return of(null);
-            })
-          )
-        )
-      )
-    ),
-    setActiveNotification: (notification: INotification | null): void => {
-      patchState(store, { activeNotification: notification });
-    },
-    clearError: (): void => {
-      patchState(store, { error: null });
-    },
-    createNotifyAndSend: rxMethod<{
-      projectId: string;
-      dto: NotifyParticipantsDto;
-      attachments?: File[];
-      onSuccess?: () => void;
-    }>(
-      pipe(
-        tap(() => patchState(store, { isSaving: true, error: null })),
-        switchMap((input) => {
-          const { projectId, dto, attachments = [] } = input;
-          return _http.post<{ data: INotification }>(`projects/${projectId}/notification`, dto).pipe(
-            concatMap((createRes) => {
-              const notification = createRes.data;
-              const [list, count] = store.notifications();
-              patchState(store, {
-                notifications: [[notification, ...list], count + 1],
-                activeNotification: notification
-              });
-              if (attachments.length === 0) {
-                return of(notification);
-              }
-              const formData = new FormData();
-              attachments.forEach((file) => formData.append('attachments', file));
-              return _http
-                .post<{ data: INotification }>(`notifications/${notification.id}/attachments`, formData)
-                .pipe(map((res) => res.data));
-            }),
-            concatMap((notification) => _http.post<{ data: INotification }>(`projects/notify/${notification.id}`, {})),
-            tap(({ data }) => {
-              const [list, count] = store.notifications();
-              const updated = list.map((item) => (item.id === data.id ? data : item));
-              patchState(store, {
-                isSaving: false,
-                error: null,
-                notifications: [updated, count],
-                activeNotification: data
-              });
-              input.onSuccess?.();
-            }),
-            catchError(() => {
-              patchState(store, {
-                isSaving: false,
-                error: "Une erreur s'est produite lors de l'envoi"
-              });
-              return of(null);
-            })
-          );
-        })
-      )
-    ),
-    updateWithAttachments: rxMethod<{
-      id: string;
-      dto: NotifyParticipantsDto;
-      attachments?: File[];
-      onSuccess?: () => void;
-    }>(
-      pipe(
-        tap(() => patchState(store, { isSaving: true, error: null })),
-        switchMap((input) => {
-          const { id, dto, attachments = [] } = input;
-          return _http.patch<{ data: INotification }>(`notifications/${id}`, dto).pipe(
-            concatMap((updateRes) => {
-              const notification = updateRes.data;
-              const [list, count] = store.notifications();
-              patchState(store, {
-                notifications: [list.map((i) => (i.id === id ? notification : i)), count],
-                activeNotification: notification
-              });
-              if (attachments.length === 0) {
-                return of(notification);
-              }
-              const formData = new FormData();
-              attachments.forEach((file) => formData.append('attachments', file));
-              return _http
-                .post<{ data: INotification }>(`notifications/${id}/attachments`, formData)
-                .pipe(map((res) => res.data));
-            }),
-            tap((data) => {
-              const [list, count] = store.notifications();
-              const updated = list.map((item) => (item.id === data.id ? data : item));
-              patchState(store, {
-                isSaving: false,
-                error: null,
-                notifications: [updated, count],
-                activeNotification: data
-              });
-              input.onSuccess?.();
-            }),
-            catchError(() => {
-              patchState(store, {
-                isSaving: false,
-                error: "Une erreur s'est produite lors de la mise à jour"
-              });
-              return of(null);
-            })
-          );
-        })
-      )
-    )
-  }))
+    };
+  })
 );
