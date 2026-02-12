@@ -14,4 +14,6 @@ export interface INotification extends IBase {
   phase_id?: string | null;
   sender?: IUser | null;
   attachments?: INotificationAttachment[];
+  /** Draft or sent; used for list actions (e.g. resend only when sent) */
+  status?: 'draft' | 'sent';
 }
