@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  ArrowLeft,
   Bell,
-  Check,
-  ChevronRight,
+  CircleAlert,
   Paperclip,
   Send,
   Trash2,
@@ -14,7 +15,7 @@ import {
   Inbox,
   LucideAngularModule
 } from 'lucide-angular';
-import { UiButton, UiInput, UiSelect, UiTextarea, UiConfirmDialog, UiPagination, SelectOption } from '@shared/ui';
+import { UiButton, UiInput, UiSelect, UiTextEditor, UiConfirmDialog, UiPagination, SelectOption } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { INotification } from '@shared/models';
 import { NotifyParticipantsDto } from '../../dto/notifications/notify-participants.dto';
@@ -36,12 +37,11 @@ interface AttachmentPreview {
   providers: [NotificationsStore, PhasesStore],
   imports: [
     DatePipe,
-    NgClass,
     FormsModule,
     ReactiveFormsModule,
     UiButton,
     UiInput,
-    UiTextarea,
+    UiTextEditor,
     UiSelect,
     UiConfirmDialog,
     UiPagination,
@@ -52,14 +52,13 @@ export class ProjectNotifications implements OnInit {
   projectId = input.required<string>();
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
+  #sanitizer = inject(DomSanitizer);
   authStore = inject(AuthStore);
   notificationsStore = inject(NotificationsStore);
   phasesStore = inject(PhasesStore);
   form = this.#buildForm();
   attachments = signal<AttachmentPreview[]>([]);
-  isEditing = signal(false);
-  wizardStep = signal<1 | 2 | 3>(1);
-  currentStep = computed(() => this.wizardStep());
+  isComposing = signal(false);
   filterPhaseId = signal('');
   filterStatus = signal<NotificationStatus | null>(null);
   filterPage = signal<number | null>(null);
@@ -70,7 +69,7 @@ export class ProjectNotifications implements OnInit {
   }));
   currentPage = computed(() => this.filterPage() ?? 1);
   itemsPerPage = 10;
-  icons = { Bell, Check, ChevronRight, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox };
+  icons = { ArrowLeft, Bell, CircleAlert, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox };
   phaseOptions = computed(() => {
     const options = this.phasesStore.sortedPhases().map((phase) => ({
       label: phase.name,
@@ -124,25 +123,36 @@ export class ProjectNotifications implements OnInit {
   }
 
   onSelectNotification(notification: INotification): void {
-    this.isEditing.set(true);
-    this.wizardStep.set(1);
     this.notificationsStore.setActiveNotification(notification);
     this.notificationsStore.clearError();
-    this.form.patchValue({
-      title: notification.title,
-      body: notification.body,
-      phase_id: notification.phase_id ?? notification.phase?.id ?? ''
-    });
-    this.attachments.set([]);
+    this.isComposing.set(false);
   }
 
   onComposeNew(): void {
-    this.isEditing.set(false);
-    this.wizardStep.set(1);
     this.notificationsStore.setActiveNotification(null);
     this.notificationsStore.clearError();
     this.form.reset({ title: '', body: '', phase_id: '' });
     this.attachments.set([]);
+    this.isComposing.set(true);
+  }
+
+  onEditNotification(): void {
+    const current = this.activeNotification();
+    if (!current) return;
+    this.form.patchValue({
+      title: current.title,
+      body: current.body,
+      phase_id: current.phase_id ?? current.phase?.id ?? ''
+    });
+    this.attachments.set([]);
+    this.notificationsStore.clearError();
+    this.isComposing.set(true);
+  }
+
+  onCancelCompose(): void {
+    this.isComposing.set(false);
+    this.attachments.set([]);
+    this.notificationsStore.clearError();
   }
 
   onPageChange(page: number): void {
@@ -173,61 +183,78 @@ export class ProjectNotifications implements OnInit {
     this.attachments.set([]);
   }
 
-  /** Step 1 action: create notification (API) */
-  onStep1Create(): void {
+  onSaveDraft(): void {
     if (this.form.invalid || this.notificationsStore.isSaving()) return;
     const dto = this.#buildNotifyDto();
-    this.notificationsStore.create({
-      projectId: this.projectId(),
-      dto,
-      onSuccess: () => this.wizardStep.set(2)
-    });
-  }
-
-  /** Step 1 action: update existing notification (API) */
-  onStep1Update(): void {
-    const current = this.activeNotification();
-    if (!current || this.form.invalid || this.notificationsStore.isSaving()) return;
-    const dto = this.#buildNotifyDto();
-    this.notificationsStore.update({
-      id: current.id,
-      dto,
-      onSuccess: () => this.wizardStep.set(2)
-    });
-  }
-
-  /** Step 2 action: add attachments (if any) or skip to step 3 */
-  onStep2Next(): void {
     const files = this.attachments().map((a) => a.file);
-    if (files.length === 0) {
-      this.wizardStep.set(3);
+    const current = this.activeNotification();
+
+    if (!current) {
+      this.notificationsStore.create({
+        projectId: this.projectId(),
+        dto,
+        attachments: files.length > 0 ? files : undefined,
+        onSuccess: (data) => {
+          this.attachments.set([]);
+          this.isComposing.set(false);
+          this.notificationsStore.setActiveNotification(data);
+        }
+      });
       return;
     }
-    const current = this.activeNotification();
-    if (!current || this.notificationsStore.isUploading()) return;
-    this.notificationsStore.addAttachments({
+
+    this.notificationsStore.updateWithAttachments({
       id: current.id,
-      attachments: files,
+      dto,
+      attachments: files.length > 0 ? files : undefined,
       onSuccess: () => {
         this.attachments.set([]);
-        this.wizardStep.set(3);
+        this.isComposing.set(false);
       }
     });
   }
 
-  /** Step 3 action: send notification (API) */
-  onStep3Send(): void {
+  /** Create+send or update+send. */
+  onSend(): void {
+    if (this.form.invalid || this.notificationsStore.isSaving()) return;
+    const dto = this.#buildNotifyDto();
+    const files = this.attachments().map((a) => a.file);
     const current = this.activeNotification();
-    if (!current || this.notificationsStore.isSaving()) return;
-    this.notificationsStore.send({
-      notificationId: current.id,
-      onSuccess: () => this.onComposeNew()
+
+    if (!current) {
+      this.notificationsStore.createNotifyAndSend({
+        projectId: this.projectId(),
+        dto,
+        attachments: files.length > 0 ? files : undefined,
+        onSuccess: () => {
+          this.attachments.set([]);
+          this.isComposing.set(false);
+        }
+      });
+      return;
+    }
+
+    this.notificationsStore.updateWithAttachments({
+      id: current.id,
+      dto,
+      attachments: files.length > 0 ? files : undefined,
+      onSuccess: () => {
+        this.notificationsStore.send({
+          notificationId: current.id,
+          onSuccess: () => {
+            this.attachments.set([]);
+            this.isComposing.set(false);
+          }
+        });
+      }
     });
   }
 
-  goBack(): void {
-    const s = this.wizardStep();
-    if (s > 1) this.wizardStep.set((s - 1) as 1 | 2);
+  resendNotification(notification: INotification): void {
+    if (this.notificationsStore.isSaving()) return;
+    this.notificationsStore.send({
+      notificationId: notification.id
+    });
   }
 
   deleteNotification(notification: INotification): void {
@@ -237,7 +264,7 @@ export class ProjectNotifications implements OnInit {
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
       accept: () => {
-        this.notificationsStore.delete({ id: notification.id, onSuccess: () => this.onComposeNew() });
+        this.notificationsStore.delete({ id: notification.id });
       }
     });
   }
@@ -271,6 +298,32 @@ export class ProjectNotifications implements OnInit {
     if (!phaseId) return 'Tous les participants';
     const phase = this.phasesStore.sortedPhases().find((p) => p.id === phaseId);
     return phase ? phase.name : 'Tous les participants';
+  }
+
+  /** Title for detail view or composer. */
+  detailTitle(notification: INotification | null): string {
+    return notification?.title ?? '';
+  }
+
+  /** Body HTML for detail view (notification) or composer (form). */
+  detailBody(notification: INotification | null): string {
+    return notification?.body ?? String(this.form.value.body ?? '');
+  }
+
+  /** Sanitized HTML for rendering editor/detail body. */
+  bodySafe(notification: INotification | null): SafeHtml {
+    return this.#sanitizer.bypassSecurityTrustHtml(this.detailBody(notification));
+  }
+
+  /** Strip HTML tags for list preview; returns plain text, optionally truncated. */
+  bodyPlainText(html: string | undefined, maxChars?: number): string {
+    if (!html) return '';
+    const text = html
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (maxChars != null && text.length > maxChars) return text.slice(0, maxChars) + '…';
+    return text;
   }
 
   attachmentSummary(notification: INotification): string {
