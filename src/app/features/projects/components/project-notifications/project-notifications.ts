@@ -197,7 +197,15 @@ export class ProjectNotifications implements OnInit {
         onSuccess: (data) => {
           this.attachments.set([]);
           this.isComposing.set(false);
-          this.notificationsStore.setActiveNotification(data);
+          if (files.length > 0) {
+            this.notificationsStore.loadAllAndSelectNotification({
+              projectId: this.projectId(),
+              filters: this.queryParams(),
+              notificationId: data.id
+            });
+          } else {
+            this.notificationsStore.setActiveNotification(data);
+          }
         }
       });
       return;
@@ -210,6 +218,13 @@ export class ProjectNotifications implements OnInit {
       onSuccess: () => {
         this.attachments.set([]);
         this.isComposing.set(false);
+        if (files.length > 0) {
+          this.notificationsStore.loadAllAndSelectNotification({
+            projectId: this.projectId(),
+            filters: this.queryParams(),
+            notificationId: current.id
+          });
+        }
       }
     });
   }
@@ -229,6 +244,16 @@ export class ProjectNotifications implements OnInit {
         onSuccess: () => {
           this.attachments.set([]);
           this.isComposing.set(false);
+          if (files.length > 0) {
+            const id = this.notificationsStore.activeNotification()?.id;
+            if (id) {
+              this.notificationsStore.loadAllAndSelectNotification({
+                projectId: this.projectId(),
+                filters: this.queryParams(),
+                notificationId: id
+              });
+            }
+          }
         }
       });
       return;
@@ -244,6 +269,13 @@ export class ProjectNotifications implements OnInit {
           onSuccess: () => {
             this.attachments.set([]);
             this.isComposing.set(false);
+            if (files.length > 0) {
+              this.notificationsStore.loadAllAndSelectNotification({
+                projectId: this.projectId(),
+                filters: this.queryParams(),
+                notificationId: current.id
+              });
+            }
           }
         });
       }

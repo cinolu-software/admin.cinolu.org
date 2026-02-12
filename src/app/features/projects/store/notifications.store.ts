@@ -57,6 +57,34 @@ export const NotificationsStore = signalStore(
         })
       )
     ),
+    /** Load project notifications and optionally set active to the notification with the given id (e.g. after create/update with attachments). */
+    loadAllAndSelectNotification: rxMethod<{
+      projectId: string;
+      filters: FilterProjectNotificationsDto;
+      notificationId: string;
+    }>(
+      pipe(
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap(({ projectId, filters, notificationId }) => {
+          const params = buildQueryParams(filters);
+          return _http.get<{ data: [INotification[], number] }>(`notifications/project/${projectId}`, { params }).pipe(
+            tap(({ data }) => {
+              const [list] = data;
+              const active = list.find((n) => n.id === notificationId) ?? null;
+              patchState(store, {
+                isLoading: false,
+                notifications: data,
+                activeNotification: active
+              });
+            }),
+            catchError(() => {
+              patchState(store, { isLoading: false, notifications: [[], 0] });
+              return of(null);
+            })
+          );
+        })
+      )
+    ),
     create: rxMethod<{
       projectId: string;
       dto: NotifyParticipantsDto;
