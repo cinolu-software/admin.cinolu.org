@@ -1,7 +1,7 @@
 <div class="project-notifications font-satoshi min-w-0">
   <div class="relative flex flex-wrap items-center justify-between gap-4">
     <div class="flex flex-col md:flex-row items-center gap-4">
-      <div class="w-full">
+      <div class="w-full md:w-52">
         <app-ui-select
           [id]="'notification-phase-filter'"
           [options]="phaseFilterOptions()"
@@ -9,7 +9,7 @@
           (ngModelChange)="onFilterPhaseChange($event)"
           placeholder="Toutes les phases" />
       </div>
-      <div class="w-full md:w-48">
+      <div class="w-full md:w-40">
         <app-ui-select
           [id]="'notification-status-filter'"
           [options]="statusFilterOptions"
@@ -233,11 +233,10 @@
               {{ activeNotification() ? 'Modifier la notification' : 'Nouvelle notification' }}
             </h2>
           </div>
-
           <div class="min-h-0 flex-1 overflow-y-auto">
             <div class="mx-auto w-full max-w-3xl space-y-8 px-5 py-7 sm:px-6 sm:py-8">
               <div class="grid gap-6 sm:grid-cols-2">
-                <div class="space-y-2 sm:col-span-1">
+                <div class="space-y-2 col-span-1">
                   <app-ui-select
                     [id]="'phase_id'"
                     label="Destinataires"
@@ -245,7 +244,7 @@
                     formControlName="phase_id"
                     placeholder="Tous les participants" />
                 </div>
-                <div class="space-y-2 sm:col-span-1">
+                <div class="space-y-2 col-span-2">
                   <app-ui-input
                     [id]="'title'"
                     label="Objet"
@@ -358,7 +357,9 @@
               [loading]="notificationsStore.isSaving()"
               (clicked)="onSend()">
               <span class="flex items-center gap-2">
-                <i-lucide [name]="icons.Send" class="size-5" />
+                @if (!notificationsStore.isSaving()) {
+                  <i-lucide [name]="icons.Send" class="size-5" />
+                }
                 Envoyer
               </span>
             </app-ui-button>
