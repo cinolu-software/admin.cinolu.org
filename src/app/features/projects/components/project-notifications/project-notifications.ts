@@ -4,7 +4,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   ArrowLeft,
-  Bell,
   CircleAlert,
   Paperclip,
   Send,
@@ -58,7 +57,7 @@ export class ProjectNotifications implements OnInit {
   phasesStore = inject(PhasesStore);
   form = this.#buildForm();
   attachments = signal<AttachmentPreview[]>([]);
-  isComposing = signal(false);
+  isComposing = signal(true);
   filterPhaseId = signal('');
   filterStatus = signal<NotificationStatus | null>(null);
   filterPage = signal<number | null>(null);
@@ -69,7 +68,7 @@ export class ProjectNotifications implements OnInit {
   }));
   currentPage = computed(() => this.filterPage() ?? 1);
   itemsPerPage = 10;
-  icons = { ArrowLeft, Bell, CircleAlert, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox };
+  icons = { ArrowLeft, CircleAlert, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox };
   phaseOptions = computed(() => {
     const options = this.phasesStore.sortedPhases().map((phase) => ({
       label: phase.name,
@@ -229,7 +228,6 @@ export class ProjectNotifications implements OnInit {
     });
   }
 
-  /** Create+send or update+send. */
   onSend(): void {
     if (this.form.invalid || this.notificationsStore.isSaving()) return;
     const dto = this.#buildNotifyDto();
@@ -332,22 +330,18 @@ export class ProjectNotifications implements OnInit {
     return phase ? phase.name : 'Tous les participants';
   }
 
-  /** Title for detail view or composer. */
   detailTitle(notification: INotification | null): string {
     return notification?.title ?? '';
   }
 
-  /** Body HTML for detail view (notification) or composer (form). */
   detailBody(notification: INotification | null): string {
     return notification?.body ?? String(this.form.value.body ?? '');
   }
 
-  /** Sanitized HTML for rendering editor/detail body. */
   bodySafe(notification: INotification | null): SafeHtml {
     return this.#sanitizer.bypassSecurityTrustHtml(this.detailBody(notification));
   }
 
-  /** Strip HTML tags for list preview; returns plain text, optionally truncated. */
   bodyPlainText(html: string | undefined, maxChars?: number): string {
     if (!html) return '';
     const text = html
