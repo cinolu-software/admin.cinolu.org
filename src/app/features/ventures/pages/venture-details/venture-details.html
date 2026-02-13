@@ -8,7 +8,7 @@
   } @else if (venture) {
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6 overflow-hidden">
       @if (venture.cover) {
-        <div class="h-48 w-full overflow-hidden">
+        <div class="h-60 w-full overflow-hidden">
           <img [src]="venture | apiIMG: 'ventureCover'" [alt]="venture.name" class="w-full h-full object-cover" />
         </div>
       }
