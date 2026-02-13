@@ -42,11 +42,6 @@ export class ApiImgPipe implements PipeTransform {
           ? `${apiUrl}uploads/ventures/covers/${value['cover']}`
           : '';
 
-      case 'product':
-        return typeof value['image'] === 'string' && value['image']
-          ? `${apiUrl}uploads/products/images/${value['image']}`
-          : '';
-
       case 'article':
         return typeof value['image'] === 'string' && value['image']
           ? `${apiUrl}uploads/articles/${value['image']}`
