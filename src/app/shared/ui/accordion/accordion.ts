@@ -1,8 +1,10 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, input, signal, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-ui-accordion',
-  templateUrl: './accordion.html'
+  templateUrl: './accordion.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiAccordion {
   multiple = input<boolean>(false);

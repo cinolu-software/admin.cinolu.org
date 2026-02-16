@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChartColumn, SquarePen, Images, Star, Eye } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
@@ -13,6 +13,7 @@ import { LucideAngularModule } from 'lucide-angular';
 @Component({
   selector: 'app-event-details',
   templateUrl: './event-details.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EventsStore, GalleryStore],
   imports: [UiTabs, EventSheet, EventGalleryComponent, EventUpdate, EventDetailsSkeleton, LucideAngularModule]
 })

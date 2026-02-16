@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 import { ICategory, IProject, ISubprogram, IUser } from '@shared/models';
@@ -8,6 +8,7 @@ import { ProjectsStore } from '../../store/projects.store';
 @Component({
   selector: 'app-project-update',
   templateUrl: './project-update.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ProjectsStore],
   imports: [FormsModule, ReactiveFormsModule, UiInput, UiTextarea, UiSelect, UiMultiSelect, UiDatepicker, UiButton]
 })

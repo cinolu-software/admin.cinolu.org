@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Images, SquarePen, Star, LucideAngularModule } from 'lucide-angular';
 import { UiTabs } from '@shared/ui';
@@ -11,7 +11,9 @@ import { ArticleGalleryComponent } from '../../components/article-gallery/articl
   selector: 'app-update-details',
   providers: [ArticlesStore],
   imports: [CommonModule, UiTabs, ArticleUpdate, ArticleGalleryComponent, LucideAngularModule],
-  templateUrl: './article-details.html'
+  templateUrl: './article-details.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArticleDetails implements OnInit {
   #route = inject(ActivatedRoute);

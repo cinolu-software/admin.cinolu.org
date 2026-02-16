@@ -1,9 +1,11 @@
-import { input, inject, computed, Component } from '@angular/core';
+import { input, inject, computed, Component, ChangeDetectionStrategy } from '@angular/core';
 import { UiAccordion } from '../accordion';
 
 @Component({
   selector: 'app-ui-accordion-panel',
-  templateUrl: './accordion-panel.html'
+  templateUrl: './accordion-panel.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiAccordionPanel {
   value = input.required<string>();

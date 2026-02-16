@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { IEvent } from '@shared/models';
 import {
   BookOpen,
@@ -20,6 +20,7 @@ import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-event-sheet',
   templateUrl: './event-sheet.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [UiAccordion, DatePipe, UiAccordionPanel, UiAccordionHeader, UiAccordionContent, LucideAngularModule]
 })
 export class EventSheet {

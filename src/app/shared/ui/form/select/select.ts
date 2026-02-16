@@ -1,4 +1,13 @@
-import { Component, input, forwardRef, computed, signal, ElementRef, HostListener, inject } from '@angular/core';
+import {
+  Component,
+  input,
+  forwardRef,
+  computed,
+  signal,
+  ElementRef,
+  inject,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ChevronDown, LucideAngularModule } from 'lucide-angular';
 
@@ -12,6 +21,10 @@ export interface SelectOption {
   selector: 'app-ui-select',
   imports: [LucideAngularModule],
   templateUrl: './select.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:click)': 'onDocumentClick($event)'
+  },
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiSelect), multi: true }]
 })
 export class UiSelect implements ControlValueAccessor {
@@ -57,7 +70,6 @@ export class UiSelect implements ControlValueAccessor {
   #onChangeCallback!: (value: unknown) => void;
   onTouched!: () => void;
 
-  @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!this.isOpen()) {
       return;

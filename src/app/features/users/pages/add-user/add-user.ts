@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UsersStore } from '../../store/users.store';
 import { RolesStore } from '../../store/roles.store';
@@ -8,6 +8,7 @@ import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect } from '@share
 @Component({
   selector: 'app-user-add',
   templateUrl: './add-user.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [UsersStore, RolesStore],
   imports: [UiButton, UiInput, ReactiveFormsModule, UiDatepicker, UiMultiSelect, UiSelect]
 })

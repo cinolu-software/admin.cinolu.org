@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProgramsStore } from '../../store/programs.store';
@@ -25,7 +25,9 @@ import { UiButton, UiSelect, UiTextarea } from '@shared/ui';
     UiTextarea,
     UiInput
   ],
-  templateUrl: './update-program.html'
+  templateUrl: './update-program.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UpdateProgram implements OnInit {
   #route = inject(ActivatedRoute);

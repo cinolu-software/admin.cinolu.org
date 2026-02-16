@@ -1,10 +1,12 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-ui-avatar',
   imports: [NgOptimizedImage],
-  templateUrl: './avatar.html'
+  templateUrl: './avatar.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiAvatar {
   label = input<string>('');

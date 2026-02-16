@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Search, Funnel, Eye, ToggleLeft, ToggleRight } from 'lucide-angular';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +15,7 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   selector: 'app-list-ventures',
   templateUrl: './list-ventures.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [VenturesStore],
   imports: [
     LucideAngularModule,

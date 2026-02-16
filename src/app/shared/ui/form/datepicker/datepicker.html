@@ -75,7 +75,7 @@
       }
     </div>
     <div class="grid grid-cols-7 gap-1.5 p-4 -mt-9">
-      @for (day of calendarDays(); track $index) { @if (day === null) {
+      @for (day of calendarDays(); track calendarDayKey($index, day)) { @if (day === null) {
       <div class="aspect-square"></div>
       } @else {
       <button

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterArticleDto } from '../../dto/filter-article.dto';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -30,7 +30,9 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
     UiTableSkeleton,
     UiBadge
   ],
-  templateUrl: './list-articles.html'
+  templateUrl: './list-articles.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListArticles {
   #route = inject(ActivatedRoute);

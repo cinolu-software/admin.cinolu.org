@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { IArticle, IImage } from '@shared/models';
 import { LucideAngularModule, Trash2, Image } from 'lucide-angular';
 import { FileUpload } from '@shared/ui';
@@ -8,6 +8,7 @@ import { ApiImgPipe } from '@shared/pipes';
 @Component({
   selector: 'app-article-gallery',
   templateUrl: './article-gallery.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, NgOptimizedImage, LucideAngularModule, FileUpload, ApiImgPipe]
 })
 export class ArticleGalleryComponent {

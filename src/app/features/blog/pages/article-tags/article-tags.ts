@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Plus, Search, Trash, Funnel, Pencil } from 'lucide-angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TagsStore } from '../../store/tags.store';
@@ -24,7 +24,9 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
     UiTableSkeleton,
     UiBadge
   ],
-  templateUrl: './article-tags.html'
+  templateUrl: './article-tags.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArticleTags {
   #route = inject(ActivatedRoute);

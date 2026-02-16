@@ -1,4 +1,4 @@
-import { Component, input, forwardRef, signal, computed, HostListener } from '@angular/core';
+import { Component, input, forwardRef, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LucideAngularModule, Calendar, ChevronLeft, ChevronRight } from 'lucide-angular';
 
@@ -8,6 +8,10 @@ export type DatePickerView = 'date' | 'month' | 'year';
   selector: 'app-ui-datepicker',
   imports: [LucideAngularModule],
   templateUrl: './datepicker.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:click)': 'onDocumentClick($event)'
+  },
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiDatepicker), multi: true }]
 })
 export class UiDatepicker implements ControlValueAccessor {
@@ -262,12 +266,16 @@ export class UiDatepicker implements ControlValueAccessor {
     return [baseClasses, invalidClass, disabledClass].filter(Boolean).join(' ');
   }
 
-  @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     const element = target.closest('.ui-datepicker-wrapper');
     if (!element && this.isOpen()) {
       this.closeCalendar();
     }
+  }
+
+  calendarDayKey(index: number, day: number | null): string {
+    const current = this.currentViewDate();
+    return `${current.getFullYear()}-${current.getMonth()}-${index}-${day ?? 'empty'}`;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthStore } from '@core/auth';
 import { UpdateInfoStore } from '@features/account/store/update-info.store';
@@ -11,6 +11,7 @@ import { UiInput, UiDatepicker, UiTextarea, UiSelect, UiButton, FileUpload } fro
 @Component({
   selector: 'app-account-update',
   templateUrl: './account-update.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [UpdateInfoStore, UpdatePasswordStore],
   imports: [ReactiveFormsModule, UiInput, UiDatepicker, UiTextarea, UiSelect, UiButton, FileUpload]
 })

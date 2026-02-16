@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UsersStore } from '../../store/users.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,6 +11,7 @@ import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } 
 @Component({
   selector: 'app-user-update',
   templateUrl: './update-user.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [UsersStore, RolesStore],
   imports: [UiInput, UiButton, UiSelect, UiDatepicker, UiTextarea, UiMultiSelect, ReactiveFormsModule]
 })

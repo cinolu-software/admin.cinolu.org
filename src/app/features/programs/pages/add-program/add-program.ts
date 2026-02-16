@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, CircleAlert } from 'lucide-angular';
 import { ProgramsStore } from '../../store/programs.store';
@@ -10,7 +10,9 @@ import { UiButton, UiInput, UiSelect, UiTextarea } from '@shared/ui';
   selector: 'app-add-program',
   providers: [ProgramsStore, CategoriesStore],
   imports: [ReactiveFormsModule, UiButton, UiInput, UiSelect, UiTextarea, LucideAngularModule],
-  templateUrl: './add-program.html'
+  templateUrl: './add-program.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProgramPage {
   #fb = inject(FormBuilder);

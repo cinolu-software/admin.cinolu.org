@@ -9,7 +9,7 @@
       <i-lucide [name]="icons.ChevronLeft" class="size-4" aria-hidden="true" />
     </button>
     <ul class="pagination-pages" role="list">
-      @for (item of visibleItems(); track $index) {
+      @for (item of visibleItems(); track trackPaginationItem($index, item)) {
         @if (item === 'ellipsis') {
           <li class="pagination-ellipsis" aria-hidden="true">
             <span class="pagination-ellipsis-dot">…</span>

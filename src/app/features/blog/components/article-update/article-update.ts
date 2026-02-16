@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiInput, UiMultiSelect, UiTextEditor } from '@shared/ui';
 import { Info, LucideAngularModule } from 'lucide-angular';
@@ -9,6 +9,7 @@ import { TagsStore } from '../../store/tags.store';
 @Component({
   selector: 'app-article-update',
   templateUrl: './article-update.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ArticlesStore, TagsStore],
   imports: [ReactiveFormsModule, LucideAngularModule, UiButton, UiInput, UiMultiSelect, UiTextEditor]
 })

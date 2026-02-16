@@ -7,7 +7,7 @@ import { buildQueryParams } from '@shared/helpers';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { ICategory } from '@shared/models';
 import { FilterProjectCategoriesDto } from '../dto/categories/filter-categories.dto';
-import { ProjectCategoryDto } from '../dto/categories/event-category.dto';
+import { ProjectCategoryDto } from '../dto/categories/project-category.dto';
 
 interface ICategoriesStore {
   isLoading: boolean;

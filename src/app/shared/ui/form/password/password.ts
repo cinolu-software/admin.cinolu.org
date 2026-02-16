@@ -1,4 +1,4 @@
-import { Component, input, forwardRef, signal } from '@angular/core';
+import { Component, input, forwardRef, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 
@@ -6,6 +6,7 @@ import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
   selector: 'app-ui-password',
   imports: [LucideAngularModule],
   templateUrl: './password.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiPassword), multi: true }]
 })
 export class UiPassword implements ControlValueAccessor {

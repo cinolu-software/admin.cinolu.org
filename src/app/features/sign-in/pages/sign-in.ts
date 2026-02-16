@@ -1,4 +1,4 @@
-import { Component, inject, signal, afterNextRender } from '@angular/core';
+import { Component, inject, signal, afterNextRender, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -10,6 +10,7 @@ import { environment } from '@env/environment';
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SignInStore],
   imports: [ReactiveFormsModule, NgOptimizedImage, UiInput, UiPassword, UiButton]
 })

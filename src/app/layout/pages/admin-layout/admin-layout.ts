@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, HostListener, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { BackButton } from '@shared/ui/back-button/back-button';
@@ -11,6 +11,9 @@ import { MobileMenu } from '../../components/mobile-menu/mobile-menu';
 @Component({
   selector: 'app-admin-layout',
   templateUrl: './admin-layout.html',
+  host: {
+    '(document:click)': 'onDocumentClick($event)'
+  },
   imports: [
     RouterModule,
     LucideAngularModule,
@@ -35,7 +38,6 @@ export class AdminLayout {
     this.isUserMenuOpen.set(false);
   }
 
-  @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     const isInsideMenu = target.closest('[data-user-menu]');

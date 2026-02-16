@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { X, CircleAlert, LucideAngularModule } from 'lucide-angular';
 import { UiButton } from '../form/button/button';
 import { ConfirmationService } from '@shared/services/confirmation';
@@ -6,7 +6,9 @@ import { ConfirmationService } from '@shared/services/confirmation';
 @Component({
   selector: 'app-ui-confirm-dialog',
   imports: [UiButton, LucideAngularModule],
-  templateUrl: './confirm-dialog.html'
+  templateUrl: './confirm-dialog.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiConfirmDialog {
   #confirmationService = inject(ConfirmationService);

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectsStore } from '../../store/projects.store';
 import { CategoriesStore } from '../../store/project-categories.store';
@@ -9,6 +9,7 @@ import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } 
 @Component({
   selector: 'app-project-add',
   templateUrl: './add-project.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ProjectsStore, SubprogramsStore, CategoriesStore, UsersStore],
   imports: [UiSelect, UiInput, UiMultiSelect, UiButton, UiDatepicker, UiTextarea, ReactiveFormsModule]
 })

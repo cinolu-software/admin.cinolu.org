@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Loader2 } from 'lucide-angular';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'info' | 'contrast' | 'success' | 'outlined';
@@ -7,7 +7,9 @@ type ButtonSize = 'small' | 'medium' | 'large';
 @Component({
   selector: 'app-ui-button',
   imports: [LucideAngularModule],
-  templateUrl: './button.html'
+  templateUrl: './button.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiButton {
   icons = { Loader2 };

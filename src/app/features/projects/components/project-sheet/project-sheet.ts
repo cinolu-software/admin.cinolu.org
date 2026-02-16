@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { IProject } from '@shared/models';
 import {
   BookOpen,
@@ -18,6 +18,7 @@ import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-project-sheet',
   templateUrl: './project-sheet.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [UiAccordion, DatePipe, UiAccordionPanel, UiAccordionHeader, UiAccordionContent, LucideAngularModule]
 })
 export class ProjectSheet {

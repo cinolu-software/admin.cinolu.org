@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { IProject, IImage } from '@shared/models';
 import { LucideAngularModule, Trash2, Image } from 'lucide-angular';
 import { FileUpload } from '@shared/ui';
@@ -8,6 +8,7 @@ import { ApiImgPipe } from '@shared/pipes';
 @Component({
   selector: 'app-project-gallery',
   templateUrl: './project-gallery.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgOptimizedImage, LucideAngularModule, FileUpload, ApiImgPipe]
 })
 export class ProjectGallery {

@@ -1,9 +1,10 @@
-import { Component, input, forwardRef } from '@angular/core';
+import { Component, input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-ui-input',
   templateUrl: './input.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiInput), multi: true }]
 })
 export class UiInput implements ControlValueAccessor {

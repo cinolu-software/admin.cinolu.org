@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, ChevronDown } from 'lucide-angular';
 import { UiAccordionPanel } from '../accordion-panel/accordion-panel';
 
@@ -17,7 +17,9 @@ import { UiAccordionPanel } from '../accordion-panel/accordion-panel';
         class="size-5 transition-transform shrink-0"
         [class.rotate-180]="panel?.isActive()" />
     </button>
-  `
+  `,
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiAccordionHeader {
   panel = inject(UiAccordionPanel, { optional: true });

@@ -7,7 +7,7 @@ export const routes: Routes = [
     path: '',
     title: 'Connexion',
     canActivate: [unauthGuard],
-    loadChildren: () => import('@features/sign-in/sign-in.route').then((m) => m.signInRoutes)
+    loadChildren: () => import('@features/sign-in/sign-in.routes').then((m) => m.signInRoutes)
   },
   {
     path: 'dashboard',
@@ -83,6 +83,6 @@ export const routes: Routes = [
   {
     path: '**',
     title: 'Page introuvable',
-    loadChildren: () => import('@features/not-found/not-found.route').then((m) => m.notFoundRoutes)
+    loadChildren: () => import('@features/not-found/not-found.routes').then((m) => m.notFoundRoutes)
   }
 ];

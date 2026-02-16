@@ -59,4 +59,11 @@ export class UiPagination {
       this.pageChange.emit(page);
     }
   }
+
+  protected trackPaginationItem(index: number, item: PaginationItem): string {
+    if (item === 'ellipsis') {
+      return `ellipsis-${index}`;
+    }
+    return `page-${item}`;
+  }
 }

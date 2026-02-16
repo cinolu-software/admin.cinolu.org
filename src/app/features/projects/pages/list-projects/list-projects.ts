@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Trash, Search, Funnel, Eye } from 'lucide-angular';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +15,7 @@ import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-list-projects',
   templateUrl: './list-projects.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ProjectsStore],
   imports: [
     LucideAngularModule,

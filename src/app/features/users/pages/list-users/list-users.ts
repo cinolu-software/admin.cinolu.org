@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Trash, Download, Search, Funnel, Pencil } from 'lucide-angular';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +15,7 @@ import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-list-users',
   templateUrl: './list-users.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [UsersStore],
   imports: [
     LucideAngularModule,

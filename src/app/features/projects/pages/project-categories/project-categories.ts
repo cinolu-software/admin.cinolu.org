@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Trash, Search, Funnel, Pencil } from 'lucide-angular';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-project-categories',
   templateUrl: './project-categories.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CategoriesStore],
   imports: [
     LucideAngularModule,

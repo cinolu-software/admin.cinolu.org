@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventsStore } from '../../store/events.store';
@@ -10,6 +10,7 @@ import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } 
 @Component({
   selector: 'app-event-add',
   templateUrl: './add-event.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EventsStore, SubprogramsStore, UsersStore, CategoriesStore],
   imports: [UiSelect, UiMultiSelect, CommonModule, UiButton, UiTextarea, UiInput, UiDatepicker, ReactiveFormsModule]
 })

@@ -101,7 +101,7 @@
       <div class="h-6 bg-gray-200 rounded w-32"></div>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      @for (_ of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
+      @for (_ of [1, 2, 3, 4, 5, 6, 7, 8]; track _) {
         <div class="relative rounded-lg border border-gray-200 overflow-hidden">
           <div class="h-28 md:h-36 w-full bg-gray-200"></div>
         </div>
@@ -116,7 +116,7 @@
       <div class="h-6 bg-gray-200 rounded w-32"></div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (_ of [1, 2, 3]; track $index) {
+      @for (_ of [1, 2, 3]; track _) {
         <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
           <div class="h-28 w-full bg-gray-200"></div>
           <div class="p-5 space-y-3">

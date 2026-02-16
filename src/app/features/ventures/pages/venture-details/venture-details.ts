@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VenturesStore } from '../../store/ventures.store';
 import {
@@ -24,11 +24,12 @@ import { CurrencyPipe, DatePipe, NgOptimizedImage } from '@angular/common';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar } from '@shared/ui';
 import type { IProduct } from '@shared/models';
-import { VentureSkeleton } from '@features/ventures/ui/venture-sekeleton/venture-skeleton';
+import { VentureSkeleton } from '@features/ventures/ui/venture-skeleton/venture-skeleton';
 
 @Component({
   selector: 'app-venture-details',
   templateUrl: './venture-details.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [VenturesStore, ConfirmationService],
   imports: [
     LucideAngularModule,

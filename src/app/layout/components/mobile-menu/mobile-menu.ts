@@ -1,13 +1,4 @@
-import {
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  input,
-  OnDestroy,
-  output,
-  signal
-} from '@angular/core';
+import { Component, computed, ElementRef, inject, input, OnDestroy, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import {
   LucideAngularModule,
@@ -30,6 +21,7 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   selector: 'app-mobile-menu',
   templateUrl: './mobile-menu.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [LucideAngularModule, RouterModule, NgOptimizedImage]
 })
 export class MobileMenu implements OnDestroy {

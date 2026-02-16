@@ -1,5 +1,5 @@
 <div class="flex gap-6 border-b border-gray-300 overflow-x-auto scrollbar-hide relative">
-  @for (tab of tabs(); track $index) {
+  @for (tab of tabs(); track tab.name) {
     <button
       [class]="
         activeTab() === tab.name

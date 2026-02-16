@@ -1,4 +1,4 @@
-import { Component, input, forwardRef, signal, effect, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, input, forwardRef, signal, effect, ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
   LucideAngularModule,
@@ -15,6 +15,7 @@ import {
   selector: 'app-ui-text-editor',
   imports: [LucideAngularModule],
   templateUrl: './text-editor.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiTextEditor), multi: true }]
 })
 export class UiTextEditor implements ControlValueAccessor, AfterViewInit {

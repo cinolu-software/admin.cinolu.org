@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiButton, UiInput, UiTextarea, UiMultiSelect, UiDatepicker, UiTextEditor } from '@shared/ui';
 import { ArticlesStore } from '../../store/articles.store';
@@ -8,7 +8,9 @@ import { TagsStore } from '../../store/tags.store';
   selector: 'app-article-add',
   providers: [ArticlesStore, TagsStore],
   imports: [ReactiveFormsModule, UiButton, UiInput, UiTextarea, UiMultiSelect, UiDatepicker, UiTextEditor],
-  templateUrl: './add-article.html'
+  templateUrl: './add-article.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddArticle {
   #fb = inject(FormBuilder);

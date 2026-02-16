@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Search, Funnel, Eye, CircleCheckBig, CircleX } from 'lucide-angular';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
 @Component({
   selector: 'app-mentors-list',
   templateUrl: './list-mentors.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MentorsStore],
   imports: [
     LucideAngularModule,

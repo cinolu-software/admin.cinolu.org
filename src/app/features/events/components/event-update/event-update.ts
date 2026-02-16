@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IEvent } from '@shared/models';
 import { extractCategoryIds, parseDate } from '@shared/helpers/form.helper';
@@ -11,6 +11,7 @@ import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } 
 @Component({
   selector: 'app-event-update',
   templateUrl: './event-update.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EventsStore, CategoriesStore, UsersStore, SubprogramsStore],
   imports: [FormsModule, ReactiveFormsModule, UiSelect, UiMultiSelect, UiInput, UiButton, UiTextarea, UiDatepicker]
 })

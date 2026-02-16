@@ -6,8 +6,8 @@ import {
   computed,
   effect,
   ElementRef,
-  HostListener,
-  inject
+  inject,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -19,6 +19,10 @@ import { UiCheckbox } from '../checkbox/checkbox';
   selector: 'app-ui-multi-select',
   imports: [FormsModule, LucideAngularModule, UiCheckbox],
   templateUrl: './multi-select.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:click)': 'onDocumentClick($event)'
+  },
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiMultiSelect), multi: true }]
 })
 export class UiMultiSelect implements ControlValueAccessor {
@@ -46,7 +50,6 @@ export class UiMultiSelect implements ControlValueAccessor {
     });
   }
 
-  @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!this.isOpen()) {
       return;

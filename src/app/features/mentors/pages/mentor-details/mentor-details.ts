@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MentorsStore } from '../../store/mentors.store';
 import {
@@ -21,6 +21,7 @@ import { environment } from '@env/environment';
 @Component({
   selector: 'app-mentor-details',
   templateUrl: './mentor-details.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MentorsStore, ConfirmationService],
   imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar]
 })
