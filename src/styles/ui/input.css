@@ -3,14 +3,14 @@
   .ui-textarea,
   .ui-select,
   .ui-datepicker {
-    @apply w-full px-3.5 py-2.5 text-[15px] leading-6 text-slate-900 bg-white border border-slate-300 rounded-lg font-[inherit] transition-colors duration-300 ease-in-out shadow-sm hover:border-slate-400 hover:shadow-md;
+    @apply w-full px-3.5 py-2.5 text-[15px] leading-6 text-slate-900 bg-white border border-slate-300 rounded-lg font-[inherit]   shadow-sm hover:border-slate-400/90 hover:shadow-sm transition-colors duration-200;
   }
 
   .ui-input:focus,
   .ui-textarea:focus,
   .ui-select:focus,
   .ui-datepicker:focus {
-    @apply outline-none border-primary-500 ring-2 ring-offset-1 ring-primary-200 shadow-md;
+    @apply outline-none border-primary-500 ring-2 ring-offset-1 ring-primary-200 shadow-sm;
   }
 
   .ui-input::placeholder,
