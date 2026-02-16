@@ -49,7 +49,7 @@ export const EventsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
-          _http.get<{ data: IEvent }>(`events/slug/${slug}`).pipe(
+          _http.get<{ data: IEvent }>(`events/by-slug/${slug}`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, event: data });
             }),
@@ -125,7 +125,7 @@ export const EventsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.post<{ data: IEvent }>(`events/publish/${id}`, {}).pipe(
+          _http.patch<{ data: IEvent }>(`events/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.events();
               const updated = list.map((e) => (e.id === data.id ? data : e));
@@ -143,7 +143,7 @@ export const EventsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: IEvent }>(`events/highlight/${id}`, {}).pipe(
+          _http.patch<{ data: IEvent }>(`events/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.events();
               const updated = list.map((e) => (e.id === data.id ? data : e));

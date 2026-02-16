@@ -1,11 +1,4 @@
-import {
-  signalStore,
-  withState,
-  withMethods,
-  patchState,
-  withProps,
-  withComputed
-} from '@ngrx/signals';
+import { signalStore, withState, withMethods, patchState, withProps, withComputed } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, tap, catchError, of, exhaustMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -38,7 +31,7 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => patchState(store, { isCheckingAuth: true })),
         exhaustMap(() =>
-          _http.get<{ data: IUser }>('auth/profile').pipe(
+          _http.get<{ data: IUser }>('auth/me').pipe(
             tap(({ data }) => {
               patchState(store, { user: data, isCheckingAuth: false });
             }),
@@ -53,7 +46,7 @@ export const AuthStore = signalStore(
     signOut: rxMethod<void>(
       pipe(
         exhaustMap(() =>
-          _http.post<void>('auth/sign-out', {}).pipe(
+          _http.post<void>('auth/signout', {}).pipe(
             tap(() => {
               _router.navigate(['/']);
               patchState(store, { user: null });

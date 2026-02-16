@@ -62,7 +62,7 @@ export const VenturesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
-          _http.patch<{ data: IVenture }>(`ventures/toggle-publish/${slug}`, {}).pipe(
+          _http.patch<{ data: IVenture }>(`ventures/by-slug/${slug}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.ventures();
               const updated = list.map((v) => (v.slug === data.slug ? data : v));

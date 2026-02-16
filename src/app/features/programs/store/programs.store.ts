@@ -62,7 +62,7 @@ export const ProgramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) => {
-          return _http.get<{ data: IProgram }>(`programs/slug/${slug}`).pipe(
+          return _http.get<{ data: IProgram }>(`programs/by-slug/${slug}`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, program: data });
             }),
@@ -140,7 +140,7 @@ export const ProgramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.post<{ data: IProgram }>(`programs/publish/${id}`, {}).pipe(
+          _http.patch<{ data: IProgram }>(`programs/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.programs();
               const updated = list.map((p) => (p.id === data.id ? data : p));
@@ -158,7 +158,7 @@ export const ProgramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: IProgram }>(`programs/highlight/${id}`, {}).pipe(
+          _http.patch<{ data: IProgram }>(`programs/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.programs();
               const updated = list.map((p) => (p.id === data.id ? data : p));

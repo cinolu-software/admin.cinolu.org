@@ -45,7 +45,7 @@ export const TagsStore = signalStore(
         switchMap((queryParams) => {
           patchState(store, { lastQuery: queryParams });
           const params = buildQueryParams(queryParams);
-          return _http.get<{ data: [ITag[], number] }>('tags/filtered', { params }).pipe(
+          return _http.get<{ data: [ITag[], number] }>('tags/paginated', { params }).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, tags: data });
             }),

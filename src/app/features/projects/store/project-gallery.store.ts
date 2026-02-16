@@ -22,7 +22,7 @@ export const GalleryStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
-          _http.get<{ data: IImage[] }>(`projects/gallery/${slug}`).pipe(
+          _http.get<{ data: IImage[] }>(`projects/by-slug/${slug}/gallery`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, gallery: data });
             }),
@@ -38,7 +38,7 @@ export const GalleryStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.delete<void>(`projects/gallery/remove/${id}`).pipe(
+          _http.delete<void>(`projects/gallery/${id}`).pipe(
             map(() => {
               const current = store.gallery();
               const filtered = current.filter((img) => img.id !== id);

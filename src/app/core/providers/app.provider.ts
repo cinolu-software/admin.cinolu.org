@@ -21,7 +21,7 @@ export const provideApp = (): EnvironmentProviders[] => {
       const authStore = inject(AuthStore);
       const http = inject(HttpClient);
       authStore.setCheckingAuth(true);
-      return http.get<{ data: IUser }>('auth/profile').pipe(
+      return http.get<{ data: IUser }>('auth/me').pipe(
         map(({ data }) => {
           authStore.setUser(data);
           authStore.setCheckingAuth(false);

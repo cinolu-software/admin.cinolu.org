@@ -31,7 +31,7 @@ export const StatsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoadingGeneral: true })),
         switchMap(() =>
-          _http.get<{ data: IAdminStatsGeneral } | IAdminStatsGeneral>('stats/admin/general').pipe(
+          _http.get<{ data: IAdminStatsGeneral } | IAdminStatsGeneral>('stats/admin/overview').pipe(
             map((res) => ('data' in res ? res.data : res)),
             tap((data) => patchState(store, { isLoadingGeneral: false, general: data })),
             catchError(() => {
@@ -47,7 +47,7 @@ export const StatsStore = signalStore(
         tap((year) => patchState(store, { isLoadingByYear: true, selectedYear: year })),
         switchMap((year) =>
           _http
-            .get<{ data: IAdminStatsByYear } | IAdminStatsByYear>(`stats/admin/by-year/${year}`)
+            .get<{ data: IAdminStatsByYear } | IAdminStatsByYear>(`stats/admin/year/${year}`)
             .pipe(
               map((res) => ('data' in res ? res.data : res)),
               tap((data) => patchState(store, { isLoadingByYear: false, byYear: data })),

@@ -22,7 +22,7 @@ export const UpdatePasswordStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) => {
-          return _http.patch<{ data: IUser }>('auth/update-password', payload).pipe(
+          return _http.patch<{ data: IUser }>('auth/me/password', payload).pipe(
             tap(() => {
               _toast.showSuccess('Mot de passe mis à jour');
               patchState(store, { isLoading: false });

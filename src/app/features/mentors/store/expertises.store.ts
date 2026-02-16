@@ -31,7 +31,7 @@ export const ExpertisesStore = signalStore(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {
           const params = buildQueryParams(queryParams);
-          return _http.get<{ data: [IExpertise[], number] }>('expertises/filtered', { params }).pipe(
+          return _http.get<{ data: [IExpertise[], number] }>('expertises/paginated', { params }).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, expertises: data });
             }),

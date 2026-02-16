@@ -43,6 +43,6 @@ export class SignIn {
   }
 
   signinWithGoogle(): void {
-    window.location.replace(environment.apiUrl + 'auth/sign-in');
+    window.location.replace(environment.apiUrl + 'auth/google');
   }
 }

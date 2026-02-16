@@ -24,7 +24,7 @@ export const SubprogramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.get<{ data: ISubprogram[] }>(`subprograms/unpaginated/${id}`).pipe(
+          _http.get<{ data: ISubprogram[] }>(`subprograms/program/${id}`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, allSubprograms: data });
             }),
@@ -104,7 +104,7 @@ export const SubprogramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.post<{ data: ISubprogram }>(`subprograms/publish/${id}`, {}).pipe(
+          _http.patch<{ data: ISubprogram }>(`subprograms/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.subprograms();
               const updated = list.map((sp) => (sp.id === data.id ? data : sp));
@@ -123,7 +123,7 @@ export const SubprogramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: ISubprogram }>(`subprograms/highlight/${id}`, {}).pipe(
+          _http.patch<{ data: ISubprogram }>(`subprograms/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.subprograms();
               const updated = list.map((sp) => (sp.id === data.id ? data : sp));

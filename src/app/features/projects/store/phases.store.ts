@@ -35,7 +35,7 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => {
-          return _http.get<{ data: IPhase[] }>(`phases/all/${id}`).pipe(
+          return _http.get<{ data: IPhase[] }>(`phases/project/${id}`).pipe(
             tap(({ data }) => patchState(store, { isLoading: false, phases: data })),
             catchError(() => {
               patchState(store, { isLoading: false, phases: [] });
@@ -113,7 +113,7 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, onSuccess }) =>
-          _http.post<void>('phases/move/participants', dto).pipe(
+          _http.post<void>('phases/participants/move', dto).pipe(
             map(() => {
               _toast.showSuccess('Les participants ont été déplacés avec succès');
               patchState(store, { isLoading: false });
@@ -132,7 +132,7 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, onSuccess }) =>
-          _http.post<void>('phases/remove/participants', dto).pipe(
+          _http.post<void>('phases/participants/remove', dto).pipe(
             map(() => {
               _toast.showSuccess('Les participants ont été retirés avec succès');
               patchState(store, { isLoading: false });

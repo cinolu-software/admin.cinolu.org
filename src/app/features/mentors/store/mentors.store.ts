@@ -30,7 +30,7 @@ export const MentorsStore = signalStore(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {
           const params = buildQueryParams(queryParams);
-          return _http.get<{ data: [IMentorProfile[], number] }>('mentor-profiles/filtered', { params }).pipe(
+          return _http.get<{ data: [IMentorProfile[], number] }>('mentors/paginated', { params }).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, mentors: data });
             }),
@@ -46,7 +46,7 @@ export const MentorsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.get<{ data: IMentorProfile }>(`mentor-profiles/${id}`).pipe(
+          _http.get<{ data: IMentorProfile }>(`mentors/${id}`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, mentor: data });
             }),
@@ -62,7 +62,7 @@ export const MentorsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: IMentorProfile }>(`mentor-profiles/approve/${id}`, {}).pipe(
+          _http.patch<{ data: IMentorProfile }>(`mentors/${id}/approve`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.mentors();
               const updated = list.map((m) => (m.id === data.id ? data : m));
@@ -82,7 +82,7 @@ export const MentorsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: IMentorProfile }>(`mentor-profiles/reject/${id}`, {}).pipe(
+          _http.patch<{ data: IMentorProfile }>(`mentors/${id}/reject`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.mentors();
               const updated = list.map((m) => (m.id === data.id ? data : m));

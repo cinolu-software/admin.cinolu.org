@@ -55,7 +55,7 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) => {
-          return _http.get<{ data: IProject }>(`projects/slug/${slug}`).pipe(
+          return _http.get<{ data: IProject }>(`projects/by-slug/${slug}`).pipe(
             tap(({ data }) => {
               patchState(store, { isLoading: false, project: data });
             }),
@@ -125,7 +125,7 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => {
-          return _http.post<{ data: IProject }>(`projects/publish/${id}`, {}).pipe(
+          return _http.patch<{ data: IProject }>(`projects/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.projects();
               const updated = list.map((p) => (p.id === data.id ? data : p));
@@ -143,7 +143,7 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => {
-          return _http.patch<{ data: IProject }>(`projects/highlight/${id}`, {}).pipe(
+          return _http.patch<{ data: IProject }>(`projects/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.projects();
               const updated = list.map((p) => (p.id === data.id ? data : p));
@@ -185,7 +185,7 @@ export const ProjectsStore = signalStore(
         switchMap(({ projectId, file, onSuccess }) => {
           const formData = new FormData();
           formData.append('file', file);
-          return _http.post<unknown>(`projects/${projectId}/participants/csv`, formData).pipe(
+          return _http.post<unknown>(`projects/${projectId}/participants/import-csv`, formData).pipe(
             map(() => {
               _toast.showSuccess('Les participants ont été importés avec succès');
               patchState(store, { isImportingCsv: false });

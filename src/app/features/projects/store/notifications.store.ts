@@ -124,7 +124,7 @@ export const NotificationsStore = signalStore(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null })),
           exhaustMap(({ projectId, dto, attachments = [], onSuccess }) =>
-            _http.post<{ data: INotification }>(`projects/${projectId}/notification`, dto).pipe(
+            _http.post<{ data: INotification }>(`projects/${projectId}/notifications`, dto).pipe(
               map(({ data }) => data),
               tap((notification) => patchState(store, upsertNotificationState(notification))),
               concatMap((notification) => {
@@ -154,7 +154,7 @@ export const NotificationsStore = signalStore(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null })),
           exhaustMap(({ notificationId, onSuccess }) =>
-            _http.post<{ data: INotification }>(`projects/notify/${notificationId}`, {}).pipe(
+            _http.post<{ data: INotification }>(`projects/notifications/${notificationId}/send`, {}).pipe(
               tap(({ data }) => {
                 patchState(store, { isSaving: false, error: null, ...upsertNotificationState(data) });
                 onSuccess?.(data);
@@ -233,7 +233,7 @@ export const NotificationsStore = signalStore(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null })),
           exhaustMap(({ projectId, dto, attachments = [], onSuccess }) =>
-            _http.post<{ data: INotification }>(`projects/${projectId}/notification`, dto).pipe(
+            _http.post<{ data: INotification }>(`projects/${projectId}/notifications`, dto).pipe(
               map(({ data }) => data),
               tap((notification) => patchState(store, upsertNotificationState(notification))),
               concatMap((notification) => {
@@ -241,7 +241,7 @@ export const NotificationsStore = signalStore(
                 return uploadAttachments(notification.id, attachments);
               }),
               concatMap((notification) =>
-                _http.post<{ data: INotification }>(`projects/notify/${notification.id}`, {})
+                _http.post<{ data: INotification }>(`projects/notifications/${notification.id}/send`, {})
               ),
               tap(({ data }) => {
                 patchState(store, { isSaving: false, error: null, ...upsertNotificationState(data) });

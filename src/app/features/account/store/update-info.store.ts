@@ -24,7 +24,7 @@ export const UpdateInfoStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) => {
-          return _http.patch<{ data: IUser }>('auth/profile', payload).pipe(
+          return _http.patch<{ data: IUser }>('auth/me', payload).pipe(
             tap(({ data }) => {
               patchState(store, { isLoading: false });
               _toast.showSuccess('Profil mis à jour');

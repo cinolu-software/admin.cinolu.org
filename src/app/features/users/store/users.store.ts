@@ -46,7 +46,7 @@ export const UsersStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true } as Partial<IUsersStore>)),
         switchMap(() =>
-          _http.get<{ data: IUser[] }>('users/find-staff').pipe(
+          _http.get<{ data: IUser[] }>('users/staff').pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, staff: data } as Partial<IUsersStore>);
             }),
@@ -137,7 +137,7 @@ export const UsersStore = signalStore(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((queryParams) => {
           const params = buildQueryParams(queryParams);
-          return _http.get('users/export/csv', { params, responseType: 'blob' }).pipe(
+          return _http.get('users/export/users.csv', { params, responseType: 'blob' }).pipe(
             tap((blob) => {
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement('a');

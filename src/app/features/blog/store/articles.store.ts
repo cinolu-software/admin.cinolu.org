@@ -53,7 +53,7 @@ export const ArticlesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
-          _http.get<{ data: IArticle }>(`articles/slug/${slug}`).pipe(
+          _http.get<{ data: IArticle }>(`articles/by-slug/${slug}`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, article: data });
             }),
@@ -129,7 +129,7 @@ export const ArticlesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: IArticle }>(`articles/highlight/${id}`, {}).pipe(
+          _http.patch<{ data: IArticle }>(`articles/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.articles();
               const updated = list.map((a) => (a.id === data.id ? data : a));
@@ -151,7 +151,7 @@ export const ArticlesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((slug) =>
-          _http.get<{ data: IImage[] }>(`articles/gallery/${slug}`).pipe(
+          _http.get<{ data: IImage[] }>(`articles/by-slug/${slug}/gallery`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, gallery: data });
             }),
@@ -167,7 +167,7 @@ export const ArticlesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.delete<void>(`articles/gallery/remove/${id}`).pipe(
+          _http.delete<void>(`articles/gallery/${id}`).pipe(
             map(() => {
               const current = store.gallery();
               const filtered = current.filter((img) => img.id !== id);
