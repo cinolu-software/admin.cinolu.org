@@ -47,7 +47,7 @@
               <tr class="ui-table-row">
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-3">
-                    <app-ui-avatar [image]="article | apiIMG: 'article'" [label]="article.title" />
+                    <app-ui-avatar [shape]="'square'" [image]="article | apiIMG: 'article'" [label]="article.title" />
                     <p class="font-semibold text-gray-900 w-32 md:w-48 line-clamp-1 md:line-clamp-2">
                       {{ article.title | titlecase }}
                     </p>
