@@ -137,7 +137,6 @@ export class Participations {
       this.searchQuery();
       this.selectedPhase();
       this.currentPage.set(1);
-      this.clearSelection();
     });
   }
 
@@ -163,10 +162,19 @@ export class Participations {
   }
 
   toggleSelectAll(): void {
+    const filteredIds = new Set(this.filteredParticipations().map((p) => getParticipationKey(p)));
     if (this.isAllFilteredSelected()) {
-      this.clearSelection();
+      this.selectedIds.update((set) => {
+        const next = new Set(set);
+        for (const id of filteredIds) next.delete(id);
+        return next;
+      });
     } else {
-      this.selectedIds.set(new Set(this.filteredParticipations().map((p) => getParticipationKey(p))));
+      this.selectedIds.update((set) => {
+        const next = new Set(set);
+        for (const id of filteredIds) next.add(id);
+        return next;
+      });
     }
   }
 
@@ -221,7 +229,7 @@ export class Participations {
 
   private getParticipationsIds(): string[] {
     const ids = this.selectedIds();
-    return this.filteredParticipations()
+    return this.rawParticipations()
       .filter((p) => ids.has(getParticipationKey(p)))
       .map((p) => p.id);
   }
