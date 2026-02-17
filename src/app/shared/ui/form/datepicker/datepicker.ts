@@ -33,10 +33,13 @@ export class UiDatepicker implements ControlValueAccessor {
   #onChangeCallback!: (value: Date | null) => void;
   #onTouchedCallback!: () => void;
 
-  writeValue(value: Date | null): void {
-    this.selectedDate.set(value);
+  writeValue(value: Date | string | null): void {
     if (value) {
-      this.currentViewDate.set(new Date(value));
+      const dateValue = value instanceof Date ? value : new Date(value);
+      this.selectedDate.set(dateValue);
+      this.currentViewDate.set(new Date(dateValue));
+    } else {
+      this.selectedDate.set(null);
     }
   }
 
