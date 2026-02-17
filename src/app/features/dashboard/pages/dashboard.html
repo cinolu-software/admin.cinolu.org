@@ -117,47 +117,116 @@
 
       @if (data.detailedParticipations.programs.length > 0) {
         <div class="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
-          <div class="px-6 py-4">
+          <div class="px-6 py-4 border-b border-gray-100">
             <h3 class="text-base font-semibold text-gray-900 flex items-center gap-2">
               <i-lucide [name]="icons.LayoutList" class="size-4 text-gray-500" />
               Détail par programme
             </h3>
           </div>
-          <div class="ui-table-wrapper overflow-x-auto">
-            <table class="ui-table">
-              <thead class="ui-table-head">
-                <tr class="ui-table-head-row">
-                  <th class="ui-table-header" scope="col">Programmes</th>
-                  <th class="ui-table-header" scope="col">Participations</th>
-                  <th class="ui-table-header" scope="col">Sous-programmes</th>
-                </tr>
-              </thead>
-              <tbody class="ui-table-body">
-                @for (program of data.detailedParticipations.programs; track program.id) {
-                  <tr class="ui-table-row">
-                    <td class="ui-table-cell">
-                      <span class="font-medium text-gray-900">{{ program.name }}</span>
-                    </td>
-                    <td class="ui-table-cell">
-                      <span class="tabular-nums text-gray-700">{{ program.participations }}</span>
-                    </td>
-                    <td class="ui-table-cell">
-                      @if (program.subprograms.length > 0) {
-                        <ul class="flex flex-wrap gap-1.5">
-                          @for (sub of program.subprograms; track sub.id) {
-                            <li>
-                              <app-ui-badge [label]="sub.name + ' (' + sub.participations + ')'" size="small" />
-                            </li>
+          <div class="p-4">
+            <div class="space-y-2">
+              @for (program of data.detailedParticipations.programs; track program.id) {
+                <div class="rounded-lg border border-gray-100 bg-gray-50/50 overflow-hidden">
+                  <button
+                    type="button"
+                    class="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100/50 transition-colors"
+                    (click)="toggleProgram(program.id)">
+                    <i-lucide
+                      [name]="isProgramExpanded(program.id) ? icons.ChevronDown : icons.ChevronRight"
+                      class="size-4 text-gray-400 shrink-0" />
+                    <i-lucide
+                      [name]="isProgramExpanded(program.id) ? icons.FolderOpen : icons.Folder"
+                      class="size-5 text-primary-600 shrink-0" />
+                    <span class="font-semibold text-gray-900 flex-1 text-left">{{ program.name }}</span>
+                    <span
+                      class="px-2.5 py-1 bg-primary-100 text-primary-700 text-sm font-semibold rounded-full tabular-nums">
+                      {{ program.participations }}
+                    </span>
+                  </button>
+                  @if (isProgramExpanded(program.id) && program.subprograms.length > 0) {
+                    <div class="bg-white border-t border-gray-100">
+                      @for (subprogram of program.subprograms; track subprogram.id) {
+                        <div class="border-b border-gray-50 last:border-b-0">
+                          <button
+                            type="button"
+                            class="w-full px-4 py-2.5 pl-12 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                            (click)="toggleSubprogram(subprogram.id)">
+                            <i-lucide
+                              [name]="isSubprogramExpanded(subprogram.id) ? icons.ChevronDown : icons.ChevronRight"
+                              class="size-3.5 text-gray-400 shrink-0" />
+                            <i-lucide [name]="icons.FolderKanban" class="size-4 text-blue-600 shrink-0" />
+                            <span class="font-medium text-gray-800 flex-1 text-left text-sm">{{
+                              subprogram.name
+                            }}</span>
+                            <span
+                              class="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full tabular-nums">
+                              {{ subprogram.participations }}
+                            </span>
+                          </button>
+                          @if (isSubprogramExpanded(subprogram.id)) {
+                            <div class="px-4 py-3 pl-16 bg-gray-50/50 space-y-3">
+                              @if (subprogram.projects.length > 0) {
+                                <div>
+                                  <div class="flex items-center gap-2 mb-2">
+                                    <i-lucide [name]="icons.FileCode" class="size-3.5 text-emerald-600" />
+                                    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+                                      >Projets</span
+                                    >
+                                  </div>
+                                  <ul class="space-y-1.5">
+                                    @for (project of subprogram.projects; track project.id) {
+                                      <li class="flex items-center gap-2 text-sm">
+                                        <div class="w-1 h-1 rounded-full bg-emerald-400 shrink-0"></div>
+                                        <span class="text-gray-700">{{ project.name }}</span>
+                                        <span
+                                          class="ml-auto px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded tabular-nums">
+                                          {{ project.participations }}
+                                        </span>
+                                      </li>
+                                    }
+                                  </ul>
+                                </div>
+                              }
+                              @if (subprogram.events.length > 0) {
+                                <div>
+                                  <div class="flex items-center gap-2 mb-2">
+                                    <i-lucide [name]="icons.Calendar" class="size-3.5 text-purple-600" />
+                                    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+                                      >Événements</span
+                                    >
+                                  </div>
+                                  <ul class="space-y-1.5">
+                                    @for (event of subprogram.events; track event.id) {
+                                      <li class="flex items-center gap-2 text-sm">
+                                        <div class="w-1 h-1 rounded-full bg-purple-400 shrink-0"></div>
+                                        <span class="text-gray-700">{{ event.name }}</span>
+                                        <span
+                                          class="ml-auto px-1.5 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded tabular-nums">
+                                          {{ event.participations }}
+                                        </span>
+                                      </li>
+                                    }
+                                  </ul>
+                                </div>
+                              }
+
+                              @if (subprogram.projects.length === 0 && subprogram.events.length === 0) {
+                                <p class="text-xs text-gray-400 italic">Aucun projet ou événement</p>
+                              }
+                            </div>
                           }
-                        </ul>
-                      } @else {
-                        <span class="text-sm text-gray-400">—</span>
+                        </div>
                       }
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+                    </div>
+                  }
+                  @if (isProgramExpanded(program.id) && program.subprograms.length === 0) {
+                    <div class="px-4 py-3 pl-12 bg-white border-t border-gray-100 text-sm text-gray-400 italic">
+                      Aucun sous-programme
+                    </div>
+                  }
+                </div>
+              }
+            </div>
           </div>
         </div>
       } @else {
