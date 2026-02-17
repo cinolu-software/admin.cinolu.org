@@ -188,10 +188,11 @@
               [label]="totalFiltered + ' participation(s)'" />
           </div>
           <div class="flex flex-col gap-4 py-4 px-6 border-b border-gray-200 bg-gray-50/30">
-            <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
-              <div class="min-w-0 sm:w-56 shrink-0">
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+              <div class="w-full min-w-0 sm:w-56 sm:shrink-0">
                 <label for="operation-type-select" class="sr-only">Type d'opération</label>
                 <app-ui-select
+                  class="block w-full min-w-0 max-w-full"
                   id="operation-type-select"
                   [options]="operationTypeOptions"
                   [ngModel]="operationType()"
@@ -199,8 +200,9 @@
                   placeholder="Opération" />
               </div>
               @if (operationType() === operationMove) {
-                <div class="min-w-0 sm:w-64 shrink-0">
+                <div class="w-full min-w-0 sm:w-64 sm:shrink-0">
                   <app-ui-select
+                    class="block w-full min-w-0 max-w-full"
                     id="move-phase-select"
                     [options]="movePhaseOptions()"
                     [ngModel]="moveTargetPhase()"
@@ -208,6 +210,7 @@
                     placeholder="Déplacer vers la phase" />
                 </div>
                 <app-ui-button
+                  class="w-full sm:w-auto"
                   type="button"
                   variant="primary"
                   size="small"
@@ -223,8 +226,9 @@
                 </app-ui-button>
               }
               @if (operationType() === operationRemove) {
-                <div class="min-w-0 sm:w-64 shrink-0">
+                <div class="w-full min-w-0 sm:w-64 sm:shrink-0">
                   <app-ui-select
+                    class="block w-full min-w-0 max-w-full"
                     id="remove-phase-select"
                     [options]="movePhaseOptions()"
                     [ngModel]="removeTargetPhase()"
@@ -232,6 +236,7 @@
                     placeholder="Retirer de la phase" />
                 </div>
                 <app-ui-button
+                  class="w-full sm:w-auto"
                   type="button"
                   variant="outlined"
                   size="small"
@@ -248,7 +253,7 @@
               }
               <button
                 type="button"
-                class="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 border border-gray-200"
+                class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 border border-gray-200"
                 (click)="clearSelection()">
                 <i-lucide [name]="icons.X" class="size-4 shrink-0" />
                 Annuler
