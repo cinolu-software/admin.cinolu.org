@@ -7,13 +7,25 @@ import { RolesStore } from '@features/users/store/roles.store';
 import { parseDate } from '@shared/helpers';
 import { IUser, IRole } from '@shared/models';
 import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@ui';
+import { UserUpdateFormSkeleton } from '../../ui/user-update-form-skeleton/user-update-form-skeleton';
+import { UserNotFoundPlaceholder } from '../../ui/user-not-found-placeholder/user-not-found-placeholder';
 
 @Component({
   selector: 'app-user-update',
   templateUrl: './update-user.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [UsersStore, RolesStore],
-  imports: [UiInput, UiButton, UiSelect, UiDatepicker, UiTextarea, UiMultiSelect, ReactiveFormsModule]
+  imports: [
+    UiInput,
+    UiButton,
+    UiSelect,
+    UiDatepicker,
+    UiTextarea,
+    UiMultiSelect,
+    ReactiveFormsModule,
+    UserUpdateFormSkeleton,
+    UserNotFoundPlaceholder
+  ]
 })
 export class UpdateUser implements OnInit {
   #route = inject(ActivatedRoute);

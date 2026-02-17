@@ -1,94 +1,96 @@
-<section class="pt-32 dashboard-main-content flex flex-col gap-4">
+<section class="pt-32 dashboard-main-content flex flex-col gap-6">
+  <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 p-6 md:p-8">
+    <div class="relative flex flex-col gap-3">
+      <span
+        class="inline-flex w-fit items-center rounded-full border border-sky-200 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-700">
+        Gestion des utilisateurs
+      </span>
+      <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Modifier un utilisateur</h1>
+      <p class="max-w-2xl text-sm text-gray-600 md:text-base">
+        Mettez a jour les informations personnelles, les roles et la biographie depuis un formulaire clair et structure.
+      </p>
+    </div>
+  </div>
+
   @if (usersStore.isLoading()) {
-  <div class="border border-gray-200 rounded-lg p-4 md:bg-white md:p-6 animate-pulse">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
-      <div class="space-y-2">
-        <div class="h-4 w-28 bg-gray-200 rounded"></div>
-        <div class="h-11 w-full bg-gray-100 rounded-lg border border-gray-200"></div>
-      </div>
-      }
-      <div class="lg:col-span-2 space-y-2">
-        <div class="h-4 w-28 bg-gray-200 rounded"></div>
-        <div class="h-32 w-full bg-gray-100 rounded-lg border border-gray-200"></div>
-      </div>
-    </div>
-    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-      <div class="h-9 w-44 bg-gray-200 rounded-lg"></div>
-    </div>
-  </div>
+    <app-user-update-form-skeleton />
   } @else if (user()) {
-  <form class="border border-gray-200 rounded-lg p-4 md:bg-white md:p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <app-ui-input
-        label="Email"
-        [id]="'email'"
-        formControlName="email"
-        class="w-full"
-        placeholder="exemple@email.com" />
-      <app-ui-input
-        label="Nom complet"
-        [id]="'name'"
-        formControlName="name"
-        class="w-full"
-        placeholder="Nom de l'utilisateur" />
-      <app-ui-input
-        label="Numéro de téléphone"
-        [id]="'phone_number'"
-        formControlName="phone_number"
-        class="w-full"
-        placeholder="+243 XXX XXX XXX" />
-      <app-ui-select
-        [id]="'gender'"
-        label="Genre"
-        [options]="genders"
-        formControlName="gender"
-        placeholder="Sélectionner un genre"
-        class="w-full" />
-      <app-ui-input label="Ville" [id]="'city'" formControlName="city" class="w-full" placeholder="Ex: Kinshasa" />
-      <app-ui-input
-        label="Pays"
-        [id]="'country'"
-        formControlName="country"
-        class="w-full"
-        placeholder="Ex: République Démocratique du Congo" />
-      <app-ui-datepicker [id]="'birth_date'" label="Date de naissance" formControlName="birth_date" class="w-full" />
-      <app-ui-multi-select
-        [id]="'roles'"
-        label="Rôles"
-        [optionLabel]="'name'"
-        [optionValue]="'id'"
-        [options]="rolesStore.allRoles()"
-        formControlName="roles"
-        placeholder="Sélectionner un ou plusieurs rôles" />
-      <div class="lg:col-span-2">
-        <app-ui-textarea
-          label="Biographie"
-          [id]="'biography'"
-          formControlName="biography"
-          class="w-full"
-          placeholder="Biographie de l'utilisateur"
-          [rows]="6" />
+    <form
+      class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm md:p-7"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()">
+      <div class="mb-6 flex flex-col gap-2 border-b border-gray-100 pb-5">
+        <h2 class="text-lg font-semibold text-gray-900">Informations du profil</h2>
+        <p class="text-sm text-gray-600">Assurez-vous que les informations sont exactes avant de valider.</p>
       </div>
-    </div>
-    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-      <app-ui-button
-        [size]="'small'"
-        [loading]="store.isUpdating()"
-        [disabled]="store.isUpdating() || form.invalid"
-        type="submit"
-        variant="primary">
-        Modifier l'utilisateur
-      </app-ui-button>
-    </div>
-  </form>
+
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <app-ui-input
+          label="Email"
+          [id]="'email'"
+          formControlName="email"
+          class="w-full"
+          placeholder="exemple@email.com" />
+        <app-ui-input
+          label="Nom complet"
+          [id]="'name'"
+          formControlName="name"
+          class="w-full"
+          placeholder="Nom de l'utilisateur" />
+        <app-ui-input
+          label="Numero de telephone"
+          [id]="'phone_number'"
+          formControlName="phone_number"
+          class="w-full"
+          placeholder="+243 XXX XXX XXX" />
+        <app-ui-select
+          [id]="'gender'"
+          label="Genre"
+          [options]="genders"
+          formControlName="gender"
+          placeholder="Selectionner un genre"
+          class="w-full" />
+        <app-ui-input label="Ville" [id]="'city'" formControlName="city" class="w-full" placeholder="Ex: Kinshasa" />
+        <app-ui-input
+          label="Pays"
+          [id]="'country'"
+          formControlName="country"
+          class="w-full"
+          placeholder="Ex: Republique Democratique du Congo" />
+        <app-ui-datepicker [id]="'birth_date'" label="Date de naissance" formControlName="birth_date" class="w-full" />
+        <app-ui-multi-select
+          [id]="'roles'"
+          label="Roles"
+          [optionLabel]="'name'"
+          [optionValue]="'id'"
+          [options]="rolesStore.allRoles()"
+          formControlName="roles"
+          placeholder="Selectionner un ou plusieurs roles" />
+        <div class="lg:col-span-2">
+          <app-ui-textarea
+            label="Biographie"
+            [id]="'biography'"
+            formControlName="biography"
+            class="w-full"
+            placeholder="Biographie de l'utilisateur"
+            [rows]="6" />
+        </div>
+      </div>
+
+      <div
+        class="mt-8 flex flex-col gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs text-gray-500">Les changements seront appliques immediatement au profil utilisateur.</p>
+        <app-ui-button
+          [size]="'small'"
+          [loading]="store.isUpdating()"
+          [disabled]="store.isUpdating() || form.invalid"
+          type="submit"
+          variant="primary">
+          Modifier l'utilisateur
+        </app-ui-button>
+      </div>
+    </form>
   } @else {
-  <div class="border border-gray-200 rounded-lg p-6 md:bg-white">
-    <div class="flex flex-col items-center justify-center py-10 text-center">
-      <div class="h-12 w-12 rounded-full bg-gray-100 border border-gray-200 mb-4"></div>
-      <h2 class="text-lg font-semibold text-gray-900">Utilisateur introuvable</h2>
-      <p class="mt-2 text-sm text-gray-600">Aucun utilisateur ne correspond à cette requête.</p>
-    </div>
-  </div>
+    <app-user-not-found-placeholder />
   }
 </section>
