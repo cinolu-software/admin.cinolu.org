@@ -1,7 +1,8 @@
-<div class="project-notifications font-satoshi min-w-0">
-  <div class="relative flex flex-wrap items-center justify-between gap-4">
-    <div class="flex flex-col md:flex-row items-center gap-4">
-      <div class="w-full md:w-52">
+<div class="project-notifications min-w-0 space-y-6">
+  <!-- Filters Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      <div class="w-full sm:w-52">
         <app-ui-select
           [id]="'notification-phase-filter'"
           [options]="phaseFilterOptions()"
@@ -9,7 +10,7 @@
           (ngModelChange)="onFilterPhaseChange($event)"
           placeholder="Toutes les phases" />
       </div>
-      <div class="w-full md:w-40">
+      <div class="w-full sm:w-40">
         <app-ui-select
           [id]="'notification-status-filter'"
           [options]="statusFilterOptions"
@@ -18,70 +19,71 @@
           placeholder="Tous" />
       </div>
     </div>
-    <app-ui-button variant="primary" (clicked)="onComposeNew()">
+    <app-ui-button variant="primary" (clicked)="onComposeNew()" class="w-full sm:w-auto">
       <i-lucide [name]="icons.Plus" class="size-5" />
-      Nouvelle notification
+      <span class="hidden sm:inline">Nouveau</span>
     </app-ui-button>
   </div>
 
-  <div class="mt-6 grid min-h-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,20rem)_1fr] lg:items-start">
-    <div
-      class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-[0_12px_40px_-24px_rgba(15,23,42,0.45)]">
-      <div class="border-b border-slate-100 px-5 py-4 sm:px-6">
+  <!-- Main Layout: Sidebar + Content -->
+  <div class="grid min-h-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_2fr] lg:items-start">
+    <!-- Sidebar: List -->
+    <div class="flex flex-col rounded-lg border border-gray-100 bg-white overflow-hidden max-h-[600px] lg:max-h-screen">
+      <!-- Header -->
+      <div class="border-b border-gray-100 px-4 sm:px-5 py-3">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="text-base font-semibold text-slate-900">Historique</h2>
+          <h2 class="text-sm font-semibold text-gray-900">Historique</h2>
           <span
-            class="inline-flex min-w-8 items-center justify-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium tabular-nums text-slate-600"
-            aria-label="{{ notificationsStore.total() }} notification(s)">
+            class="inline-flex min-w-6 items-center justify-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
             {{ notificationsStore.total() }}
           </span>
         </div>
       </div>
-      <div class="px-3 py-6">
+
+      <!-- List Content -->
+      <div class="flex-1 overflow-y-auto px-3 py-3">
         @if (notificationsStore.list().length === 0) {
           <div
-            class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-6 py-16 text-center">
-            <i-lucide [name]="icons.Inbox" class="mb-4 size-12 text-slate-300" aria-hidden="true" />
-            <p class="text-sm font-semibold text-slate-700">Aucune notification</p>
-            <p class="mt-1.5 text-sm text-slate-500">Créez-en une pour commencer.</p>
+            class="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center">
+            <i-lucide [name]="icons.Inbox" class="mb-2 size-8 text-gray-300" aria-hidden="true" />
+            <p class="text-xs font-medium text-gray-600">Aucune notification</p>
+            <p class="mt-1 text-xs text-gray-500">Créez-en une pour commencer</p>
           </div>
         } @else {
-          <ul class="space-y-3">
+          <ul class="space-y-2">
             @for (notification of notificationsStore.list(); track notification.id) {
               <li>
                 <button
                   type="button"
                   (click)="onSelectNotification(notification)"
-                  class="group w-full rounded-xl border border-slate-200 px-4 py-3.5 text-left transition-[border-color,background-color,box-shadow] duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                  class="group w-full rounded-lg border px-3 py-2.5 text-left transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                   [class.border-primary-200]="isActive(notification)"
-                  [class.bg-primary-50/70]="isActive(notification)"
-                  [class.shadow-sm]="isActive(notification)"
+                  [class.bg-primary-50]="isActive(notification)"
+                  [class.border-gray-200]="!isActive(notification)"
                   [class.bg-white]="!isActive(notification)"
-                  [class.hover:border-slate-200]="!isActive(notification)"
-                  [class.hover:bg-slate-50/60]="!isActive(notification)">
-                  <div class="flex items-start justify-between gap-3">
-                    <h3 class="min-w-0 flex-1 truncate text-sm font-semibold text-slate-900">
+                  [class.hover:border-gray-300]="!isActive(notification)"
+                  [class.hover:bg-gray-50]="!isActive(notification)">
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="min-w-0 flex-1 truncate text-xs font-semibold text-gray-900">
                       {{ notification.title }}
                     </h3>
                     @if (notification.status === 'sent') {
                       <span
-                        class="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium tracking-wide text-emerald-700">
+                        class="shrink-0 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
                         Envoyée
                       </span>
                     }
                     @if (notification.status === 'draft') {
                       <span
-                        class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium tracking-wide text-amber-700">
-                        Brouillons
+                        class="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
+                        Brouillon
                       </span>
                     }
                   </div>
-                  <p
-                    class="mt-1.5 line-clamp-2 text-sm leading-snug text-slate-600"
-                    [innerHTML]="bodySafe(notification)"></p>
-                  <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-400">
-                    <span>{{ phaseLabel(notification) }}</span>
-                    <span class="size-1 shrink-0 rounded-full bg-slate-300" aria-hidden="true"></span>
+                  <p class="mt-1 line-clamp-1 text-xs text-gray-600" [innerHTML]="bodySafe(notification)"></p>
+                  <div class="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-gray-400">
+                    <span class="truncate">{{ phaseLabel(notification) }}</span>
+                    <span class="size-0.5 rounded-full bg-gray-300"></span>
                     <span>{{ notification.created_at | date: 'short' }}</span>
                   </div>
                 </button>
@@ -90,8 +92,10 @@
           </ul>
         }
       </div>
+
+      <!-- Pagination -->
       @if (notificationsStore.list().length > 0) {
-        <div class="border-t border-slate-100 px-4 py-3 sm:px-5">
+        <div class="border-t border-gray-100 px-3 py-2">
           <app-ui-pagination
             [currentPage]="currentPage()"
             [totalItems]="notificationsStore.total()"
@@ -100,94 +104,54 @@
         </div>
       }
     </div>
+
+    <!-- Main: View/Compose -->
     <div
-      class="flex min-h-168 min-w-0 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_12px_40px_-24px_rgba(15,23,42,0.45)]">
+      class="flex min-h-[400px] lg:min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white">
+      <!-- View Mode -->
       @if (!isComposing() && activeNotification(); as notification) {
         <div class="flex min-h-0 flex-1 flex-col">
-          <div class="border-b border-slate-100 bg-slate-50/70 px-6 py-6 sm:px-8">
-            <div class="flex flex-wrap items-start justify-between gap-4">
-              <div class="min-w-0 space-y-2">
-                <h2 class="wrap-break-word text-2xl font-bold text-slate-900">{{ notification.title }}</h2>
-                <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-                  <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-slate-200">
-                    {{ phaseLabel(notification) }}
-                  </span>
-                  <span>{{ notification.created_at | date: 'medium' }}</span>
-                  @if (notification.status === 'sent') {
-                    <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                      Envoyée
-                    </span>
-                  }
-                  @if (notification.status === 'draft') {
-                    <span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700">
-                      Brouillon
-                    </span>
-                  }
-                </div>
-                <p class="text-sm text-slate-500">
-                  De {{ senderName(notification) }}
-                  @if (senderEmail(notification)) {
-                    <span class="text-slate-400"> - {{ senderEmail(notification) }}</span>
-                  }
-                </p>
+          <!-- Header -->
+          <div class="border-b border-gray-100 bg-gray-50 px-4 sm:px-6 py-4">
+            <div class="flex flex-col gap-3">
+              <div class="flex items-start justify-between gap-3">
+                <h2 class="text-lg sm:text-xl font-semibold text-gray-900 wrap-break-word flex-1">
+                  {{ notification.title }}
+                </h2>
               </div>
-              <div class="flex flex-wrap items-center gap-2">
-                @if (notification.status === 'draft') {
-                  <app-ui-button
-                    type="button"
-                    variant="primary"
-                    [disabled]="notificationsStore.isSaving()"
-                    [loading]="notificationsStore.isSaving()"
-                    (clicked)="resendNotification(notification)">
-                    <span class="flex items-center gap-2">
-                      <i-lucide [name]="icons.Send" class="size-5" />
-                      Envoyer
-                    </span>
-                  </app-ui-button>
-                }
+              <div class="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                <span class="inline-flex items-center bgwhite px-2 py-1 rounded-full ring-1 ring-gray-200">
+                  {{ phaseLabel(notification) }}
+                </span>
+                <span>{{ notification.created_at | date: 'medium' }}</span>
                 @if (notification.status === 'sent') {
-                  <app-ui-button
-                    [size]="'small'"
-                    type="button"
-                    variant="primary"
-                    [disabled]="notificationsStore.isSaving()"
-                    (clicked)="resendNotification(notification)">
-                    <span class="flex items-center gap-2">
-                      <i-lucide [name]="icons.Send" class="size-5" />
-                      Renvoyer
-                    </span>
-                  </app-ui-button>
+                  <span class="rounded-full bg-emerald-100 px-2 py-1 text-emerald-700 font-medium">Envoyée</span>
                 }
-                <app-ui-button [size]="'small'" type="button" [outlined]="true" (clicked)="onEditNotification()">
-                  <span class="flex items-center gap-2">
-                    <i-lucide [name]="icons.Pencil" class="size-5" />
-                    Modifier
-                  </span>
-                </app-ui-button>
-                <app-ui-button
-                  type="button"
-                  [size]="'small'"
-                  variant="outlined"
-                  class="border-red-200 text-red-600 hover:bg-red-50"
-                  (clicked)="deleteNotification(notification)">
-                  <span class="flex items-center gap-2">
-                    <i-lucide [name]="icons.Trash2" class="size-5" />
-                    Supprimer
-                  </span>
-                </app-ui-button>
+                @if (notification.status === 'draft') {
+                  <span class="rounded-full bg-amber-100 px-2 py-1 text-amber-700 font-medium">Brouillon</span>
+                }
               </div>
+              <p class="text-xs text-gray-500">
+                De {{ senderName(notification) }}
+                @if (senderEmail(notification)) {
+                  <span class="text-gray-400"> — {{ senderEmail(notification) }}</span>
+                }
+              </p>
             </div>
           </div>
-          <div class="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8">
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-              <div class="prose prose-slate max-w-none text-slate-700" [innerHTML]="bodySafe(notification)"></div>
+
+          <!-- Content -->
+          <div class="min-h-0 flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-4">
+            <div class="rounded-lg border border-gray-100 bg-white p-4">
+              <div
+                class="text-sm text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                [innerHTML]="bodySafe(notification)"></div>
             </div>
             @if (notification.attachments?.length) {
-              <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50/70 p-5">
-                <div class="mb-3 flex items-center justify-between gap-3">
-                  <p class="text-sm font-semibold text-slate-800">Pieces jointes</p>
-                  <span class="text-xs text-slate-500">{{ attachmentSummary(notification) }}</span>
-                </div>
+              <div class="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                <p class="text-xs font-semibold text-gray-800 mb-3">
+                  Pièces jointes · {{ attachmentSummary(notification) }}
+                </p>
                 <ul class="space-y-2">
                   @for (att of notification.attachments; track att.id) {
                     <li>
@@ -195,8 +159,8 @@
                         [href]="attachmentUrl(att.filename)"
                         target="_blank"
                         rel="noopener"
-                        class="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm text-primary-700 ring-1 ring-slate-200 transition hover:bg-primary-50">
-                        <i-lucide [name]="icons.Paperclip" class="size-4" />
+                        class="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs text-primary-700 ring-1 ring-gray-200 transition hover:bg-primary-50">
+                        <i-lucide [name]="icons.Paperclip" class="size-3.5" />
                         {{ att.filename }}
                       </a>
                     </li>
@@ -205,48 +169,94 @@
               </div>
             }
           </div>
+
+          <!-- Actions -->
+          <div
+            class="border-t border-gray-100 bg-gray-50 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-end gap-2">
+            @if (notification.status === 'draft') {
+              <app-ui-button
+                type="button"
+                variant="primary"
+                size="small"
+                [disabled]="notificationsStore.isSaving()"
+                [loading]="notificationsStore.isSaving()"
+                (clicked)="resendNotification(notification)">
+                <i-lucide [name]="icons.Send" class="size-4" />
+                <span class="hidden sm:inline">Envoyer</span>
+              </app-ui-button>
+            }
+            @if (notification.status === 'sent') {
+              <app-ui-button
+                type="button"
+                variant="primary"
+                size="small"
+                [disabled]="notificationsStore.isSaving()"
+                (clicked)="resendNotification(notification)">
+                <i-lucide [name]="icons.Send" class="size-4" />
+                <span class="hidden sm:inline">Renvoyer</span>
+              </app-ui-button>
+            }
+            <app-ui-button type="button" variant="outlined" size="small" (clicked)="onEditNotification()">
+              <i-lucide [name]="icons.Pencil" class="size-4" />
+              <span class="hidden sm:inline">Modifier</span>
+            </app-ui-button>
+            <app-ui-button
+              type="button"
+              variant="outlined"
+              size="small"
+              class="border-red-200 text-red-600 hover:bg-red-50"
+              (clicked)="deleteNotification(notification)">
+              <i-lucide [name]="icons.Trash2" class="size-4" />
+              <span class="hidden sm:inline">Supprimer</span>
+            </app-ui-button>
+          </div>
         </div>
       }
+
+      <!-- Compose Mode -->
       @if (isComposing()) {
         <form class="flex min-h-0 flex-1 flex-col" [formGroup]="form">
-          <div class="flex items-center gap-3 border-b border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
-            <h2 class="text-lg font-semibold text-slate-900">
-              {{ activeNotification() ? 'Modifier la notification' : 'Nouvelle notification' }}
+          <!-- Header -->
+          <div class="border-b border-gray-100 bg-gray-50 px-4 sm:px-6 py-3 flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-gray-900">
+              {{ activeNotification() ? 'Modifier' : 'Nouvelle notification' }}
             </h2>
           </div>
+
+          <!-- Form -->
           <div class="min-h-0 flex-1 overflow-y-auto">
-            <div class="mx-auto w-full max-w-3xl space-y-8 px-5 py-7 sm:px-6 sm:py-8">
-              <div class="grid gap-6 sm:grid-cols-2">
-                <div class="space-y-2 col-span-1">
-                  <app-ui-select
-                    [id]="'phase_id'"
-                    label="Destinataires"
-                    [options]="phaseOptions()"
-                    formControlName="phase_id"
-                    placeholder="Tous les participants" />
-                </div>
-                <div class="space-y-2 col-span-2">
-                  <app-ui-input
-                    [id]="'title'"
-                    label="Objet"
-                    [required]="true"
-                    formControlName="title"
-                    placeholder="Ex. Mise a jour importante" />
-                </div>
+            <div class="mx-auto w-full max-w-2xl space-y-5 px-4 sm:px-6 py-5">
+              <div class="space-y-2">
+                <app-ui-select
+                  [id]="'phase_id'"
+                  label="Destinataires"
+                  [options]="phaseOptions()"
+                  formControlName="phase_id"
+                  placeholder="Tous les participants" />
+              </div>
+              <div class="space-y-2">
+                <app-ui-input
+                  [id]="'title'"
+                  label="Objet"
+                  [required]="true"
+                  formControlName="title"
+                  placeholder="Ex. Mise à jour importante" />
               </div>
               <div class="space-y-2">
                 <app-ui-text-editor
                   [id]="'body'"
                   formControlName="body"
-                  [placeholder]="'Redigez votre message...'"
-                  [minHeight]="'260px'"
+                  [placeholder]="'Rédigez votre message...'"
+                  [minHeight]="'180px'"
                   [invalid]="!!(form.get('body')?.invalid && form.get('body')?.touched)" />
               </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
-                <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
-                  <span class="flex items-center gap-2 text-sm font-semibold text-slate-800">
-                    <i-lucide [name]="icons.Paperclip" class="size-5 text-primary-600" />
-                    Pieces jointes
+
+              <!-- Attachments -->
+              <div class="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-xs font-semibold text-gray-800">
+                    <i-lucide [name]="icons.Paperclip" class="size-4 text-primary-600" />
+                    Pièces jointes
                   </span>
                   <input
                     #notificationAttachments
@@ -255,46 +265,47 @@
                     class="sr-only"
                     multiple
                     (change)="onSelectFiles($event)" />
-                  <app-ui-button type="button" variant="outlined" (clicked)="notificationAttachments.click()">
-                    Ajouter des fichiers
+                  <app-ui-button
+                    type="button"
+                    variant="outlined"
+                    size="small"
+                    (clicked)="notificationAttachments.click()">
+                    Ajouter
                   </app-ui-button>
                 </div>
                 @if (attachments().length > 0) {
-                  <ul class="space-y-2">
+                  <ul class="space-y-2 mb-2">
                     @for (item of attachments(); track item.id) {
                       <li
-                        class="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3">
-                        <div class="min-w-0">
-                          <p class="truncate text-sm font-medium text-slate-800">{{ item.file.name }}</p>
-                          <p class="text-xs text-slate-500">{{ formatBytes(item.file.size) }}</p>
+                        class="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2">
+                        <div class="min-w-0 flex-1">
+                          <p class="truncate text-xs font-medium text-gray-800">{{ item.file.name }}</p>
+                          <p class="text-xs text-gray-500">{{ formatBytes(item.file.size) }}</p>
                         </div>
                         <button
                           type="button"
-                          class="rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-600"
-                          (click)="removeAttachment(item.id)"
-                          [attr.aria-label]="'Retirer ' + item.file.name">
+                          class="rounded-lg p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                          (click)="removeAttachment(item.id)">
                           <i-lucide [name]="icons.X" class="size-4" />
                         </button>
                       </li>
                     }
                   </ul>
-                  <button
-                    type="button"
-                    class="mt-3 text-sm text-slate-500 hover:text-slate-700"
-                    (click)="clearAttachments()">
-                    Effacer la selection
+                  <button type="button" class="text-xs text-gray-500 hover:text-gray-700" (click)="clearAttachments()">
+                    Effacer
                   </button>
                 }
                 @if (activeNotification()?.attachments?.length) {
-                  <div class="mt-4 border-t border-slate-200 pt-4">
-                    <ul class="space-y-1.5">
+                  <div class="mt-3 border-t border-gray-200 pt-3">
+                    <p class="text-xs font-medium text-gray-600 mb-2">Existants</p>
+                    <ul class="space-y-1">
                       @for (existing of activeNotification()?.attachments ?? []; track existing.id) {
                         <li>
                           <a
                             [href]="attachmentUrl(existing.filename)"
                             target="_blank"
                             rel="noopener"
-                            class="text-sm text-primary-700 hover:underline">
+                            class="text-xs text-primary-600 hover:underline">
                             {{ existing.filename }}
                           </a>
                         </li>
@@ -303,11 +314,12 @@
                   </div>
                 }
               </div>
+
               @if (notificationsStore.error()) {
                 <div
-                  class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                  class="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700"
                   role="alert">
-                  <i-lucide [name]="icons.CircleAlert" class="mt-0.5 size-5 shrink-0" />
+                  <i-lucide [name]="icons.CircleAlert" class="mt-0.5 size-4 shrink-0" />
                   <div>
                     <span class="font-semibold">Erreur</span>
                     {{ notificationsStore.error() }}
@@ -316,34 +328,39 @@
               }
             </div>
           </div>
+
+          <!-- Footer -->
           <div
-            class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
+            class="border-t border-gray-100 bg-gray-50 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2">
             <app-ui-button type="button" variant="secondary" (clicked)="onCancelCompose()"> Annuler </app-ui-button>
-            <app-ui-button
-              type="button"
-              variant="outlined"
-              [disabled]="form.invalid || notificationsStore.isSaving()"
-              [loading]="notificationsStore.isSaving()"
-              (clicked)="onSaveDraft()">
-              Enregistrer
-            </app-ui-button>
-            <app-ui-button
-              type="button"
-              variant="primary"
-              [disabled]="form.invalid || notificationsStore.isSaving()"
-              [loading]="notificationsStore.isSaving()"
-              (clicked)="onSend()">
-              <span class="flex items-center gap-2">
-                @if (!notificationsStore.isSaving()) {
-                  <i-lucide [name]="icons.Send" class="size-5" />
-                }
-                Envoyer
-              </span>
-            </app-ui-button>
+            <div class="flex flex-wrap items-center gap-2">
+              <app-ui-button
+                type="button"
+                variant="outlined"
+                [disabled]="form.invalid || notificationsStore.isSaving()"
+                [loading]="notificationsStore.isSaving()"
+                (clicked)="onSaveDraft()">
+                Enregistrer
+              </app-ui-button>
+              <app-ui-button
+                type="button"
+                variant="primary"
+                [disabled]="form.invalid || notificationsStore.isSaving()"
+                [loading]="notificationsStore.isSaving()"
+                (clicked)="onSend()">
+                <span class="flex items-center gap-2">
+                  @if (!notificationsStore.isSaving()) {
+                    <i-lucide [name]="icons.Send" class="size-4" />
+                  }
+                  <span class="hidden sm:inline">Envoyer</span>
+                </span>
+              </app-ui-button>
+            </div>
           </div>
         </form>
       }
     </div>
   </div>
+
   <app-ui-confirm-dialog />
 </div>
