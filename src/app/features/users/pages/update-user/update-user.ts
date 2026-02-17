@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, effect, computed } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UsersStore } from '../../store/users.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -24,6 +24,7 @@ export class UpdateUser implements OnInit {
   rolesStore = inject(RolesStore);
   genders = GENDERS;
   form = this.#initForm();
+  user = computed(() => this.usersStore.user());
 
   ngOnInit(): void {
     this.usersStore.loadOne(this.#email);
@@ -31,9 +32,8 @@ export class UpdateUser implements OnInit {
   }
 
   constructor() {
-    this.form = this.#initForm();
     effect(() => {
-      const user = this.usersStore.user();
+      const user = this.user();
       if (user) this.#patchForm(user);
     });
   }
@@ -53,14 +53,16 @@ export class UpdateUser implements OnInit {
   }
 
   #patchForm(user: IUser): void {
+    console.log(user?.roles?.map((role: IRole) => role.id) || []);
     this.form.patchValue({
       ...user,
       birth_date: parseDate(user.birth_date),
-      roles: user?.roles?.map((role: IRole) => role.id) || []
+      roles: user.roles.map((role: IRole) => role.id) || []
     });
   }
 
   onSubmit(): void {
-    if (this.form.valid) this.store.update(this.form.value);
+    const user = this.user();
+    if (this.form.valid && user) this.store.update({ id: user.id, dto: this.form.value });
   }
 }

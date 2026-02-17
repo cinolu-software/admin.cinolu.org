@@ -55,8 +55,8 @@
     <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
       <app-ui-button
         [size]="'small'"
-        [loading]="store.isLoading()"
-        [disabled]="store.isLoading() || form.invalid"
+        [loading]="store.isUpdating()"
+        [disabled]="store.isUpdating() || form.invalid"
         type="submit"
         variant="primary">
         Modifier l'utilisateur

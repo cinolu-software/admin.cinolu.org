@@ -12,13 +12,14 @@ import { UserDto } from '../dto/users/user.dto';
 
 interface IUsersStore {
   isLoading: boolean;
+  isUpdating: boolean;
   users: [IUser[], number];
   user: IUser | null;
   staff: IUser[];
 }
 
 export const UsersStore = signalStore(
-  withState<IUsersStore>({ isLoading: false, users: [[], 0], user: null, staff: [] }),
+  withState<IUsersStore>({ isLoading: false, isUpdating: false, users: [[], 0], user: null, staff: [] }),
   withProps(() => ({
     _http: inject(HttpClient),
     _toast: inject(ToastrService),
@@ -93,19 +94,19 @@ export const UsersStore = signalStore(
         )
       )
     ),
-    update: rxMethod<UserDto>(
+    update: rxMethod<{ id: string; dto: UserDto }>(
       pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap((userData) =>
-          _http.patch<{ data: IUser }>(`users/${userData.id}`, userData).pipe(
+        tap(() => patchState(store, { isUpdating: true })),
+        switchMap((params) =>
+          _http.patch<{ data: IUser }>(`users/${params.id}`, params.dto).pipe(
             map(({ data }) => {
               _router.navigate(['/users']);
               _toast.showSuccess('Utilisateur mis à jour avec succès');
-              patchState(store, { isLoading: false, user: data });
+              patchState(store, { isUpdating: false, user: data });
             }),
             catchError(() => {
               _toast.showError("Erreur lors de la mise à jour de l'utilisateur");
-              patchState(store, { isLoading: false });
+              patchState(store, { isUpdating: false });
               return of(null);
             })
           )
