@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { LucideAngularModule, Pencil, Trash, Eye, Star, Search, Funnel, Plus } from 'lucide-angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SubprogramsStore } from '../../store/subprograms.store';
@@ -7,7 +7,7 @@ import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { IProgram } from '@shared/models';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
-import { UiButton, UiInput, UiConfirmDialog, FileUpload, UiAvatar, UiTextarea, UiBadge } from '@ui';
+import { UiButton, UiInput, UiConfirmDialog, FileUpload, UiAvatar, UiTextarea, UiBadge, UiPagination } from '@ui';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -28,7 +28,8 @@ import { DatePipe } from '@angular/common';
     UiTableSkeleton,
     UiTextarea,
     UiButton,
-    UiBadge
+    UiBadge,
+    UiPagination
   ]
 })
 export class ListSubprograms {
@@ -59,6 +60,15 @@ export class ListSubprograms {
   icons = { Pencil, Plus, Trash, Eye, Star, Search, Funnel };
   isCreating = signal(false);
   editingSubprogramId = signal<string | null>(null);
+  currentPage = signal(1);
+  itemsPerPage = 10;
+
+  paginatedSubprograms = computed(() => {
+    const subprograms = this.store.subprograms();
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return subprograms.slice(start, end);
+  });
 
   loadAll(programId?: string): void {
     const id = programId ?? this.programSignal()?.id;
@@ -66,16 +76,12 @@ export class ListSubprograms {
     this.store.loadAll(id);
   }
 
-  onShowcase(): void {
-    const subprogram = this.getEditingSubprogram();
-    if (!subprogram) return;
-    this.store.showcase(subprogram.id);
+  onShowcase(id: string): void {
+    this.store.showcase(id);
   }
 
-  onPublishProgram(): void {
-    const subprogram = this.getEditingSubprogram();
-    if (!subprogram) return;
-    this.store.publish(subprogram.id);
+  onPublishProgram(id: string): void {
+    this.store.publish(id);
   }
 
   onFileUploadLoaded(): void {
@@ -91,6 +97,10 @@ export class ListSubprograms {
         description: ''
       });
     }
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
   }
 
   onCancelCreation(): void {
@@ -158,7 +168,7 @@ export class ListSubprograms {
   getEditingSubprogram(): ISubprogram | null {
     const id = this.editingSubprogramId();
     if (!id) return null;
-    return this.store.allSubprograms().find((sp) => sp.id === id) || null;
+    return this.store.subprograms().find((sp) => sp.id === id) || null;
   }
 
   onDelete(subprogramId: string): void {

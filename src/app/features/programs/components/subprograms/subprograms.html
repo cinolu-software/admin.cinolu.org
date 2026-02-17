@@ -1,6 +1,6 @@
 @let program = programSignal();
 @let isLoading = store.isLoading();
-@let subprograms = store.allSubprograms();
+@let subprograms = store.subprograms();
 <div class="pt-6 pb-4 border-b border-gray-100">
   <div class="flex justify-end px-6">
     <app-ui-button [disabled]="!program" (clicked)="onToggleCreation()" variant="primary" size="small">
@@ -76,25 +76,20 @@
           </tr>
         </thead>
         <tbody class="ui-table-body">
-          @for (subprogram of subprograms; track subprogram.id) {
-            @if (!isEditing(subprogram.id)) {
+          @for (sp of paginatedSubprograms(); track sp.id) {
+            @if (!isEditing(sp.id)) {
               <tr class="ui-table-row">
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-3">
-                    <app-ui-avatar
-                      [shape]="'square'"
-                      [image]="subprogram | apiIMG: 'subprogram'"
-                      [label]="subprogram.name" />
+                    <app-ui-avatar [shape]="'square'" [image]="sp | apiIMG: 'subprogram'" [label]="sp.name" />
                     <div class="whitespace-nowrap w-32 md:w-48 line-clamp-1 md:line-clamp-2">
-                      <p class="font-semibold text-gray-900">{{ subprogram.name }}</p>
-                      <p class="text-xs text-gray-500 mt-0.5">
-                        Créé le {{ subprogram.created_at | date: 'dd MMM yyyy' }}
-                      </p>
+                      <p class="font-semibold text-gray-900">{{ sp.name }}</p>
+                      <p class="text-xs text-gray-500 mt-0.5">Créé le {{ sp.created_at | date: 'dd MMM yyyy' }}</p>
                     </div>
                   </div>
                 </td>
                 <td class="ui-table-cell">
-                  @if (subprogram.is_published) {
+                  @if (sp.is_published) {
                     <app-ui-badge variant="success" [label]="'Publié'" />
                   } @else {
                     <app-ui-badge variant="default" [label]="'Brouillon'" />
@@ -103,26 +98,26 @@
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-1">
                     <app-ui-button
-                      (clicked)="onShowcase()"
+                      (clicked)="onShowcase(sp.id)"
                       size="small"
-                      [variant]="getEditingSubprogram()?.is_highlighted ? 'success' : 'primary'"
-                      [outlined]="!getEditingSubprogram()?.is_highlighted">
+                      [variant]="sp?.is_highlighted ? 'success' : 'primary'"
+                      [outlined]="!sp?.is_highlighted">
                       <i-lucide [name]="icons.Star" class="size-4" />
-                      {{ getEditingSubprogram()?.is_highlighted ? 'Retirer' : 'En avant' }}
+                      {{ sp?.is_highlighted ? 'Retirer' : 'En avant' }}
                     </app-ui-button>
                     <app-ui-button
-                      (clicked)="onPublishProgram()"
+                      (clicked)="onPublishProgram(sp.id)"
                       size="small"
-                      [variant]="getEditingSubprogram()?.is_published ? 'success' : 'primary'"
-                      [outlined]="!getEditingSubprogram()?.is_published">
+                      [variant]="sp?.is_published ? 'success' : 'primary'"
+                      [outlined]="!sp?.is_published">
                       <i-lucide [name]="icons.Eye" class="size-4" />
-                      {{ getEditingSubprogram()?.is_published ? 'Dépublier' : 'Publier' }}
+                      {{ sp?.is_published ? 'Dépublier' : 'Publier' }}
                     </app-ui-button>
-                    <app-ui-button (clicked)="onEdit(subprogram)" size="small" variant="primary" [outlined]="true">
+                    <app-ui-button (clicked)="onEdit(sp)" size="small" variant="primary" [outlined]="true">
                       <i-lucide [name]="icons.Pencil" class="size-4" />
                       Modifier
                     </app-ui-button>
-                    <app-ui-button (clicked)="onDelete(subprogram.id)" size="small" variant="danger">
+                    <app-ui-button (clicked)="onDelete(sp.id)" size="small" variant="danger">
                       <i-lucide [name]="icons.Trash" class="size-4" />
                       Supprimer
                     </app-ui-button>
@@ -130,21 +125,21 @@
                 </td>
               </tr>
             }
-            @if (isEditing(subprogram.id)) {
+            @if (isEditing(sp.id)) {
               <tr class="ui-table-row">
                 <td colspan="3" class="ui-table-cell">
                   <form class="space-y-4" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
                     <div class="grid grid-cols-1 gap-4">
                       <div class="space-y-2">
                         <app-ui-input
-                          [id]="'subprogram-name-update-' + subprogram.id"
+                          [id]="'subprogram-name-update-' + sp.id"
                           label="Nom du sous-programme"
                           formControlName="name"
                           placeholder="Nom du sous-programme" />
                       </div>
                       <div class="space-y-2">
                         <app-ui-textarea
-                          [id]="'subprogram-description-update-' + subprogram.id"
+                          [id]="'subprogram-description-update-' + sp.id"
                           label="Description"
                           formControlName="description"
                           placeholder="Décrivez brièvement le sous-programme..." />
@@ -153,7 +148,9 @@
                     @if (getEditingSubprogram()) {
                       <div class="rounded-xl border w-full md:w-1/2 border-dashed border-gray-300 bg-white p-4">
                         <p class="text-xs font-semibold text-gray-600 mb-3">Logo</p>
-                        <app-ui-file-upload [name]="'logo'" [url]="'subprograms/logo/' + getEditingSubprogram()?.id" />
+                        <app-ui-file-upload
+                          [name]="'logo'"
+                          [url]="'subprograms/' + getEditingSubprogram()?.id + '/logo'" />
                       </div>
                     }
                     <div class="flex items-center justify-end gap-3 pt-2">
@@ -182,6 +179,15 @@
         </tbody>
       </table>
     </div>
+    @if (subprograms.length > itemsPerPage) {
+      <div class="px-6 py-4">
+        <app-ui-pagination
+          [currentPage]="currentPage()"
+          [totalItems]="subprograms.length"
+          [itemsPerPage]="itemsPerPage"
+          (pageChange)="onPageChange($event)" />
+      </div>
+    }
   }
   <app-ui-confirm-dialog />
 </div>
