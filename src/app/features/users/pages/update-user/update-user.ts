@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UsersStore } from '../../store/users.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -31,6 +31,7 @@ export class UpdateUser implements OnInit {
   }
 
   constructor() {
+    this.form = this.#initForm();
     effect(() => {
       const user = this.usersStore.user();
       if (user) this.#patchForm(user);
@@ -39,7 +40,6 @@ export class UpdateUser implements OnInit {
 
   #initForm(): FormGroup {
     return this.#fb.group({
-      id: ['', Validators.required],
       email: ['', [Validators.required]],
       name: ['', Validators.required],
       phone_number: ['', Validators.required],
@@ -52,8 +52,7 @@ export class UpdateUser implements OnInit {
     });
   }
 
-  #patchForm(user: IUser | null): void {
-    if (!user) return;
+  #patchForm(user: IUser): void {
     this.form.patchValue({
       ...user,
       birth_date: parseDate(user.birth_date),
