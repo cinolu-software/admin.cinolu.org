@@ -55,7 +55,7 @@
   @if (activeTab() === 'edit' && project) {
     <app-project-update
       [project]="project"
-      [programs]="programsStore.allSubprograms()"
+      [programs]="programsStore.subprograms()"
       [staff]="usersStore.staff()"
       [categories]="categoriesStore.allCategories()" />
   }
