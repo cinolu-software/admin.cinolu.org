@@ -1,6 +1,6 @@
 @layer utilities {
   .ui-button {
-    @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg border cursor-pointer leading-6 relative overflow-hidden shadow-sm;
+    @apply inline-flex items-center justify-center gap-1 font-medium rounded-lg border cursor-pointer leading-6 relative overflow-hidden shadow-sm;
   }
 
   .ui-button::before {
@@ -62,6 +62,14 @@
     @apply ring-offset-2 ring-slate-700;
   }
 
+  .ui-button-success {
+    @apply text-white bg-green-600 border-green-600;
+  }
+
+  .ui-button-success:focus {
+    @apply ring-offset-2 ring-green-500;
+  }
+
   .ui-button-outlined {
     @apply bg-white shadow-sm border border-gray-200;
   }
@@ -116,6 +124,16 @@
   }
   .ui-button-outlined.ui-button-contrast:focus {
     @apply ring-offset-2 ring-slate-700;
+  }
+
+  .ui-button-outlined.ui-button-success {
+    @apply text-green-700 border-green-600;
+  }
+  .ui-button-outlined.ui-button-success:hover:not(.ui-button-disabled) {
+    @apply bg-green-50 border-green-700;
+  }
+  .ui-button-outlined.ui-button-success:focus {
+    @apply ring-offset-2 ring-green-500;
   }
 
   .ui-button-text {
@@ -173,6 +191,16 @@
   }
   .ui-button-text.ui-button-contrast:focus {
     @apply ring-offset-2 ring-slate-700;
+  }
+
+  .ui-button-text.ui-button-success {
+    @apply text-green-700;
+  }
+  .ui-button-text.ui-button-success:hover:not(.ui-button-disabled) {
+    @apply bg-green-50;
+  }
+  .ui-button-text.ui-button-success:focus {
+    @apply ring-offset-2 ring-green-500;
   }
 
   .ui-button-disabled {

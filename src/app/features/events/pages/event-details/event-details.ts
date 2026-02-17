@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChartColumn, SquarePen, Images, Star, Eye } from 'lucide-angular';
-import { UiTabs } from '@shared/ui';
+import { UiTabs, UiButton } from '@shared/ui';
 import { EventsStore } from '../../store/events.store';
 import { EventSheet } from '../../components/event-sheet/event-sheet';
 import { EventGalleryComponent } from '../../components/event-gallery/event-gallery';
@@ -15,7 +15,7 @@ import { LucideAngularModule } from 'lucide-angular';
   templateUrl: './event-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EventsStore, GalleryStore],
-  imports: [UiTabs, EventSheet, EventGalleryComponent, EventUpdate, EventDetailsSkeleton, LucideAngularModule]
+  imports: [UiTabs, EventSheet, EventGalleryComponent, EventUpdate, EventDetailsSkeleton, LucideAngularModule, UiButton]
 })
 export class EventDetails implements OnInit {
   #route = inject(ActivatedRoute);

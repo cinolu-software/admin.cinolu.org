@@ -118,22 +118,25 @@
                 }
               </div>
               <div class="flex items-center gap-2 shrink-0">
-                <button
+                <app-ui-button
                   type="button"
-                  class="action-button-default"
-                  (click)="onEdit(phase)"
+                  size="small"
+                  variant="primary"
+                  [outlined]="true"
+                  (clicked)="onEdit(phase)"
                   [attr.aria-label]="'Modifier la phase ' + phase.name">
                   <i-lucide [name]="icons.Pencil" class="size-4" aria-hidden="true" />
                   Modifier
-                </button>
-                <button
+                </app-ui-button>
+                <app-ui-button
                   type="button"
-                  class="action-button-danger"
-                  (click)="onDelete(phase)"
+                  size="small"
+                  variant="danger"
+                  (clicked)="onDelete(phase)"
                   [attr.aria-label]="'Supprimer la phase ' + phase.name">
                   <i-lucide [name]="icons.Trash2" class="size-4" aria-hidden="true" />
                   Supprimer
-                </button>
+                </app-ui-button>
               </div>
             </div>
           </div>

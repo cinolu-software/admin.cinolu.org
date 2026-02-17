@@ -102,30 +102,30 @@
                 </td>
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-1">
-                    <button
-                      (click)="onShowcase()"
-                      [class]="
-                        getEditingSubprogram()?.is_highlighted
-                          ? 'action-button-highlight'
-                          : 'action-button-highlight-default'
-                      ">
+                    <app-ui-button
+                      (clicked)="onShowcase()"
+                      size="small"
+                      [variant]="getEditingSubprogram()?.is_highlighted ? 'success' : 'primary'"
+                      [outlined]="!getEditingSubprogram()?.is_highlighted">
                       <i-lucide [name]="icons.Star" class="size-4" />
                       {{ getEditingSubprogram()?.is_highlighted ? 'Retirer' : 'En avant' }}
-                    </button>
-                    <button
-                      (click)="onPublishProgram()"
-                      [class]="getEditingSubprogram()?.is_published ? 'action-button-active' : 'action-button-default'">
+                    </app-ui-button>
+                    <app-ui-button
+                      (clicked)="onPublishProgram()"
+                      size="small"
+                      [variant]="getEditingSubprogram()?.is_published ? 'success' : 'primary'"
+                      [outlined]="!getEditingSubprogram()?.is_published">
                       <i-lucide [name]="icons.Eye" class="size-4" />
                       {{ getEditingSubprogram()?.is_published ? 'Dépublier' : 'Publier' }}
-                    </button>
-                    <button (click)="onEdit(subprogram)" class="action-button-default">
+                    </app-ui-button>
+                    <app-ui-button (clicked)="onEdit(subprogram)" size="small" variant="primary" [outlined]="true">
                       <i-lucide [name]="icons.Pencil" class="size-4" />
                       Modifier
-                    </button>
-                    <button (click)="onDelete(subprogram.id)" class="action-button-danger">
+                    </app-ui-button>
+                    <app-ui-button (clicked)="onDelete(subprogram.id)" size="small" variant="danger">
                       <i-lucide [name]="icons.Trash" class="size-4" />
                       Supprimer
-                    </button>
+                    </app-ui-button>
                   </div>
                 </td>
               </tr>

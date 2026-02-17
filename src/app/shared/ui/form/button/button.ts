@@ -74,11 +74,11 @@ export class UiButton {
   sizeMinHeight(): string {
     switch (this.size()) {
       case 'small':
-        return '2.5rem';
+        return '2rem';
       case 'large':
         return '3rem';
       default:
-        return '2.75rem';
+        return '2.5rem';
     }
   }
 

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Images, SquarePen, Star, LucideAngularModule } from 'lucide-angular';
-import { UiTabs } from '@shared/ui';
+import { UiTabs, UiButton } from '@shared/ui';
 import { ArticlesStore } from '../../store/articles.store';
 import { ArticleUpdate } from '../../components/article-update/article-update';
 import { ArticleGalleryComponent } from '../../components/article-gallery/article-gallery';
@@ -10,7 +10,7 @@ import { ArticleGalleryComponent } from '../../components/article-gallery/articl
 @Component({
   selector: 'app-update-details',
   providers: [ArticlesStore],
-  imports: [CommonModule, UiTabs, ArticleUpdate, ArticleGalleryComponent, LucideAngularModule],
+  imports: [CommonModule, UiTabs, ArticleUpdate, ArticleGalleryComponent, LucideAngularModule, UiButton],
   templateUrl: './article-details.html',
 
   changeDetection: ChangeDetectionStrategy.OnPush

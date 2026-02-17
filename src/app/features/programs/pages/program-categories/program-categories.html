@@ -74,49 +74,51 @@
                   </td>
                   <td class="ui-table-cell">
                     <div class="flex items-center gap-1">
-                      <button (click)="onEdit(category)" class="action-button-default">
+                      <app-ui-button (clicked)="onEdit(category)" size="small" variant="primary" [outlined]="true">
                         <i-lucide [name]="icons.Pencil" class="size-4" />
                         Modifier
-                      </button>
-                      <button (click)="onDelete(category.id)" class="action-button-danger">
+                      </app-ui-button>
+                      <app-ui-button (clicked)="onDelete(category.id)" size="small" variant="danger">
                         <i-lucide [name]="icons.Trash" class="size-4" />
                         Supprimer
-                      </button>
+                      </app-ui-button>
                     </div>
                   </td>
                 </tr>
               }
-              <tr [class.hidden]="!isEditing(category.id)" class="border-b border-gray-200 bg-gray-50">
-                <td colspan="2" class="ui-table-cell">
-                  <form class="flex items-center gap-6" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
-                    <div class="flex-1">
-                      <app-ui-input
-                        [required]="true"
-                        [id]="'program-category-name-update-' + category.id"
-                        formControlName="name"
-                        placeholder="Ex: Formation, Incubation, Accélération..." />
-                    </div>
-                    <div class="flex items-center gap-3">
-                      <app-ui-button
-                        type="button"
-                        size="small"
-                        variant="secondary"
-                        [outlined]="true"
-                        (clicked)="onCancelUpdate()">
-                        Annuler
-                      </app-ui-button>
-                      <app-ui-button
-                        type="submit"
-                        size="small"
-                        variant="primary"
-                        [disabled]="updateForm.invalid || store.isLoading()"
-                        [loading]="store.isLoading()">
-                        Mettre à jour
-                      </app-ui-button>
-                    </div>
-                  </form>
-                </td>
-              </tr>
+              @if (isEditing(category.id)) {
+                <tr class="ui-table-row">
+                  <td colspan="2" class="ui-table-cell">
+                    <form class="flex items-center gap-6" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
+                      <div class="flex-1">
+                        <app-ui-input
+                          [required]="true"
+                          [id]="'program-category-name-update-' + category.id"
+                          formControlName="name"
+                          placeholder="Ex: Formation, Incubation, Accélération..." />
+                      </div>
+                      <div class="flex items-center gap-3">
+                        <app-ui-button
+                          type="button"
+                          size="small"
+                          variant="secondary"
+                          [outlined]="true"
+                          (clicked)="onCancelUpdate()">
+                          Annuler
+                        </app-ui-button>
+                        <app-ui-button
+                          type="submit"
+                          size="small"
+                          variant="primary"
+                          [disabled]="updateForm.invalid || store.isLoading()"
+                          [loading]="store.isLoading()">
+                          Mettre à jour
+                        </app-ui-button>
+                      </div>
+                    </form>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SquarePen, Images, ChartColumn, Star, Eye, Layers, Users, Bell, LucideAngularModule } from 'lucide-angular';
-import { UiTabs } from '@shared/ui';
+import { UiTabs, UiButton } from '@shared/ui';
 import { GalleryStore } from '../../store/project-gallery.store';
 import { ProjectsStore } from '../../store/projects.store';
 import { ProjectSheet } from '../../components/project-sheet/project-sheet';
@@ -29,8 +29,9 @@ import { UsersStore } from '@features/users/store/users.store';
     Participations,
     ProjectNotifications,
     ProjectDetailsSkeleton,
-    LucideAngularModule
-  ]
+    LucideAngularModule,
+    UiButton
+]
 })
 export class ProjectDetails implements OnInit {
   #route = inject(ActivatedRoute);

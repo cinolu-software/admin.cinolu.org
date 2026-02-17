@@ -8,12 +8,14 @@
         <p class="text-sm text-gray-500 mt-1">Gérer les paramètres de mise en avant</p>
       </div>
       <div class="flex items-center gap-2">
-        <button
-          (click)="onShowcase()"
-          [class]="article.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
+        <app-ui-button
+          (clicked)="onShowcase()"
+          size="small"
+          [variant]="article.is_highlighted ? 'success' : 'primary'"
+          [outlined]="!article.is_highlighted">
           <i-lucide [name]="icons.Star" class="size-4" />
           {{ article.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
-        </button>
+        </app-ui-button>
       </div>
     </div>
   }

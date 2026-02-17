@@ -95,7 +95,9 @@
                   }
                 </td>
                 <td class="ui-table-cell">
-                  <a [routerLink]="['/ventures/view', venture.slug]" class="action-button-default">
+                  <a
+                    [routerLink]="['/ventures/view', venture.slug]"
+                    class="ui-button ui-button-small ui-button-primary ui-button-outlined ui-button-text">
                     <i-lucide [name]="icons.Eye" class="size-4" />
                     Détails
                   </a>

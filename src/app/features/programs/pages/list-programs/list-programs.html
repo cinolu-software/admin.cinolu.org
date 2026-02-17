@@ -68,14 +68,16 @@
                 </td>
                 <td class="ui-table-cell">
                   <div class="flex items-center gap-2">
-                    <button [routerLink]="['/programs', program.slug]" class="action-button-default">
+                    <button
+                      [routerLink]="['/programs', program.slug]"
+                      class="ui-button ui-button-small ui-button-primary ui-button-outlined ui-button-text">
                       <i-lucide [name]="icons.Eye" class="size-4" />
                       Détails
                     </button>
-                    <button (click)="onDelete(program.id)" class="action-button-danger">
+                    <app-ui-button (clicked)="onDelete(program.id)" size="small" variant="danger">
                       <i-lucide [name]="icons.Trash" class="size-4" />
                       Supprimer
-                    </button>
+                    </app-ui-button>
                   </div>
                 </td>
               </tr>

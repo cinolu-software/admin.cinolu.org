@@ -105,6 +105,7 @@ export class ProgramCategories {
   }
 
   onEdit(category: ICategory): void {
+    console.log(category);
     this.editingCategoryId.set(category.id);
     this.updateForm.patchValue({ name: category.name });
   }

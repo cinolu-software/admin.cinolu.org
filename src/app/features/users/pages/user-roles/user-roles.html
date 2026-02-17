@@ -76,14 +76,14 @@
                   </td>
                   <td class="ui-table-cell">
                     <div class="flex items-center gap-1">
-                      <button (click)="onEdit(role)" class="action-button-default">
+                      <app-ui-button (clicked)="onEdit(role)" size="small" variant="primary" [outlined]="true">
                         <i-lucide [name]="icons.Pencil" class="size-4" />
                         Modifier
-                      </button>
-                      <button (click)="onDelete(role.id)" class="action-button-danger">
+                      </app-ui-button>
+                      <app-ui-button (clicked)="onDelete(role.id)" size="small" variant="danger">
                         <i-lucide [name]="icons.Trash" class="size-4" />
                         Supprimer
-                      </button>
+                      </app-ui-button>
                     </div>
                   </td>
                 </tr>

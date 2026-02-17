@@ -8,16 +8,22 @@
         <p class="text-sm text-gray-500 mt-1">Gérer les paramètres de publication et de mise en avant</p>
       </div>
       <div class="flex items-center gap-2">
-        <button
-          (click)="onShowcase()"
-          [class]="event.is_highlighted ? 'action-button-highlight' : 'action-button-highlight-default'">
+        <app-ui-button
+          (clicked)="onShowcase()"
+          size="small"
+          [variant]="event.is_highlighted ? 'success' : 'primary'"
+          [outlined]="!event.is_highlighted">
           <i-lucide [name]="icons.Star" class="size-4" />
           {{ event.is_highlighted ? 'Retirer de la vedette' : 'Mettre en vedette' }}
-        </button>
-        <button (click)="onPublish()" [class]="event.is_published ? 'action-button-active' : 'action-button-default'">
+        </app-ui-button>
+        <app-ui-button
+          (clicked)="onPublish()"
+          size="small"
+          [variant]="event.is_published ? 'success' : 'primary'"
+          [outlined]="!event.is_published">
           <i-lucide [name]="icons.Eye" class="size-4" />
           {{ event.is_published ? 'Dépublier' : 'Publier' }}
-        </button>
+        </app-ui-button>
       </div>
     </div>
   }
