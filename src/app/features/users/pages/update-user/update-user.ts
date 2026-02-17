@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, effect, computed } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, computed, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UsersStore } from '../../store/users.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -34,7 +34,8 @@ export class UpdateUser implements OnInit {
   constructor() {
     effect(() => {
       const user = this.user();
-      if (user) this.#patchForm(user);
+      if (!user) return;
+      this.#patchForm(user);
     });
   }
 
@@ -42,22 +43,21 @@ export class UpdateUser implements OnInit {
     return this.#fb.group({
       email: ['', [Validators.required]],
       name: ['', Validators.required],
-      phone_number: ['', Validators.required],
-      gender: ['', Validators.required],
-      city: ['', Validators.required],
-      biography: ['', Validators.required],
-      country: ['', Validators.required],
-      birth_date: ['', Validators.required],
+      phone_number: [''],
+      gender: [''],
+      city: [''],
+      biography: [''],
+      country: [''],
+      birth_date: [''],
       roles: [[], Validators.required]
     });
   }
 
   #patchForm(user: IUser): void {
-    console.log(user?.roles?.map((role: IRole) => role.id) || []);
-    this.form.patchValue({
+    this.form.reset({
       ...user,
       birth_date: parseDate(user.birth_date),
-      roles: user.roles.map((role: IRole) => role.id) || []
+      roles: user.roles.map((role: IRole) => role.id)
     });
   }
 

@@ -1,4 +1,23 @@
 <section class="pt-32 dashboard-main-content flex flex-col gap-4">
+  @if (usersStore.isLoading()) {
+  <div class="border border-gray-200 rounded-lg p-4 md:bg-white md:p-6 animate-pulse">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
+      <div class="space-y-2">
+        <div class="h-4 w-28 bg-gray-200 rounded"></div>
+        <div class="h-11 w-full bg-gray-100 rounded-lg border border-gray-200"></div>
+      </div>
+      }
+      <div class="lg:col-span-2 space-y-2">
+        <div class="h-4 w-28 bg-gray-200 rounded"></div>
+        <div class="h-32 w-full bg-gray-100 rounded-lg border border-gray-200"></div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+      <div class="h-9 w-44 bg-gray-200 rounded-lg"></div>
+    </div>
+  </div>
+  } @else if (user()) {
   <form class="border border-gray-200 rounded-lg p-4 md:bg-white md:p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <app-ui-input
@@ -63,4 +82,13 @@
       </app-ui-button>
     </div>
   </form>
+  } @else {
+  <div class="border border-gray-200 rounded-lg p-6 md:bg-white">
+    <div class="flex flex-col items-center justify-center py-10 text-center">
+      <div class="h-12 w-12 rounded-full bg-gray-100 border border-gray-200 mb-4"></div>
+      <h2 class="text-lg font-semibold text-gray-900">Utilisateur introuvable</h2>
+      <p class="mt-2 text-sm text-gray-600">Aucun utilisateur ne correspond à cette requête.</p>
+    </div>
+  </div>
+  }
 </section>
