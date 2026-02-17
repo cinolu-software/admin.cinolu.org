@@ -79,6 +79,14 @@
 }
 
 @layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+  }
+
   .dashboard-main-content {
     @apply md:bg-white py-3 md:px-8 md:shadow-md md:py-10 rounded-lg;
   }
