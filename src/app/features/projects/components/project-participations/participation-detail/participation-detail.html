@@ -1,7 +1,6 @@
 @let p = participation();
 @let id = participationId();
 <div class="px-4 sm:px-6 py-5 space-y-4 max-h-[500px] overflow-y-auto">
-  <!-- User Card -->
   <div class="rounded-lg bg-white p-4 border border-gray-100">
     <h4 [id]="'detail-user-heading-' + id" class="text-xs font-semibold text-gray-500 mb-3 tracking-wide uppercase">
       Participant
@@ -41,7 +40,6 @@
       </div>
     </div>
   </div>
-  <!-- Venture Card -->
   @if (p.venture) {
     <div class="rounded-lg bg-white p-4 border border-gray-100">
       <h4
@@ -103,8 +101,6 @@
       <p class="text-xs text-gray-400 italic">Aucun projet associé</p>
     </div>
   }
-
-  <!-- Phases Card -->
   @if (p.phases.length) {
     <div class="rounded-lg bg-white p-4 border border-gray-100">
       <h4 [id]="'detail-phases-heading-' + id" class="text-xs font-semibold text-gray-500 mb-3 tracking-wide uppercase">
@@ -112,9 +108,8 @@
       </h4>
       <div class="flex flex-wrap gap-2">
         @for (ph of p.phases; track ph.id) {
-          <app-ui-badge [label]="ph.name" variant="info" />\n
+          <app-ui-badge [label]="ph.name" variant="info" />
         }
-        \n
       </div>
       \n
     </div>
