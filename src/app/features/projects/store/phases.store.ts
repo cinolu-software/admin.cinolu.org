@@ -15,21 +15,6 @@ interface IPhasesStore {
   phase: IPhase | null;
 }
 
-const normalizePhaseDto = (dto: PhaseDto): PhaseDto => {
-  const deliverables =
-    dto.deliverables
-      ?.map((deliverable) => ({
-        title: deliverable.title.trim(),
-        description: deliverable.description?.trim() ?? ''
-      }))
-      .filter((deliverable) => deliverable.title.length > 0) ?? [];
-
-  return {
-    ...dto,
-    deliverables: deliverables.length > 0 ? deliverables : undefined
-  };
-};
-
 export const PhasesStore = signalStore(
   withState<IPhasesStore>({
     isLoading: false,
@@ -64,9 +49,7 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, onSuccess }) => {
-          const { id, ...phaseDto } = dto;
-          const body = normalizePhaseDto(phaseDto);
-          return _http.post<{ data: IPhase }>(`phases/${id}`, body).pipe(
+          return _http.post<{ data: IPhase }>(`phases/${dto.id}`, dto).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été créée avec succès');
               const phases = [...store.phases(), data];
@@ -86,9 +69,7 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, onSuccess }) => {
-          const { id, ...phaseDto } = dto;
-          const body = normalizePhaseDto(phaseDto);
-          return _http.patch<{ data: IPhase }>(`phases/${id}`, body).pipe(
+          return _http.patch<{ data: IPhase }>(`phases/${dto.id}`, dto).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été mise à jour avec succès');
               const phases = store.phases().map((p) => (p.id === data.id ? data : p));
@@ -123,9 +104,6 @@ export const PhasesStore = signalStore(
         )
       )
     ),
-    setPhases: (phases: IPhase[]): void => {
-      patchState(store, { phases });
-    },
     moveParticipations: rxMethod<{ dto: MoveParticipationsDto; onSuccess: () => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
