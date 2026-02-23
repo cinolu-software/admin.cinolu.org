@@ -1,4 +1,7 @@
-import { IDeliverable } from '@shared/models/delivrable.model';
+export interface PhaseDeliverableDto {
+  title: string;
+  description?: string;
+}
 
 export interface PhaseDto {
   id?: string;
@@ -6,5 +9,5 @@ export interface PhaseDto {
   description: string;
   started_at: Date;
   ended_at: Date;
-  deliverables: IDeliverable[];
+  deliverables?: PhaseDeliverableDto[];
 }

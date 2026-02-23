@@ -15,6 +15,21 @@ interface IPhasesStore {
   phase: IPhase | null;
 }
 
+const normalizePhaseDto = (dto: PhaseDto): PhaseDto => {
+  const deliverables =
+    dto.deliverables
+      ?.map((deliverable) => ({
+        title: deliverable.title.trim(),
+        description: deliverable.description?.trim() ?? ''
+      }))
+      .filter((deliverable) => deliverable.title.length > 0) ?? [];
+
+  return {
+    ...dto,
+    deliverables: deliverables.length > 0 ? deliverables : undefined
+  };
+};
+
 export const PhasesStore = signalStore(
   withState<IPhasesStore>({
     isLoading: false,
@@ -49,7 +64,8 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, onSuccess }) => {
-          const { id, ...body } = dto;
+          const { id, ...phaseDto } = dto;
+          const body = normalizePhaseDto(phaseDto);
           return _http.post<{ data: IPhase }>(`phases/${id}`, body).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été créée avec succès');
@@ -70,7 +86,8 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, onSuccess }) => {
-          const { id, ...body } = dto;
+          const { id, ...phaseDto } = dto;
+          const body = normalizePhaseDto(phaseDto);
           return _http.patch<{ data: IPhase }>(`phases/${id}`, body).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été mise à jour avec succès');
