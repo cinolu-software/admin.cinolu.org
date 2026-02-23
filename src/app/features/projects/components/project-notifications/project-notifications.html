@@ -46,7 +46,7 @@
           <div
             class="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center">
             <i-lucide [name]="icons.Inbox" class="mb-2 size-8 text-gray-300" aria-hidden="true" />
-            <p class="text-xs font-medium text-gray-600">Aucune notification</p>
+            <p class="font-medium text-gray-600">Aucune notification</p>
             <p class="mt-1 text-xs text-gray-500">Créez-en une pour commencer</p>
           </div>
         } @else {
@@ -64,7 +64,7 @@
                   [class.hover:border-gray-300]="!isActive(notification)"
                   [class.hover:bg-gray-50]="!isActive(notification)">
                   <div class="flex items-start justify-between gap-2">
-                    <h3 class="min-w-0 flex-1 truncate text-xs font-semibold text-gray-900">
+                    <h3 class="min-w-0 flex-1 truncate text-base font-semibold text-gray-900">
                       {{ notification.title }}
                     </h3>
                     @if (notification.status === 'sent') {
