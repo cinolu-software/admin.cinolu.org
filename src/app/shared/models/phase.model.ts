@@ -1,4 +1,5 @@
 import type { IBase } from './base.model';
+import { IDeliverable } from './delivrable.model';
 import type { IProject } from './project.model';
 import type { IUser } from './user.model';
 
@@ -9,5 +10,6 @@ export interface IPhase extends IBase {
   started_at: string;
   ended_at: string;
   project: IProject;
-  participants: IUser[];
+  participations: IUser[];
+  deliverables: IDeliverable[];
 }
