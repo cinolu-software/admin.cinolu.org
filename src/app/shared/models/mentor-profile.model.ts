@@ -3,6 +3,7 @@ import type { IUser } from './user.model';
 import type { IExpertise } from './expertise.model';
 
 export interface IExperience extends IBase {
+  company_name: string;
   job_title: string;
   is_current: boolean;
   start_date: Date;
@@ -11,6 +12,7 @@ export interface IExperience extends IBase {
 
 export interface IMentorProfile extends IBase {
   years_experience: number;
+  type?: string;
   status: string;
   cv?: string;
   owner: IUser;

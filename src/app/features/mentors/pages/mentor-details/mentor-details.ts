@@ -17,13 +17,14 @@ import { DatePipe } from '@angular/common';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar } from '@shared/ui';
 import { environment } from '@env/environment';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-mentor-details',
   templateUrl: './mentor-details.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MentorsStore, ConfirmationService],
-  imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar]
+  imports: [LucideAngularModule, UiBadge, UiConfirmDialog, DatePipe, ApiImgPipe, UiAvatar, RouterLink]
 })
 export class MentorDetails implements OnInit {
   #route = inject(ActivatedRoute);

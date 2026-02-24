@@ -1,0 +1,141 @@
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GENDERS } from '@shared/data';
+import { markAllAsTouched } from '@shared/helpers';
+import { UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
+import { MentorsStore } from '../../store/mentors.store';
+import { ExpertisesStore } from '../../store/expertises.store';
+import {
+  CreateExperienceDto,
+  CreateMentorDto,
+  CreateUserDto,
+  MentorRequestDto
+} from '../../dto/mentors/create-mentor.dto';
+
+@Component({
+  selector: 'app-add-mentor',
+  templateUrl: './add-mentor.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [MentorsStore, ExpertisesStore],
+  imports: [UiInput, UiTextarea, UiDatepicker, UiSelect, UiMultiSelect, UiCheckbox, UiButton, ReactiveFormsModule]
+})
+export class AddMentor {
+  #fb = inject(FormBuilder);
+  store = inject(MentorsStore);
+  expertisesStore = inject(ExpertisesStore);
+
+  genders = GENDERS;
+  form = this.#initForm();
+
+  constructor() {
+    this.expertisesStore.loadUnpaginated();
+  }
+
+  get experiences(): FormArray<FormGroup> {
+    return this.form.get('experiences') as FormArray<FormGroup>;
+  }
+
+  addExperience(): void {
+    this.experiences.push(this.#buildExperienceForm());
+  }
+
+  removeExperience(index: number): void {
+    if (this.experiences.length <= 1) {
+      return;
+    }
+    this.experiences.removeAt(index);
+  }
+
+  onSubmit(): void {
+    if (this.form.invalid) {
+      markAllAsTouched(this.form);
+      return;
+    }
+
+    this.store.create(this.#buildPayload());
+  }
+
+  #initForm(): FormGroup {
+    return this.#fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      name: ['', Validators.required],
+      phone_number: [''],
+      gender: [''],
+      city: [''],
+      birth_date: [''],
+      country: [''],
+      biography: [''],
+      years_experience: [0, [Validators.required, Validators.min(0)]],
+      expertises: [[], Validators.required],
+      type: [''],
+      experiences: this.#fb.array([this.#buildExperienceForm()])
+    });
+  }
+
+  #buildExperienceForm(experience?: Partial<CreateExperienceDto>): FormGroup {
+    return this.#fb.group({
+      id: [experience?.id ?? ''],
+      company_name: [experience?.company_name ?? '', Validators.required],
+      job_title: [experience?.job_title ?? '', Validators.required],
+      is_current: [experience?.is_current ?? false],
+      start_date: [experience?.start_date ?? new Date(), Validators.required],
+      end_date: [experience?.end_date ?? null]
+    });
+  }
+
+  #buildPayload(): CreateMentorDto {
+    const value = this.form.value;
+    const user: CreateUserDto = {
+      email: String(value['email']),
+      name: String(value['name']),
+      phone_number: this.#toOptionalString(value['phone_number']),
+      gender: this.#toOptionalString(value['gender']),
+      city: this.#toOptionalString(value['city']),
+      birth_date: this.#toOptionalDate(value['birth_date']),
+      country: this.#toOptionalString(value['country']),
+      biography: this.#toOptionalString(value['biography']),
+      google_image: this.#toOptionalString(value['google_image'])
+    };
+
+    const experiences = this.experiences.controls.map((control) => {
+      const row = control.value;
+      const isCurrent = Boolean(row['is_current']);
+      const startDate = this.#toOptionalDate(row['start_date']);
+
+      return {
+        id: this.#toOptionalString(row['id']),
+        company_name: String(row['company_name']),
+        job_title: String(row['job_title']),
+        is_current: isCurrent,
+        start_date: startDate ?? new Date(),
+        end_date: isCurrent ? undefined : this.#toOptionalDate(row['end_date'])
+      } satisfies CreateExperienceDto;
+    });
+
+    const mentor: MentorRequestDto = {
+      years_experience: Number(value['years_experience']),
+      expertises: (value['expertises'] as string[]) ?? [],
+      type: this.#toOptionalString(value['type']),
+      experiences
+    };
+
+    return { user, mentor };
+  }
+
+  #toOptionalString(value: unknown): string | undefined {
+    if (typeof value !== 'string') {
+      return undefined;
+    }
+    const trimmedValue = value.trim();
+    return trimmedValue ? trimmedValue : undefined;
+  }
+
+  #toOptionalDate(value: unknown): Date | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const date = value instanceof Date ? value : new Date(String(value));
+    return Number.isNaN(date.getTime()) ? undefined : date;
+  }
+}

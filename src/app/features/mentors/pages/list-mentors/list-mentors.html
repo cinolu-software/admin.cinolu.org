@@ -2,8 +2,9 @@
 @let mentorCount = store.mentors()[1];
 @let mentors = store.mentors()[0];
 <div class="dashboard-main-content">
-  <div class="mb-4">
+  <div class="mb-4 flex items-center justify-between gap-2">
     <app-ui-badge [label]="mentorCount.toString() + ' Mentors'" />
+    <a [routerLink]="'/mentors/add'" class="ui-button ui-button-small ui-button-primary"> Nouveau mentor </a>
   </div>
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
@@ -68,12 +69,20 @@
                   }
                 </td>
                 <td class="ui-table-cell">
-                  <a
-                    [routerLink]="['/mentors', mentor.id]"
-                    class="ui-button ui-button-small ui-button-primary ui-button-outlined ui-button-text">
-                    <i-lucide [name]="icons.Eye" class="size-4" />
-                    Voir le profil
-                  </a>
+                  <div class="flex items-center gap-2">
+                    <a
+                      [routerLink]="['/mentors', mentor.id]"
+                      class="ui-button ui-button-small ui-button-primary ui-button-outlined ui-button-text">
+                      <i-lucide [name]="icons.Eye" class="size-4" />
+                      Voir le profil
+                    </a>
+                    <a
+                      [routerLink]="['/mentors/update', mentor.id]"
+                      class="ui-button ui-button-small ui-button-primary ui-button-outlined ui-button-text">
+                      <i-lucide [name]="icons.Pencil" class="size-4" />
+                      Modifier
+                    </a>
+                  </div>
                 </td>
               </tr>
             }

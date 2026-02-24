@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { LucideAngularModule, Search, Funnel, Eye, CircleCheckBig, CircleX } from 'lucide-angular';
+import { LucideAngularModule, Search, Funnel, Eye, CircleCheckBig, CircleX, Pencil } from 'lucide-angular';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MentorsStore } from '../../store/mentors.store';
@@ -32,7 +32,7 @@ export class ListMentors {
   #destroyRef = inject(DestroyRef);
   store = inject(MentorsStore);
   itemsPerPage = 20;
-  icons = { Eye, Search, Funnel, CircleCheckBig, CircleX };
+  icons = { Eye, Search, Funnel, CircleCheckBig, CircleX, Pencil };
   queryParams = signal<FilterMentorsProfileDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q'),

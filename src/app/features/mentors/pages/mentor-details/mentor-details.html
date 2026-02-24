@@ -106,11 +106,16 @@
       </div>
       <div class="lg:col-span-2">
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
-              <i-lucide [name]="icons.Briefcase" class="w-5 h-5 text-primary-600" />
+          <div class="flex items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
+                <i-lucide [name]="icons.Briefcase" class="w-5 h-5 text-primary-600" />
+              </div>
+              <h4 class="text-lg font-bold text-gray-900">Expériences professionnelles</h4>
             </div>
-            <h4 class="text-lg font-bold text-gray-900">Expériences professionnelles</h4>
+            <a [routerLink]="['/mentors/update', mentor.id]" class="ui-button ui-button-small ui-button-primary ui-button-outlined">
+              Modifier
+            </a>
           </div>
           @if (mentor.experiences.length > 0) {
             <div class="relative">
@@ -124,9 +129,12 @@
                     <div
                       class="bg-linear-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-primary-200">
                       <div class="flex items-start justify-between gap-4 mb-3">
-                        <h5 class="text-lg font-bold text-gray-900 leading-tight">
-                          {{ experience.job_title }}
-                        </h5>
+                        <div>
+                          <h5 class="text-lg font-bold text-gray-900 leading-tight">
+                            {{ experience.job_title }}
+                          </h5>
+                          <p class="text-sm text-gray-600">{{ experience.company_name }}</p>
+                        </div>
                         @if (experience.is_current) {
                           <app-ui-badge [label]="'Actuel'" [variant]="'success'" [size]="'small'" />
                         }
