@@ -27,9 +27,6 @@ export class AddMentor {
 
   genders = GENDERS;
   form = this.#initForm();
-  newExpertiseForm: FormGroup = this.#fb.group({
-    name: ['', Validators.required]
-  });
 
   constructor() {
     this.expertisesStore.loadUnpaginated();
@@ -59,25 +56,31 @@ export class AddMentor {
     this.store.create(this.#buildPayload());
   }
 
-  onCreateExpertise(): void {
-    if (this.newExpertiseForm.invalid) {
-      markAllAsTouched(this.newExpertiseForm);
+  onCreateExpertise(name: string): void {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
       return;
     }
 
-    const name = String(this.newExpertiseForm.get('name')?.value ?? '').trim();
-    if (!name) {
+    const existingExpertise = this.expertisesStore
+      .allExpertises()
+      .find((expertise) => expertise.name.trim().toLowerCase() === trimmedName.toLowerCase());
+
+    if (existingExpertise) {
+      const currentValue = ((this.form.get('expertises')?.value as string[] | null) ?? []).filter(Boolean);
+      if (!currentValue.includes(existingExpertise.id)) {
+        this.form.patchValue({ expertises: [...currentValue, existingExpertise.id] });
+      }
       return;
     }
 
     this.expertisesStore.create({
-      payload: { name },
+      payload: { name: trimmedName },
       onSuccess: (expertise: IExpertise) => {
         const currentValue = ((this.form.get('expertises')?.value as string[] | null) ?? []).filter(Boolean);
         if (!currentValue.includes(expertise.id)) {
           this.form.patchValue({ expertises: [...currentValue, expertise.id] });
         }
-        this.newExpertiseForm.reset({ name: '' });
       }
     });
   }

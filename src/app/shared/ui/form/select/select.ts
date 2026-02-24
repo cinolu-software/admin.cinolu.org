@@ -1,6 +1,7 @@
 import {
   Component,
   input,
+  output,
   forwardRef,
   computed,
   signal,
@@ -9,7 +10,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ChevronDown, LucideAngularModule } from 'lucide-angular';
+import { ChevronDown, LucideAngularModule, Plus } from 'lucide-angular';
 
 export interface SelectOption {
   label: string;
@@ -38,9 +39,15 @@ export class UiSelect implements ControlValueAccessor {
   required = input<boolean>(false);
   optionLabel = input<string>('');
   optionValue = input<string>('');
-  icons = { ChevronDown };
+  allowCreate = input<boolean>(false);
+  createPlaceholder = input<string>('Ajouter une option');
+  createButtonLabel = input<string>('Ajouter');
+  createDisabled = input<boolean>(false);
+  createOption = output<string>();
+  icons = { ChevronDown, Plus };
   value = signal<unknown>('');
   isOpen = signal(false);
+  createValue = signal('');
   #elementRef = inject(ElementRef);
 
   normalizedOptions = computed(() => {
@@ -66,6 +73,7 @@ export class UiSelect implements ControlValueAccessor {
     const selected = this.selectedOption();
     return selected ? selected.label : '';
   });
+  canCreate = computed(() => this.createValue().trim().length > 0 && !this.createDisabled());
 
   #onChangeCallback!: (value: unknown) => void;
   onTouched!: () => void;
@@ -125,5 +133,23 @@ export class UiSelect implements ControlValueAccessor {
 
   isSelected(optionValue: unknown): boolean {
     return String(this.value()) === String(optionValue);
+  }
+
+  onCreateInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.createValue.set(target.value);
+  }
+
+  onCreateKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.onCreateOption();
+  }
+
+  onCreateOption(): void {
+    if (!this.canCreate()) return;
+    this.createOption.emit(this.createValue().trim());
+    this.createValue.set('');
   }
 }

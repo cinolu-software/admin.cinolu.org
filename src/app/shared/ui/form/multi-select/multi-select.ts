@@ -1,6 +1,7 @@
 import {
   Component,
   input,
+  output,
   forwardRef,
   signal,
   computed,
@@ -11,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ChevronDown, LucideAngularModule } from 'lucide-angular';
+import { ChevronDown, LucideAngularModule, Plus } from 'lucide-angular';
 import { SelectOption } from '../select/select';
 import { UiCheckbox } from '../checkbox/checkbox';
 
@@ -36,10 +37,16 @@ export class UiMultiSelect implements ControlValueAccessor {
   display = input<'comma' | 'chip'>('comma');
   optionLabel = input<string>('');
   optionValue = input<string>('');
-  icons = { ChevronDown };
+  allowCreate = input<boolean>(false);
+  createPlaceholder = input<string>('Ajouter une option');
+  createButtonLabel = input<string>('Ajouter');
+  createDisabled = input<boolean>(false);
+  createOption = output<string>();
+  icons = { ChevronDown, Plus };
 
   value = signal<unknown[]>([]);
   isOpen = signal(false);
+  createValue = signal('');
   checkboxValues: Record<string, boolean> = {};
   #elementRef = inject(ElementRef);
 
@@ -65,7 +72,6 @@ export class UiMultiSelect implements ControlValueAccessor {
     const opts = this.options();
     const labelKey = this.optionLabel();
     const valueKey = this.optionValue();
-
     if (labelKey && valueKey) {
       return (opts as Record<string, unknown>[]).map((opt) => ({
         label: String(opt[labelKey] ?? ''),
@@ -96,6 +102,7 @@ export class UiMultiSelect implements ControlValueAccessor {
     const othersCount = labels.length - 1;
     return `${firstLabel} et ${othersCount}`;
   });
+  canCreate = computed(() => this.createValue().trim().length > 0 && !this.createDisabled());
 
   onChange!: (value: unknown[]) => void;
   onTouched!: () => void;
@@ -175,5 +182,23 @@ export class UiMultiSelect implements ControlValueAccessor {
     this.updateCheckboxValues();
     this.onChange(this.value());
     this.onTouched();
+  }
+
+  onCreateInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.createValue.set(target.value);
+  }
+
+  onCreateKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.onCreateOption();
+  }
+
+  onCreateOption(): void {
+    if (!this.canCreate()) return;
+    this.createOption.emit(this.createValue().trim());
+    this.createValue.set('');
   }
 }

@@ -1,10 +1,11 @@
 <div class="ui-select-wrapper" [class.ui-select-disabled]="disabled()">
   @if (label()) {
-  <p class="block text-sm font-semibold text-gray-700 mb-1">
-    {{ label() }} @if (required()) {
-    <span class="text-red-500">*</span>
-    }
-  </p>
+    <p class="block text-sm font-semibold text-gray-700 mb-1">
+      {{ label() }}
+      @if (required()) {
+        <span class="text-red-500">*</span>
+      }
+    </p>
   }
   <div class="ui-select-container">
     <div
@@ -20,9 +21,9 @@
       [attr.aria-haspopup]="'listbox'"
       [attr.aria-controls]="id() + '-listbox'">
       @if (!displayText()) {
-      <span class="ui-select-placeholder">{{ placeholder() }}</span>
+        <span class="ui-select-placeholder">{{ placeholder() }}</span>
       } @else {
-      <span class="ui-select-value">{{ displayText() }}</span>
+        <span class="ui-select-value">{{ displayText() }}</span>
       }
       <div class="ui-select-icon">
         <i-lucide [img]="icons.ChevronDown" class="size-4.5" [class.rotate-180]="isOpen()" />
@@ -30,24 +31,42 @@
     </div>
 
     @if (isOpen()) {
-    <div class="ui-select-panel" [id]="id() + '-listbox'" role="listbox">
-      @for (option of normalizedOptions(); track option.value) {
-      <div
-        class="ui-select-option"
-        [class.ui-select-option-selected]="isSelected(option.value)"
-        [class.ui-select-option-disabled]="option.disabled"
-        (click)="selectOption(option)"
-        (keyup.enter)="selectOption(option)"
-        (keyup.space)="selectOption(option)"
-        [tabindex]="option.disabled ? -1 : 0"
-        role="option"
-        [attr.aria-selected]="isSelected(option.value)">
-        <span class="ui-select-option-label">{{ option.label }}</span>
+      <div class="ui-select-panel" [id]="id() + '-listbox'" role="listbox">
+        @for (option of normalizedOptions(); track option.value) {
+          <div
+            class="ui-select-option"
+            [class.ui-select-option-selected]="isSelected(option.value)"
+            [class.ui-select-option-disabled]="option.disabled"
+            (click)="selectOption(option)"
+            (keyup.enter)="selectOption(option)"
+            (keyup.space)="selectOption(option)"
+            [tabindex]="option.disabled ? -1 : 0"
+            role="option"
+            [attr.aria-selected]="isSelected(option.value)">
+            <span class="ui-select-option-label">{{ option.label }}</span>
+          </div>
+        }
+        @if (normalizedOptions().length === 0) {
+          <div class="ui-select-empty">No options available</div>
+        }
+        @if (allowCreate()) {
+          <div class="ui-select-create-wrapper">
+            <input
+              [id]="id() + '-create-option-input'"
+              type="text"
+              class="ui-select-create-input"
+              [value]="createValue()"
+              [placeholder]="createPlaceholder()"
+              [disabled]="createDisabled()"
+              (input)="onCreateInput($event)"
+              (keydown)="onCreateKeydown($event)" />
+            <button type="button" class="ui-select-create-button" [disabled]="!canCreate()" (click)="onCreateOption()">
+              <i-lucide [img]="icons.Plus" class="size-4" />
+              {{ createButtonLabel() }}
+            </button>
+          </div>
+        }
       </div>
-      } @if (normalizedOptions().length === 0) {
-      <div class="ui-select-empty">No options available</div>
-      }
-    </div>
     }
   </div>
 </div>
