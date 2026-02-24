@@ -4,9 +4,10 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { GENDERS } from '@shared/data';
 import { markAllAsTouched, parseDate } from '@shared/helpers';
 import { IExpertise } from '@shared/models';
-import { UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
+import { SelectOption, UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 import { MentorsStore } from '../../store/mentors.store';
 import { ExpertisesStore } from '../../store/expertises.store';
+import { MentorType } from '../../enums/mentor.enum';
 import {
   CreateExperienceDto,
   CreateMentorDto,
@@ -28,6 +29,10 @@ export class UpdateMentor implements OnInit {
   store = inject(MentorsStore);
   expertisesStore = inject(ExpertisesStore);
   genders = GENDERS;
+  mentorTypeOptions: SelectOption[] = [
+    { label: 'Coach', value: MentorType.COACH },
+    { label: 'Facilitator', value: MentorType.FACILITATOR }
+  ];
   form = this.#initForm();
 
   constructor() {
@@ -189,7 +194,7 @@ export class UpdateMentor implements OnInit {
     const mentor: MentorRequestDto = {
       years_experience: Number(value['years_experience']),
       expertises: (value['expertises'] as string[]) ?? [],
-      type: this.#toOptionalString(value['type']),
+      type: this.#toMentorType(value['type']),
       experiences
     };
 
@@ -211,5 +216,12 @@ export class UpdateMentor implements OnInit {
 
     const date = value instanceof Date ? value : new Date(String(value));
     return Number.isNaN(date.getTime()) ? undefined : date;
+  }
+
+  #toMentorType(value: unknown): MentorType | undefined {
+    if (value === MentorType.COACH || value === MentorType.FACILITATOR) {
+      return value;
+    }
+    return undefined;
   }
 }

@@ -75,12 +75,13 @@
         formControlName="years_experience"
         class="w-full"
         placeholder="Ex: 5" />
-      <app-ui-input
+      <app-ui-select
         [id]="'type'"
         label="Type de mentor"
+        [options]="mentorTypeOptions"
         formControlName="type"
         class="w-full"
-        placeholder="Optionnel" />
+        placeholder="Selectionner un type" />
       <div class="lg:col-span-2">
         <app-ui-multi-select
           [id]="'expertises'"

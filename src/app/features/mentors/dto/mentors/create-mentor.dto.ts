@@ -1,3 +1,5 @@
+import { MentorType } from '../../enums/mentor.enum';
+
 export interface CreateUserDto {
   email: string;
   name: string;
@@ -23,7 +25,7 @@ export interface CreateExperienceDto {
 export interface MentorRequestDto {
   years_experience: number;
   expertises: string[];
-  type?: string;
+  type?: MentorType;
   experiences: CreateExperienceDto[];
 }
 

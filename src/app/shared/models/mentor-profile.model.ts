@@ -1,6 +1,7 @@
 import type { IBase } from './base.model';
 import type { IUser } from './user.model';
 import type { IExpertise } from './expertise.model';
+import type { MentorType } from '@features/mentors/enums/mentor.enum';
 
 export interface IExperience extends IBase {
   company_name: string;
@@ -12,7 +13,7 @@ export interface IExperience extends IBase {
 
 export interface IMentorProfile extends IBase {
   years_experience: number;
-  type?: string;
+  type?: MentorType;
   status: string;
   cv?: string;
   owner: IUser;
