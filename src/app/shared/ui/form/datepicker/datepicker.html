@@ -31,7 +31,18 @@
       <button type="button" (click)="navigatePrevious()" class="ui-datepicker-nav-button">
         <i-lucide [name]="icons.ChevronLeft" class="size-4" />
       </button>
+      @if (yearSelect() && view() === 'date') {
+      <select
+        class="ui-datepicker-year-select"
+        [value]="currentViewDate().getFullYear()"
+        (change)="onYearSelectChange($event)">
+        @for (year of yearSelectOptions(); track year) {
+        <option [value]="year">{{ year }}</option>
+        }
+      </select>
+      } @else {
       <div class="ui-datepicker-header-label">{{ monthYearLabel() }}</div>
+      }
       <button type="button" (click)="navigateNext()" class="ui-datepicker-nav-button">
         <i-lucide [name]="icons.ChevronRight" class="size-4" />
       </button>

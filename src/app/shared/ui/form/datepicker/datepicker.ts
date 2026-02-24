@@ -25,6 +25,7 @@ export class UiDatepicker implements ControlValueAccessor {
   dateFormat = input<string>('');
   minDate = input<Date | null>(null);
   maxDate = input<Date | null>(null);
+  yearSelect = input<boolean>(false);
   isOpen = signal<boolean>(false);
   selectedDate = signal<Date | null>(null);
   currentViewDate = signal<Date>(new Date());
@@ -77,6 +78,20 @@ export class UiDatepicker implements ControlValueAccessor {
       });
     }
     return months;
+  });
+
+  yearSelectOptions = computed(() => {
+    const min = this.minDate();
+    const max = this.maxDate();
+    const currentYear = new Date().getFullYear();
+    const startYear = min ? min.getFullYear() : currentYear - 100;
+    const endYear = max ? max.getFullYear() : currentYear + 10;
+
+    const years: number[] = [];
+    for (let year = startYear; year <= endYear; year++) {
+      years.push(year);
+    }
+    return years;
   });
 
   calendarDays = computed(() => {
@@ -189,6 +204,18 @@ export class UiDatepicker implements ControlValueAccessor {
       date.setMonth(date.getMonth() + 1);
     }
     this.currentViewDate.set(date);
+  }
+
+  onYearSelectChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const year = Number(target.value);
+    if (Number.isNaN(year)) {
+      return;
+    }
+
+    const nextDate = new Date(this.currentViewDate());
+    nextDate.setFullYear(year);
+    this.currentViewDate.set(nextDate);
   }
 
   isSelectedYear(year: number): boolean {

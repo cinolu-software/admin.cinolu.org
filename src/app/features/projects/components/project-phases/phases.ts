@@ -1,8 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, Plus, Pencil, Trash2, Calendar, FileText } from 'lucide-angular';
-import { UiButton, UiDatepicker, UiInput, UiTextarea, UiConfirmDialog, UiBadge } from '@shared/ui';
+import {
+  SelectOption,
+  UiButton,
+  UiDatepicker,
+  UiInput,
+  UiMultiSelect,
+  UiTextarea,
+  UiConfirmDialog,
+  UiBadge
+} from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { IPhase } from '@shared/models';
 import { parseDate } from '@shared/helpers/form.helper';
@@ -21,6 +30,7 @@ import { PhasesStore } from '@features/projects/store/phases.store';
     UiInput,
     UiTextarea,
     UiDatepicker,
+    UiMultiSelect,
     UiConfirmDialog,
     LucideAngularModule,
     UiBadge
@@ -35,9 +45,19 @@ export class Phases implements OnInit {
   editingPhaseId = signal<string | null>(null);
   showCreateForm = signal(false);
   icons = { Plus, Pencil, Trash2, Calendar, FileText };
+  mentorOptions = computed<SelectOption[]>(() =>
+    this.phasesStore.mentors().map((mentor) => ({
+      label: mentor.owner.name.toUpperCase(),
+      value: mentor.id
+    }))
+  );
+  mentorNameById = computed<Map<string, string>>(
+    () => new Map(this.phasesStore.mentors().map((mentor) => [mentor.id, mentor.owner.name]))
+  );
 
   ngOnInit(): void {
     this.phasesStore.loadAll(this.projectId());
+    this.phasesStore.loadMentors();
   }
 
   #buildForm(): FormGroup {
@@ -46,6 +66,7 @@ export class Phases implements OnInit {
       description: ['', Validators.required],
       started_at: [null, Validators.required],
       ended_at: [null, Validators.required],
+      mentors: [[]],
       deliverables: this.#fb.array([])
     });
   }
@@ -53,7 +74,7 @@ export class Phases implements OnInit {
   #buildDeliverableForm(deliverable?: PhaseDeliverableDto): FormGroup {
     return this.#fb.group({
       title: [deliverable?.title ?? '', [Validators.required, Validators.minLength(2)]],
-      description: [deliverable?.description ?? '']
+      description: [deliverable?.description ?? undefined]
     });
   }
 
@@ -76,29 +97,39 @@ export class Phases implements OnInit {
     }
   }
 
+  #extractMentorIds(phase: IPhase): string[] {
+    return (phase.mentors ?? []).map((mentor) => (typeof mentor === 'string' ? mentor : mentor.id));
+  }
+
   #buildPayload(): PhaseDto {
     const formValue = this.form.getRawValue();
     const deliverables =
-      (formValue.deliverables as PhaseDeliverableDto[] | null | undefined)
-        ?.map((deliverable) => ({
-          title: deliverable.title?.trim() ?? '',
-          description: deliverable.description?.trim() || undefined
-        }))
-        .filter((deliverable) => deliverable.title.length > 0) ?? [];
-
+      (formValue.deliverables as PhaseDeliverableDto[] | undefined)
+        ?.filter((d) => d.title?.length)
+        .map((d) => ({
+          title: d.title,
+          description: d.description || undefined
+        })) ?? [];
+    const mentors = (formValue.mentors as string[] | undefined)?.filter((m) => m?.length) ?? [];
     return {
       name: formValue.name,
       description: formValue.description,
       started_at: formValue.started_at,
       ended_at: formValue.ended_at,
+      mentors: mentors.length > 0 ? mentors : undefined,
       deliverables: deliverables.length > 0 ? deliverables : undefined
     };
   }
 
-  onCreateClick(): void {
+  #resetForm(): void {
     this.editingPhaseId.set(null);
     this.form.reset();
+    this.form.patchValue({ mentors: [] });
     this.#setDeliverables();
+  }
+
+  onCreateClick(): void {
+    this.#resetForm();
     this.showCreateForm.set(true);
   }
 
@@ -107,6 +138,7 @@ export class Phases implements OnInit {
     this.editingPhaseId.set(phase.id);
     this.form.patchValue({
       ...phase,
+      mentors: this.#extractMentorIds(phase),
       started_at: parseDate(phase.started_at),
       ended_at: parseDate(phase.ended_at)
     });
@@ -120,22 +152,22 @@ export class Phases implements OnInit {
 
   onCancelForm(): void {
     this.showCreateForm.set(false);
-    this.editingPhaseId.set(null);
-    this.form.reset();
-    this.#setDeliverables();
+    this.#resetForm();
   }
 
   onSubmit(): void {
     if (this.form.invalid) return;
-    const body = this.#buildPayload();
-    this.phasesStore.create({ dto: { ...body, id: this.projectId() }, onSuccess: () => this.onCancelForm() });
+    this.phasesStore.create({
+      projectId: this.projectId(),
+      dto: this.#buildPayload(),
+      onSuccess: () => this.onCancelForm()
+    });
   }
 
   onUpdate(): void {
     const id = this.editingPhaseId();
     if (!id || this.form.invalid) return;
-    const body = this.#buildPayload();
-    this.phasesStore.update({ dto: { ...body, id }, onSuccess: () => this.onCancelForm() });
+    this.phasesStore.update({ dto: { ...this.#buildPayload(), id }, onSuccess: () => this.onCancelForm() });
   }
 
   onDelete(phase: IPhase): void {
@@ -148,6 +180,13 @@ export class Phases implements OnInit {
         this.phasesStore.delete(phase.id);
       }
     });
+  }
+
+  mentorNamesForPhase(phase: IPhase): string[] {
+    const mentorMap = this.mentorNameById();
+    return (phase.mentors ?? [])
+      .map((mentor) => (typeof mentor === 'string' ? mentorMap.get(mentor) : mentor.name) ?? '')
+      .filter(Boolean);
   }
 
   isEditing(phase: IPhase): boolean {

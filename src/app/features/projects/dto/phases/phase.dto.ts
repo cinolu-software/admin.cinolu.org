@@ -9,5 +9,6 @@ export interface PhaseDto {
   description: string;
   started_at: Date;
   ended_at: Date;
+  mentors?: string[];
   deliverables?: PhaseDeliverableDto[];
 }

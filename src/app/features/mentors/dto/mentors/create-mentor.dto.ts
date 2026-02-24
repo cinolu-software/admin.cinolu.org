@@ -6,7 +6,7 @@ export interface CreateUserDto {
   phone_number?: string;
   gender?: string;
   city?: string;
-  birth_date?: Date;
+  birth_date?: string;
   country?: string;
   biography?: string;
   google_image?: string;
@@ -18,8 +18,8 @@ export interface CreateExperienceDto {
   company_name: string;
   job_title: string;
   is_current: boolean;
-  start_date: Date;
-  end_date?: Date;
+  start_date: string;
+  end_date?: string;
 }
 
 export interface MentorRequestDto {

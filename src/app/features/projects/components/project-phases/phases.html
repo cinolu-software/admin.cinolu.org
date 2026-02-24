@@ -27,6 +27,12 @@
             label="Nom de la phase"
             formControlName="name"
             placeholder="Ex: Phase de sélection" />
+          <app-ui-multi-select
+            [id]="'phase-mentors'"
+            label="Mentors (optionnel)"
+            [options]="mentorOptions()"
+            formControlName="mentors"
+            placeholder="Sélectionner un ou plusieurs mentors" />
           <div class="grid grid-cols-1 gap-4 lg:col-span-2 lg:grid-cols-2">
             <app-ui-datepicker
               [required]="true"
@@ -157,10 +163,21 @@
                 @if (phase.description) {
                   <p class="mt-2 text-sm text-gray-600 line-clamp-2">{{ phase.description }}</p>
                 }
+                @if (mentorNamesForPhase(phase).length > 0) {
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    @for (mentorName of mentorNamesForPhase(phase); track mentorName) {
+                      <span
+                        class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                        {{ mentorName }}
+                      </span>
+                    }
+                  </div>
+                }
                 @if (phase.deliverables.length > 0) {
                   <div class="mt-3 flex flex-wrap gap-2">
                     @for (deliverable of phase.deliverables; track deliverable.id) {
-                      <span class="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary-700">
+                      <span
+                        class="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary-700">
                         {{ deliverable.title }}
                       </span>
                     }

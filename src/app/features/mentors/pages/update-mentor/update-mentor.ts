@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GENDERS } from '@shared/data';
 import { markAllAsTouched, parseDate } from '@shared/helpers';
-import { IExpertise } from '@shared/models';
+import { IExperience, IExpertise } from '@shared/models';
 import { SelectOption, UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 import { MentorsStore } from '../../store/mentors.store';
 import { ExpertisesStore } from '../../store/expertises.store';
@@ -33,6 +33,8 @@ export class UpdateMentor implements OnInit {
     { label: 'Coach', value: MentorType.COACH },
     { label: 'Facilitator', value: MentorType.FACILITATOR }
   ];
+  minBirthDate = new Date(1960, 0, 1);
+  maxBirthDate = new Date(2020, 11, 31);
   form = this.#initForm();
 
   constructor() {
@@ -113,7 +115,7 @@ export class UpdateMentor implements OnInit {
     });
   }
 
-  #patchExperiences(experiences: CreateExperienceDto[]): void {
+  #patchExperiences(experiences: IExperience[]): void {
     this.experiences.clear();
 
     if (experiences.length === 0) {
@@ -150,14 +152,23 @@ export class UpdateMentor implements OnInit {
     });
   }
 
-  #buildExperienceForm(experience?: Partial<CreateExperienceDto>): FormGroup {
+  #buildExperienceForm(
+    experience?: Partial<{
+      id: string;
+      company_name: string;
+      job_title: string;
+      is_current: boolean;
+      start_date: Date | string;
+      end_date?: Date | string;
+    }>
+  ): FormGroup {
     return this.#fb.group({
       id: [experience?.id ?? ''],
       company_name: [experience?.company_name ?? '', Validators.required],
       job_title: [experience?.job_title ?? '', Validators.required],
       is_current: [experience?.is_current ?? false],
-      start_date: [experience?.start_date ?? new Date(), Validators.required],
-      end_date: [experience?.end_date ?? null]
+      start_date: [experience?.start_date ? parseDate(String(experience.start_date)) : new Date(), Validators.required],
+      end_date: [experience?.end_date ? parseDate(String(experience.end_date)) : null]
     });
   }
 
@@ -170,7 +181,7 @@ export class UpdateMentor implements OnInit {
       phone_number: this.#toOptionalString(value['phone_number']),
       gender: this.#toOptionalString(value['gender']),
       city: this.#toOptionalString(value['city']),
-      birth_date: this.#toOptionalDate(value['birth_date']),
+      birth_date: this.#toOptionalApiDate(value['birth_date']),
       country: this.#toOptionalString(value['country']),
       biography: this.#toOptionalString(value['biography']),
       google_image: this.#toOptionalString(value['google_image'])
@@ -179,15 +190,15 @@ export class UpdateMentor implements OnInit {
     const experiences = this.experiences.controls.map((control) => {
       const row = control.value;
       const isCurrent = Boolean(row['is_current']);
-      const startDate = this.#toOptionalDate(row['start_date']);
+      const startDate = this.#toOptionalApiDate(row['start_date']) ?? this.#toOptionalApiDate(new Date());
 
       return {
         id: this.#toOptionalString(row['id']),
         company_name: String(row['company_name']),
         job_title: String(row['job_title']),
         is_current: isCurrent,
-        start_date: startDate ?? new Date(),
-        end_date: isCurrent ? undefined : this.#toOptionalDate(row['end_date'])
+        start_date: startDate ?? '',
+        end_date: isCurrent ? undefined : this.#toOptionalApiDate(row['end_date'])
       } satisfies CreateExperienceDto;
     });
 
@@ -209,13 +220,20 @@ export class UpdateMentor implements OnInit {
     return trimmedValue ? trimmedValue : undefined;
   }
 
-  #toOptionalDate(value: unknown): Date | undefined {
+  #toOptionalApiDate(value: unknown): string | undefined {
     if (!value) {
       return undefined;
     }
 
     const date = value instanceof Date ? value : new Date(String(value));
-    return Number.isNaN(date.getTime()) ? undefined : date;
+    if (Number.isNaN(date.getTime())) {
+      return undefined;
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   #toMentorType(value: unknown): MentorType | undefined {

@@ -30,7 +30,7 @@
       <app-ui-table-skeleton [rows]="10" [columns]="6" />
     }
     @if (mentorCount > 0) {
-      <div class="ui-table-wrapper">
+      <div class="ui-table-wrapper overflow-x-auto">
         <table class="ui-table">
           <thead class="ui-table-head">
             <tr class="ui-table-head-row">
@@ -72,7 +72,7 @@
                   <div class="flex items-center gap-2">
                     <a
                       [routerLink]="['/mentors', mentor.id]"
-                      class="ui-button ui-button-small ui-button-primary ui-button-outlined ui-button-text">
+                      class="text-nowrap! ui-button ui-button-small ui-button-primary ui-button-outlined ui-button-text">
                       <i-lucide [name]="icons.Eye" class="size-4" />
                       Voir le profil
                     </a>

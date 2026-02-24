@@ -6,12 +6,8 @@
         Gestion des mentors
       </span>
       <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Modifier un mentor</h1>
-      <p class="max-w-2xl text-sm text-gray-600 md:text-base">
-        Mettez a jour les informations utilisateur et mentor a partir de ce formulaire unique.
-      </p>
     </div>
   </div>
-
   @if (store.isLoading()) {
     <div class="rounded-2xl border border-gray-200 bg-white p-7 text-sm text-gray-500">Chargement du mentor...</div>
   } @else if (store.mentor()) {
@@ -52,7 +48,14 @@
           placeholder="Selectionner un genre" />
         <app-ui-input [id]="'city'" label="Ville" formControlName="city" class="w-full" placeholder="Ex: Kinshasa" />
         <app-ui-input [id]="'country'" label="Pays" formControlName="country" class="w-full" placeholder="Ex: RDC" />
-        <app-ui-datepicker [id]="'birth_date'" label="Date de naissance" formControlName="birth_date" class="w-full" />
+        <app-ui-datepicker
+          [id]="'birth_date'"
+          label="Date de naissance"
+          formControlName="birth_date"
+          [yearSelect]="true"
+          [minDate]="minBirthDate"
+          [maxDate]="maxBirthDate"
+          class="w-full" />
         <div class="lg:col-span-2">
           <app-ui-textarea
             [id]="'biography'"
@@ -80,14 +83,14 @@
           formControlName="years_experience"
           class="w-full"
           placeholder="Ex: 5" />
-        <app-ui-select
-          [id]="'type'"
-          label="Type de mentor"
-          [options]="mentorTypeOptions"
-          formControlName="type"
-          class="w-full"
-          placeholder="Selectionner un type" />
-        <div class="lg:col-span-2">
+        <div class="grid grid-cols-1 gap-6">
+          <app-ui-select
+            [id]="'type'"
+            label="Type de mentor"
+            [options]="mentorTypeOptions"
+            formControlName="type"
+            class="w-full"
+            placeholder="Selectionner un type" />
           <app-ui-multi-select
             [id]="'expertises'"
             label="Expertises"
@@ -103,14 +106,12 @@
             placeholder="Selectionner une ou plusieurs expertises" />
         </div>
       </div>
-
       <div class="mt-8 flex items-center justify-between">
         <h3 class="text-base font-semibold text-gray-900">Experiences professionnelles</h3>
         <app-ui-button type="button" variant="secondary" [outlined]="true" (clicked)="addExperience()">
           Ajouter une experience
         </app-ui-button>
       </div>
-
       <div formArrayName="experiences" class="mt-4 space-y-4">
         @for (experienceControl of experiences.controls; track $index) {
           <div [formGroupName]="$index" class="rounded-xl border border-gray-200 p-4">

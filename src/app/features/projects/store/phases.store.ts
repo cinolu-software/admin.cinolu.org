@@ -3,7 +3,7 @@ import { computed, inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { ToastrService } from '@shared/services/toast/toastr.service';
-import { IPhase } from '@shared/models';
+import { IMentorProfile, IPhase } from '@shared/models';
 import { PhaseDto } from '../dto/phases/phase.dto';
 import { MoveParticipationsDto } from '../dto/phases/move-participations.dto';
 import { HttpClient } from '@angular/common/http';
@@ -11,15 +11,19 @@ import { parseDate } from '@shared/helpers';
 
 interface IPhasesStore {
   isLoading: boolean;
+  isMentorsLoading: boolean;
   phases: IPhase[];
   phase: IPhase | null;
+  mentors: IMentorProfile[];
 }
 
 export const PhasesStore = signalStore(
   withState<IPhasesStore>({
     isLoading: false,
+    isMentorsLoading: false,
     phases: [],
-    phase: null
+    phase: null,
+    mentors: []
   }),
   withProps(() => ({
     _http: inject(HttpClient),
@@ -45,11 +49,28 @@ export const PhasesStore = signalStore(
         })
       )
     ),
-    create: rxMethod<{ dto: PhaseDto & { id: string }; onSuccess: () => void }>(
+    loadMentors: rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, { isMentorsLoading: true })),
+        switchMap(() =>
+          _http.get<{ data: IMentorProfile[] }>('mentors').pipe(
+            map(({ data }) => {
+              patchState(store, { isMentorsLoading: false, mentors: data });
+            }),
+            catchError(() => {
+              patchState(store, { isMentorsLoading: false, mentors: [] });
+              return of(null);
+            })
+          )
+        )
+      )
+    ),
+    create: rxMethod<{ projectId: string; dto: PhaseDto; onSuccess: () => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
-        switchMap(({ dto, onSuccess }) => {
-          return _http.post<{ data: IPhase }>(`phases/${dto.id}`, dto).pipe(
+        switchMap(({ dto, projectId, onSuccess }) => {
+          delete dto?.id;
+          return _http.post<{ data: IPhase }>(`phases/${projectId}`, dto).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été créée avec succès');
               const phases = [...store.phases(), data];
