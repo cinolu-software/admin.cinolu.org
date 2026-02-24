@@ -59,16 +59,21 @@ export const ExpertisesStore = signalStore(
         )
       )
     ),
-    create: rxMethod<{ payload: ExpertiseDto; onSuccess: () => void }>(
+    create: rxMethod<{ payload: ExpertiseDto; onSuccess: (expertise: IExpertise) => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ payload, onSuccess }) =>
           _http.post<{ data: IExpertise }>('expertises', payload).pipe(
             map(({ data }) => {
               const [list, count] = store.expertises();
-              patchState(store, { isLoading: false, expertises: [[data, ...list], count + 1] });
+              const nextAllExpertises = [data, ...store.allExpertises().filter((expertise) => expertise.id !== data.id)];
+              patchState(store, {
+                isLoading: false,
+                expertises: [[data, ...list], count + 1],
+                allExpertises: nextAllExpertises
+              });
               _toast.showSuccess('Expertise ajoutée avec succès');
-              onSuccess();
+              onSuccess(data);
             }),
             catchError(() => {
               _toast.showError("Échec de l'ajout de l'expertise");
@@ -88,7 +93,8 @@ export const ExpertisesStore = signalStore(
               _toast.showSuccess('Expertise mise à jour');
               const [list, count] = store.expertises();
               const updated = list.map((e) => (e.id === data.id ? data : e));
-              patchState(store, { isLoading: false, expertises: [updated, count] });
+              const allExpertises = store.allExpertises().map((expertise) => (expertise.id === data.id ? data : expertise));
+              patchState(store, { isLoading: false, expertises: [updated, count], allExpertises });
               onSuccess();
             }),
             catchError(() => {
@@ -108,7 +114,8 @@ export const ExpertisesStore = signalStore(
             map(() => {
               const [list, count] = store.expertises();
               const filtered = list.filter((e) => e.id !== id);
-              patchState(store, { expertises: [filtered, Math.max(0, count - 1)] });
+              const allExpertises = store.allExpertises().filter((expertise) => expertise.id !== id);
+              patchState(store, { expertises: [filtered, Math.max(0, count - 1)], allExpertises });
               _toast.showSuccess('Expertise supprimée avec succès');
               patchState(store, { isLoading: false });
             }),

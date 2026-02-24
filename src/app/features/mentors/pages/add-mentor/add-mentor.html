@@ -91,6 +91,25 @@
           formControlName="expertises"
           placeholder="Selectionner une ou plusieurs expertises" />
       </div>
+      <div class="lg:col-span-2" [formGroup]="newExpertiseForm">
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto] md:items-end">
+          <app-ui-input
+            [id]="'new_expertise_name'"
+            label="Nouvelle expertise"
+            formControlName="name"
+            class="w-full"
+            placeholder="Ex: Data Science" />
+          <app-ui-button
+            type="button"
+            variant="secondary"
+            [outlined]="true"
+            [loading]="expertisesStore.isLoading()"
+            [disabled]="expertisesStore.isLoading() || newExpertiseForm.invalid"
+            (clicked)="onCreateExpertise()">
+            Ajouter l'expertise
+          </app-ui-button>
+        </div>
+      </div>
     </div>
 
     <div class="mt-8 flex items-center justify-between">

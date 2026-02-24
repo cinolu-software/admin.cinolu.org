@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GENDERS } from '@shared/data';
 import { markAllAsTouched } from '@shared/helpers';
+import { IExpertise } from '@shared/models';
 import { UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
 import { MentorsStore } from '../../store/mentors.store';
 import { ExpertisesStore } from '../../store/expertises.store';
@@ -26,6 +27,9 @@ export class AddMentor {
 
   genders = GENDERS;
   form = this.#initForm();
+  newExpertiseForm: FormGroup = this.#fb.group({
+    name: ['', Validators.required]
+  });
 
   constructor() {
     this.expertisesStore.loadUnpaginated();
@@ -53,6 +57,29 @@ export class AddMentor {
     }
 
     this.store.create(this.#buildPayload());
+  }
+
+  onCreateExpertise(): void {
+    if (this.newExpertiseForm.invalid) {
+      markAllAsTouched(this.newExpertiseForm);
+      return;
+    }
+
+    const name = String(this.newExpertiseForm.get('name')?.value ?? '').trim();
+    if (!name) {
+      return;
+    }
+
+    this.expertisesStore.create({
+      payload: { name },
+      onSuccess: (expertise: IExpertise) => {
+        const currentValue = ((this.form.get('expertises')?.value as string[] | null) ?? []).filter(Boolean);
+        if (!currentValue.includes(expertise.id)) {
+          this.form.patchValue({ expertises: [...currentValue, expertise.id] });
+        }
+        this.newExpertiseForm.reset({ name: '' });
+      }
+    });
   }
 
   #initForm(): FormGroup {
