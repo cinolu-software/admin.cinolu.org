@@ -42,9 +42,7 @@ export class AddMentor {
   }
 
   removeExperience(index: number): void {
-    if (this.experiences.length <= 1) {
-      return;
-    }
+    if (this.experiences.length <= 1) return;
     this.experiences.removeAt(index);
   }
 
@@ -53,20 +51,15 @@ export class AddMentor {
       markAllAsTouched(this.form);
       return;
     }
-
     this.store.create(this.#buildPayload());
   }
 
   onCreateExpertise(name: string): void {
     const trimmedName = name.trim();
-    if (!trimmedName) {
-      return;
-    }
-
+    if (!trimmedName) return;
     const existingExpertise = this.expertisesStore
       .allExpertises()
       .find((expertise) => expertise.name.trim().toLowerCase() === trimmedName.toLowerCase());
-
     if (existingExpertise) {
       const currentValue = ((this.form.get('expertises')?.value as string[] | null) ?? []).filter(Boolean);
       if (!currentValue.includes(existingExpertise.id)) {
@@ -74,7 +67,6 @@ export class AddMentor {
       }
       return;
     }
-
     this.expertisesStore.create({
       payload: { name: trimmedName },
       onSuccess: (expertise: IExpertise) => {
@@ -118,12 +110,10 @@ export class AddMentor {
 
   #buildPayload(): CreateMentorDto {
     const value = this.form.value;
-
     const experiences = this.experiences.controls.map((control) => {
       const row = control.value;
       const isCurrent = Boolean(row['is_current']);
       const startDate = this.#toOptionalApiDate(row['start_date']) ?? this.#toOptionalApiDate(new Date());
-
       return {
         id: this.#toOptionalString(row['id']),
         company_name: String(row['company_name']),
@@ -133,35 +123,25 @@ export class AddMentor {
         end_date: isCurrent ? undefined : this.#toOptionalApiDate(row['end_date'])
       } satisfies CreateExperienceDto;
     });
-
     const mentor: MentorRequestDto = {
       years_experience: Number(value['years_experience']),
       expertises: (value['expertises'] as string[]) ?? [],
       type: this.#toMentorType(value['type']),
       experiences
     };
-
     return { email: String(value['email']), mentor };
   }
 
   #toOptionalString(value: unknown): string | undefined {
-    if (typeof value !== 'string') {
-      return undefined;
-    }
+    if (typeof value !== 'string') return undefined;
     const trimmedValue = value.trim();
     return trimmedValue ? trimmedValue : undefined;
   }
 
   #toOptionalApiDate(value: unknown): string | undefined {
-    if (!value) {
-      return undefined;
-    }
-
+    if (!value) return undefined;
     const date = value instanceof Date ? value : new Date(String(value));
-    if (Number.isNaN(date.getTime())) {
-      return undefined;
-    }
-
+    if (Number.isNaN(date.getTime())) return undefined;
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
