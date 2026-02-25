@@ -18,9 +18,7 @@ import {
   X,
   Check,
   Upload,
-  Eye,
   Trash2,
-  LayoutList,
   ChevronDown,
   ChevronUp
 } from 'lucide-angular';
@@ -34,6 +32,10 @@ import { ParticipationDetail } from './participation-detail/participation-detail
 const PAGE_SIZE = 20;
 const OPERATION_MOVE = 'move';
 const OPERATION_REMOVE = 'remove';
+const OPERATION_TYPE_OPTIONS = [
+  { label: 'Déplacer', value: OPERATION_MOVE },
+  { label: 'Retirer', value: OPERATION_REMOVE }
+];
 
 function getParticipationKey(p: IProjectParticipation): string {
   return `${p.user.id}-${p.venture?.id ?? 'none'}`;
@@ -58,8 +60,8 @@ function getParticipationKey(p: IProjectParticipation): string {
 })
 export class Participations {
   project = input.required<IProject | null>();
-  phasesStore = inject(PhasesStore);
-  projectsStore = inject(ProjectsStore);
+  readonly phasesStore = inject(PhasesStore);
+  readonly projectsStore = inject(ProjectsStore);
   selectedPhase = signal<string | null>(null);
   searchQuery = signal('');
   currentPage = signal(1);
@@ -71,15 +73,13 @@ export class Participations {
   selectedCsvFile = signal<File | null>(null);
   csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   sortedPhases = signal<IPhase[]>([]);
-  icons = { Users, Search, CircleArrowRight, X, Check, Upload, Eye, Trash2, LayoutList, ChevronDown, ChevronUp };
-  pageSize = PAGE_SIZE;
-  operationMove = OPERATION_MOVE;
-  operationRemove = OPERATION_REMOVE;
-  operationTypeOptions = [
-    { label: 'Déplacer', value: OPERATION_MOVE },
-    { label: 'Retirer', value: OPERATION_REMOVE }
-  ];
-  movePhaseOptions = computed(() => this.sortedPhases().map((p) => ({ label: p.name, value: p.id })));
+
+  readonly icons = { Users, Search, CircleArrowRight, X, Check, Upload, Trash2, ChevronDown, ChevronUp };
+  readonly pageSize = PAGE_SIZE;
+  readonly operationMove = OPERATION_MOVE;
+  readonly operationRemove = OPERATION_REMOVE;
+  readonly operationTypeOptions = OPERATION_TYPE_OPTIONS;
+  readonly movePhaseOptions = computed(() => this.sortedPhases().map((p) => ({ label: p.name, value: p.id })));
   selectedCount = computed(() => this.selectedIds().size);
   isAllFilteredSelected = computed(() => {
     const ids = this.selectedIds();
@@ -125,8 +125,10 @@ export class Participations {
   constructor() {
     effect(() => {
       const proj = this.project();
-      if (proj?.id) this.projectsStore.loadParticipations(proj.id);
-      if (proj?.id) this.phasesStore.loadAll(proj.id);
+      if (proj?.id) {
+        this.projectsStore.loadParticipations(proj.id);
+        this.phasesStore.loadAll(proj.id);
+      }
     });
 
     effect(() => {
@@ -140,9 +142,7 @@ export class Participations {
     });
   }
 
-  participationKey(p: IProjectParticipation): string {
-    return getParticipationKey(p);
-  }
+  readonly getParticipationKey = getParticipationKey;
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
@@ -162,20 +162,16 @@ export class Participations {
   }
 
   toggleSelectAll(): void {
-    const filteredIds = new Set(this.filteredParticipations().map((p) => getParticipationKey(p)));
-    if (this.isAllFilteredSelected()) {
-      this.selectedIds.update((set) => {
-        const next = new Set(set);
+    const filteredIds = new Set(this.filteredParticipations().map(getParticipationKey));
+    this.selectedIds.update((set) => {
+      const next = new Set(set);
+      if (this.isAllFilteredSelected()) {
         for (const id of filteredIds) next.delete(id);
-        return next;
-      });
-    } else {
-      this.selectedIds.update((set) => {
-        const next = new Set(set);
+      } else {
         for (const id of filteredIds) next.add(id);
-        return next;
-      });
-    }
+      }
+      return next;
+    });
   }
 
   clearSelection(): void {
@@ -196,41 +192,36 @@ export class Participations {
   }
 
   moveToPhase(): void {
-    const phaseId = this.moveTargetPhase();
-    const ids = this.getParticipationsIds();
-    const proj = this.project();
-    if (!phaseId || ids.length === 0 || !proj?.slug) return;
-    this.phasesStore.moveParticipations({
-      dto: { ids, phaseId },
-      onSuccess: () => {
-        this.projectsStore.loadOne(proj.slug);
-        if (proj.id) this.projectsStore.loadParticipations(proj.id);
-        this.clearSelection();
-        this.moveTargetPhase.set(null);
-      }
-    });
+    this.executePhaseOperation(this.moveTargetPhase(), 'move');
   }
 
   removeFromPhase(): void {
-    const phaseId = this.removeTargetPhase();
+    this.executePhaseOperation(this.removeTargetPhase(), 'remove');
+  }
+
+  private executePhaseOperation(phaseId: string | null, operation: 'move' | 'remove'): void {
     const ids = this.getParticipationsIds();
     const proj = this.project();
     if (!phaseId || ids.length === 0 || !proj?.slug) return;
-    this.phasesStore.removeParticipations({
+
+    const handler = operation === 'move' ? this.projectsStore.moveParticipations : this.projectsStore.removeParticipations;
+    const targetSignal = operation === 'move' ? this.moveTargetPhase : this.removeTargetPhase;
+
+    handler.call(this.projectsStore, {
       dto: { ids, phaseId },
       onSuccess: () => {
         this.projectsStore.loadOne(proj.slug);
         if (proj.id) this.projectsStore.loadParticipations(proj.id);
         this.clearSelection();
-        this.removeTargetPhase.set(null);
+        targetSignal.set(null);
       }
     });
   }
 
   private getParticipationsIds(): string[] {
-    const ids = this.selectedIds();
+    const selectedKeys = this.selectedIds();
     return this.rawParticipations()
-      .filter((p) => ids.has(getParticipationKey(p)))
+      .filter((p) => selectedKeys.has(getParticipationKey(p)))
       .map((p) => p.id);
   }
 
@@ -241,11 +232,7 @@ export class Participations {
   onCsvFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (file?.name.toLowerCase().endsWith('.csv')) {
-      this.selectedCsvFile.set(file);
-    } else if (file) {
-      this.selectedCsvFile.set(null);
-    }
+    this.selectedCsvFile.set(file?.name.toLowerCase().endsWith('.csv') ? file : null);
     input.value = '';
   }
 

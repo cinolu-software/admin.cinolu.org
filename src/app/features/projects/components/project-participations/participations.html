@@ -62,8 +62,7 @@
               [class.text-gray-600]="selectedPhase()"
               [class.hover:border-gray-300]="selectedPhase()">
               <i-lucide [name]="icons.Users" class="size-4 shrink-0" />
-              <span class="hidden">Tous</span>
-              <span class="inline">Tous</span>
+              Tous
               <span
                 class="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold rounded-full bg-gray-100 shrink-0">
                 {{ totalCount }}
@@ -226,11 +225,11 @@
                     type="button"
                     variant="primary"
                     size="small"
-                    [loading]="phasesStore.isLoading()"
-                    [disabled]="!moveTargetPhase() || phasesStore.isLoading()"
+                    [loading]="projectsStore.isManagingParticipations()"
+                    [disabled]="!moveTargetPhase() || projectsStore.isManagingParticipations()"
                     (clicked)="moveToPhase()">
                     <span class="flex items-center justify-center gap-2">
-                      @if (!phasesStore.isLoading()) {
+                      @if (!projectsStore.isManagingParticipations()) {
                         <i-lucide [name]="icons.CircleArrowRight" class="size-4" />
                       }
                       Déplacer
@@ -251,11 +250,11 @@
                     type="button"
                     variant="outlined"
                     size="small"
-                    [loading]="phasesStore.isLoading()"
-                    [disabled]="!removeTargetPhase() || phasesStore.isLoading()"
+                    [loading]="projectsStore.isManagingParticipations()"
+                    [disabled]="!removeTargetPhase() || projectsStore.isManagingParticipations()"
                     (clicked)="removeFromPhase()">
                     <span class="flex items-center justify-center gap-2">
-                      @if (!phasesStore.isLoading()) {
+                      @if (!projectsStore.isManagingParticipations()) {
                         <i-lucide [name]="icons.Trash2" class="size-4" />
                       }
                       Retirer
@@ -287,7 +286,7 @@
                 </tr>
               </thead>
               <tbody class="ui-table-body divide-y divide-gray-100">
-                @for (participation of paginatedParticipations(); track participationKey(participation)) {
+                @for (participation of paginatedParticipations(); track getParticipationKey(participation)) {
                   <tr
                     class="ui-table-row transition-colors duration-150 hover:bg-gray-50/50"
                     [class.bg-primary-50/50]="isSelected(participation)">
@@ -296,7 +295,7 @@
                         <input
                           type="checkbox"
                           [checked]="isSelected(participation)"
-                          (change)="toggleSelect(participationKey(participation))"
+                          (change)="toggleSelect(getParticipationKey(participation))"
                           (click)="$event.stopPropagation()"
                           class="ui-checkbox-input" />
                         @if (isSelected(participation)) {
@@ -376,7 +375,7 @@
                         @if (isDetailExpanded(participation)) {
                           <app-participation-detail
                             [participation]="participation"
-                            [participationId]="participationKey(participation)" />
+                            [participationId]="getParticipationKey(participation)" />
                         }
                       </div>
                     </td>
@@ -390,7 +389,7 @@
                           <div class="bg-gray-50/50 border-t border-gray-100">
                             <app-participation-detail
                               [participation]="participation"
-                              [participationId]="participationKey(participation)" />
+                              [participationId]="getParticipationKey(participation)" />
                           </div>
                         }
                       </div>

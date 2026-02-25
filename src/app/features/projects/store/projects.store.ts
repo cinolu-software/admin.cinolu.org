@@ -9,11 +9,13 @@ import { IProject, IProjectParticipation } from '@shared/models';
 import { buildQueryParams } from '@shared/helpers';
 import { FilterProjectCategoriesDto } from '../dto/categories/filter-categories.dto';
 import { ProjectDto } from '../dto/projects/project.dto';
+import { MoveParticipationsDto } from '../dto/phases/move-participations.dto';
 
 interface IProjectsStore {
   isLoading: boolean;
   isImportingCsv: boolean;
   isLoadingParticipations: boolean;
+  isManagingParticipations: boolean;
   projects: [IProject[], number];
   project: IProject | null;
   participations: IProjectParticipation[];
@@ -24,6 +26,7 @@ export const ProjectsStore = signalStore(
     isLoading: false,
     isImportingCsv: false,
     isLoadingParticipations: false,
+    isManagingParticipations: false,
     projects: [[], 0],
     project: null,
     participations: []
@@ -75,6 +78,44 @@ export const ProjectsStore = signalStore(
             map(({ data }) => patchState(store, { participations: data ?? [], isLoadingParticipations: false })),
             catchError(() => {
               patchState(store, { participations: [], isLoadingParticipations: false });
+              return of(null);
+            })
+          )
+        )
+      )
+    ),
+    moveParticipations: rxMethod<{ dto: MoveParticipationsDto; onSuccess: () => void }>(
+      pipe(
+        tap(() => patchState(store, { isManagingParticipations: true })),
+        switchMap(({ dto, onSuccess }) =>
+          _http.post<void>('projects/participants/move', dto).pipe(
+            map(() => {
+              _toast.showSuccess('Les participants ont été déplacés avec succès');
+              patchState(store, { isManagingParticipations: false });
+              onSuccess();
+            }),
+            catchError(() => {
+              _toast.showError("Une erreur s'est produite lors du déplacement des participants");
+              patchState(store, { isManagingParticipations: false });
+              return of(null);
+            })
+          )
+        )
+      )
+    ),
+    removeParticipations: rxMethod<{ dto: MoveParticipationsDto; onSuccess: () => void }>(
+      pipe(
+        tap(() => patchState(store, { isManagingParticipations: true })),
+        switchMap(({ dto, onSuccess }) =>
+          _http.post<void>('projects/participants/remove', dto).pipe(
+            map(() => {
+              _toast.showSuccess('Les participants ont été retirés avec succès');
+              patchState(store, { isManagingParticipations: false });
+              onSuccess();
+            }),
+            catchError(() => {
+              _toast.showError("Une erreur s'est produite lors du retrait des participants");
+              patchState(store, { isManagingParticipations: false });
               return of(null);
             })
           )

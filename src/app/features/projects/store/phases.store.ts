@@ -5,7 +5,6 @@ import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IMentorProfile, IPhase } from '@shared/models';
 import { PhaseDto } from '../dto/phases/phase.dto';
-import { MoveParticipationsDto } from '../dto/phases/move-participations.dto';
 import { HttpClient } from '@angular/common/http';
 import { parseDate } from '@shared/helpers';
 
@@ -118,44 +117,6 @@ export const PhasesStore = signalStore(
             }),
             catchError(() => {
               _toast.showError("Une erreur s'est produite lors de la suppression");
-              patchState(store, { isLoading: false });
-              return of(null);
-            })
-          )
-        )
-      )
-    ),
-    moveParticipations: rxMethod<{ dto: MoveParticipationsDto; onSuccess: () => void }>(
-      pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap(({ dto, onSuccess }) =>
-          _http.post<void>('phases/participants/move', dto).pipe(
-            map(() => {
-              _toast.showSuccess('Les participants ont été déplacés avec succès');
-              patchState(store, { isLoading: false });
-              onSuccess();
-            }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors du déplacement des participants");
-              patchState(store, { isLoading: false });
-              return of(null);
-            })
-          )
-        )
-      )
-    ),
-    removeParticipations: rxMethod<{ dto: MoveParticipationsDto; onSuccess: () => void }>(
-      pipe(
-        tap(() => patchState(store, { isLoading: true })),
-        switchMap(({ dto, onSuccess }) =>
-          _http.post<void>('phases/participants/remove', dto).pipe(
-            map(() => {
-              _toast.showSuccess('Les participants ont été retirés avec succès');
-              patchState(store, { isLoading: false });
-              onSuccess();
-            }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors du retrait des participants");
               patchState(store, { isLoading: false });
               return of(null);
             })
