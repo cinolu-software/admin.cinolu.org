@@ -41,7 +41,8 @@ export class Phases implements OnInit {
   #confirmationService = inject(ConfirmationService);
   #fb = inject(FormBuilder);
   phasesStore = inject(PhasesStore);
-  form: FormGroup = this.#buildForm();
+  createForm: FormGroup = this.#buildForm();
+  editForm: FormGroup = this.#buildForm();
   editingPhaseId = signal<string | null>(null);
   showCreateForm = signal(false);
   icons = { Plus, Pencil, Trash2, Calendar, FileText };
@@ -62,6 +63,7 @@ export class Phases implements OnInit {
 
   #buildForm(): FormGroup {
     return this.#fb.group({
+      id: [null as string | null],
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', Validators.required],
       started_at: [null, Validators.required],
@@ -78,8 +80,12 @@ export class Phases implements OnInit {
     });
   }
 
+  #getCurrentForm(): FormGroup {
+    return this.editingPhaseId() ? this.editForm : this.createForm;
+  }
+
   get deliverables(): FormArray {
-    return this.form.get('deliverables') as FormArray;
+    return this.#getCurrentForm().get('deliverables') as FormArray;
   }
 
   addDeliverable(deliverable?: PhaseDeliverableDto): void {
@@ -90,10 +96,12 @@ export class Phases implements OnInit {
     this.deliverables.removeAt(index);
   }
 
-  #setDeliverables(deliverables: PhaseDeliverableDto[] = []): void {
-    this.deliverables.clear();
+  #setDeliverables(deliverables: PhaseDeliverableDto[] = [], form?: FormGroup): void {
+    const targetForm = form || this.#getCurrentForm();
+    const deliverableArray = targetForm.get('deliverables') as FormArray;
+    deliverableArray.clear();
     for (const deliverable of deliverables) {
-      this.addDeliverable(deliverable);
+      deliverableArray.push(this.#buildDeliverableForm(deliverable));
     }
   }
 
@@ -102,7 +110,7 @@ export class Phases implements OnInit {
   }
 
   #buildPayload(): PhaseDto {
-    const formValue = this.form.getRawValue();
+    const formValue = this.#getCurrentForm().getRawValue();
     const deliverables =
       (formValue.deliverables as PhaseDeliverableDto[] | undefined)
         ?.filter((d) => d.title?.length)
@@ -112,6 +120,7 @@ export class Phases implements OnInit {
         })) ?? [];
     const mentors = (formValue.mentors as string[] | undefined)?.filter((m) => m?.length) ?? [];
     return {
+      id: formValue.id ?? undefined,
       name: formValue.name,
       description: formValue.description,
       started_at: formValue.started_at,
@@ -123,9 +132,9 @@ export class Phases implements OnInit {
 
   #resetForm(): void {
     this.editingPhaseId.set(null);
-    this.form.reset();
-    this.form.patchValue({ mentors: [] });
-    this.#setDeliverables();
+    this.createForm.reset();
+    this.createForm.patchValue({ mentors: [] });
+    this.#setDeliverables([], this.createForm);
   }
 
   onCreateClick(): void {
@@ -136,7 +145,8 @@ export class Phases implements OnInit {
   onEdit(phase: IPhase): void {
     this.showCreateForm.set(false);
     this.editingPhaseId.set(phase.id);
-    this.form.patchValue({
+    this.editForm.reset();
+    this.editForm.patchValue({
       ...phase,
       mentors: this.#extractMentorIds(phase),
       started_at: parseDate(phase.started_at),
@@ -146,8 +156,10 @@ export class Phases implements OnInit {
       (phase.deliverables ?? []).map((deliverable) => ({
         title: deliverable.title,
         description: deliverable.description
-      }))
+      })),
+      this.editForm
     );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   onCancelForm(): void {
@@ -156,7 +168,7 @@ export class Phases implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.createForm.invalid) return;
     this.phasesStore.create({
       projectId: this.projectId(),
       dto: this.#buildPayload(),
@@ -165,8 +177,8 @@ export class Phases implements OnInit {
   }
 
   onUpdate(): void {
-    const id = this.editingPhaseId();
-    if (!id || this.form.invalid) return;
+    const id = this.editForm.getRawValue().id as string | null;
+    if (!id || this.editForm.invalid) return;
     this.phasesStore.update({ dto: { ...this.#buildPayload(), id }, onSuccess: () => this.onCancelForm() });
   }
 
