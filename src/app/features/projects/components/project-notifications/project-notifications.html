@@ -234,6 +234,14 @@
                   formControlName="phase_id"
                   placeholder="Tous les participants" />
               </div>
+              @if (form.value.phase_id) {
+                <div class="space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-3">
+                  <app-ui-checkbox
+                    [id]="'notify_mentors'"
+                    formControlName="notify_mentors"
+                    label="Notifier uniquement les mentors de la phase" />
+                </div>
+              }
               <div class="space-y-2">
                 <app-ui-input
                   [id]="'title'"

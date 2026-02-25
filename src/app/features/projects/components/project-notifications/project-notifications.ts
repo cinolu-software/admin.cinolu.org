@@ -1,6 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  OnInit,
+  signal
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   ArrowLeft,
@@ -14,7 +25,7 @@ import {
   Inbox,
   LucideAngularModule
 } from 'lucide-angular';
-import { UiButton, UiInput, UiSelect, UiTextEditor, UiConfirmDialog, UiPagination, SelectOption } from '@shared/ui';
+import { UiButton, UiInput, UiSelect, UiTextEditor, UiConfirmDialog, UiPagination, SelectOption, UiCheckbox } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { INotification } from '@shared/models';
 import { NotifyParticipantsDto } from '../../dto/notifications/notify-participants.dto';
@@ -42,6 +53,7 @@ interface AttachmentPreview {
     UiInput,
     UiTextEditor,
     UiSelect,
+    UiCheckbox,
     UiConfirmDialog,
     UiPagination,
     LucideAngularModule
@@ -52,6 +64,7 @@ export class ProjectNotifications implements OnInit {
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #sanitizer = inject(DomSanitizer);
+  #destroyRef = inject(DestroyRef);
   authStore = inject(AuthStore);
   notificationsStore = inject(NotificationsStore);
   phasesStore = inject(PhasesStore);
@@ -101,13 +114,20 @@ export class ProjectNotifications implements OnInit {
 
   ngOnInit(): void {
     this.phasesStore.loadAll(this.projectId());
+    const phaseControl = this.form.get('phase_id');
+    const notifyMentorsControl = this.form.get('notify_mentors');
+    phaseControl?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((phaseId) => {
+      if (phaseId || !notifyMentorsControl?.value) return;
+      notifyMentorsControl.setValue(false, { emitEvent: false });
+    });
   }
 
   #buildForm(): FormGroup {
     return this.#fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       body: ['', [Validators.required, Validators.minLength(10)]],
-      phase_id: ['']
+      phase_id: [''],
+      notify_mentors: [false]
     });
   }
 
@@ -130,7 +150,7 @@ export class ProjectNotifications implements OnInit {
   onComposeNew(): void {
     this.notificationsStore.setActiveNotification(null);
     this.notificationsStore.clearError();
-    this.form.reset({ title: '', body: '', phase_id: '' });
+    this.form.reset({ title: '', body: '', phase_id: '', notify_mentors: false });
     this.attachments.set([]);
     this.isComposing.set(true);
   }
@@ -141,7 +161,8 @@ export class ProjectNotifications implements OnInit {
     this.form.patchValue({
       title: current.title,
       body: current.body,
-      phase_id: current.phase_id ?? current.phase?.id ?? ''
+      phase_id: current.phase_id ?? current.phase?.id ?? '',
+      notify_mentors: !!current.notify_mentors
     });
     this.attachments.set([]);
     this.notificationsStore.clearError();
@@ -318,7 +339,8 @@ export class ProjectNotifications implements OnInit {
 
   phaseLabel(notification: INotification): string {
     const phaseName = notification.phase?.name;
-    return phaseName ? `Phase: ${phaseName}` : 'Tous les participants';
+    if (!phaseName) return 'Tous les participants';
+    return notification.notify_mentors ? `Phase: ${phaseName} · mentors uniquement` : `Phase: ${phaseName}`;
   }
 
   phaseLabelForSummary(): string {
@@ -381,10 +403,11 @@ export class ProjectNotifications implements OnInit {
   #buildNotifyDto(): NotifyParticipantsDto {
     const rawPhase = this.form.value.phase_id;
     const phase_id = rawPhase ? String(rawPhase) : undefined;
+    const notify_mentors = phase_id ? !!this.form.value.notify_mentors : false;
     return {
       title: String(this.form.value.title ?? ''),
       body: String(this.form.value.body ?? ''),
-      ...(phase_id ? { phase_id } : {})
+      ...(phase_id ? { phase_id, notify_mentors } : {})
     };
   }
 }
