@@ -73,7 +73,6 @@ export class Participations {
   selectedCsvFile = signal<File | null>(null);
   csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   sortedPhases = signal<IPhase[]>([]);
-
   readonly icons = { Users, Search, CircleArrowRight, X, Check, Upload, Trash2, ChevronDown, ChevronUp };
   readonly pageSize = PAGE_SIZE;
   readonly operationMove = OPERATION_MOVE;
@@ -120,6 +119,17 @@ export class Participations {
     const phases = this.sortedPhases();
     const list = this.rawParticipations();
     return new Map(phases.map((ph) => [ph.id, list.filter((p) => p.phases?.some((x) => x.id === ph.id)).length]));
+  });
+  phaseFilterOptions = computed(() => {
+    const phases = this.sortedPhases();
+    const counts = this.phaseCounts();
+    const total = this.totalParticipations();
+    const options = [{ label: `Tous (${total})`, value: '' }];
+    phases.forEach((phase) => {
+      const count = counts.get(phase.id) ?? 0;
+      options.push({ label: `${phase.name} (${count})`, value: phase.id });
+    });
+    return options;
   });
 
   constructor() {
@@ -204,7 +214,8 @@ export class Participations {
     const proj = this.project();
     if (!phaseId || ids.length === 0 || !proj?.slug) return;
 
-    const handler = operation === 'move' ? this.projectsStore.moveParticipations : this.projectsStore.removeParticipations;
+    const handler =
+      operation === 'move' ? this.projectsStore.moveParticipations : this.projectsStore.removeParticipations;
     const targetSignal = operation === 'move' ? this.moveTargetPhase : this.removeTargetPhase;
 
     handler.call(this.projectsStore, {

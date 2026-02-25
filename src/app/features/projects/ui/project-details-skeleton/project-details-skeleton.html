@@ -33,7 +33,6 @@
   </div>
 </div>
 
-<!-- Skeleton Metrics -->
 <div class="grid grid-cols-1 my-6 sm:grid-cols-2 lg:grid-cols-4 gap-4">
   @for (i of [1, 2, 3, 4]; track i) {
     <div class="relative bg-white rounded-xl shadow-sm border border-gray-200 p-5">
@@ -44,7 +43,6 @@
   }
 </div>
 
-<!-- Skeleton Timeline -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
   <div class="flex items-center gap-3 mb-5">
     <div class="w-11 h-11 bg-gray-200 rounded-xl animate-pulse"></div>
@@ -68,17 +66,100 @@
   </div>
 </div>
 
-<!-- Skeleton Accordion -->
-<div class="space-y-4">
-  @for (i of [1, 2, 3, 4]; track i) {
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-      <div class="flex items-center gap-5">
-        <div class="w-12 h-12 bg-gray-200 rounded-xl animate-pulse"></div>
-        <div class="flex-1">
-          <div class="h-5 w-48 bg-gray-200 rounded mb-2 animate-pulse"></div>
-          <div class="h-4 w-64 bg-gray-200 rounded animate-pulse"></div>
-        </div>
+<!-- Skeleton Phase Filters -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+  <div class="px-4 sm:px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+    <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3">
+      <div class="h-10 w-11 bg-gray-200 rounded-xl animate-pulse"></div>
+      <div class="h-5 w-48 bg-gray-200 rounded animate-pulse"></div>
+    </div>
+  </div>
+  <div class="px-4 sm:px-6 py-4">
+    <!-- Phase Filter Select -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-4 w-full">
+      <div class="flex-1 max-w-xs">
+        <div class="h-4 w-32 bg-gray-200 rounded mb-2 animate-pulse"></div>
+        <div class="h-11 bg-gray-200 rounded-lg animate-pulse"></div>
+      </div>
+      <div class="flex-1">
+        <div class="h-4 w-40 bg-gray-200 rounded mb-2 animate-pulse"></div>
+        <div class="h-11 bg-gray-200 rounded-lg animate-pulse"></div>
       </div>
     </div>
-  }
+  </div>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-6">
+  <div class="px-4 sm:px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+    <div class="flex items-center gap-4">
+      <div class="size-5 rounded border border-gray-200 bg-gray-100 animate-pulse"></div>
+      <div class="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+      <div class="ml-auto h-6 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+    </div>
+  </div>
+  <div class="px-4 sm:px-6 py-4 border-b border-gray-100 bg-gray-50">
+    <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+      <div class="flex-1 min-w-0">
+        <div class="h-4 w-20 bg-gray-200 rounded mb-2 animate-pulse"></div>
+        <div class="h-11 bg-gray-200 rounded-lg animate-pulse"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="h-4 w-20 bg-gray-200 rounded mb-2 animate-pulse"></div>
+        <div class="h-11 bg-gray-200 rounded-lg animate-pulse"></div>
+      </div>
+      <div class="h-9 w-24 bg-gray-200 rounded-lg animate-pulse"></div>
+      <div class="h-9 w-20 bg-gray-200 rounded-lg animate-pulse"></div>
+    </div>
+  </div>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-6">
+  <div class="ui-table-wrapper overflow-x-auto">
+    <table class="ui-table">
+      <thead class="ui-table-head hidden md:table-header-group">
+        <tr class="ui-table-head-row">
+          <th class="ui-table-header w-12"><div class="size-4 bg-gray-200 rounded animate-pulse"></div></th>
+          <th class="ui-table-header"><div class="h-4 w-24 bg-gray-200 rounded animate-pulse"></div></th>
+          <th class="ui-table-header hidden lg:table-cell">
+            <div class="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+          </th>
+          <th class="ui-table-header"><div class="h-4 w-20 bg-gray-200 rounded animate-pulse"></div></th>
+          <th class="ui-table-header"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody class="ui-table-body divide-y divide-gray-100">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <tr class="ui-table-row">
+            <td class="ui-table-cell w-12">
+              <div class="size-5 rounded border border-gray-200 bg-gray-100 animate-pulse"></div>
+            </td>
+            <td class="ui-table-cell md:align-middle">
+              <div class="flex items-center gap-3">
+                <div class="size-10 rounded-full bg-gray-200 animate-pulse shrink-0"></div>
+                <div class="flex flex-col gap-1.5 min-w-0 flex-1">
+                  <div class="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div class="h-3 w-40 bg-gray-100 rounded animate-pulse md:hidden"></div>
+                </div>
+              </div>
+            </td>
+            <td class="ui-table-cell hidden lg:table-cell">
+              <div class="h-4 w-44 bg-gray-100 rounded animate-pulse"></div>
+            </td>
+            <td class="ui-table-cell">
+              <div class="flex flex-wrap gap-1">
+                <div class="h-6 w-16 bg-gray-100 rounded-full animate-pulse"></div>
+                <div class="h-6 w-20 bg-gray-100 rounded-full animate-pulse"></div>
+              </div>
+            </td>
+            <td class="ui-table-cell text-right">
+              <div class="inline-flex size-9 rounded-lg bg-gray-200 animate-pulse"></div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="border-t border-gray-100 px-4 sm:px-6 py-4 flex justify-center sm:justify-end bg-gray-50/50">
+    <div class="h-10 w-64 bg-gray-200 rounded-lg animate-pulse"></div>
+  </div>
 </div>
