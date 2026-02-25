@@ -68,7 +68,42 @@
           </thead>
           <tbody class="ui-table-body">
             @for (tag of tags; track tag.id) {
-              @if (!isEditing(tag.id)) {
+              @if (isEditing(tag.id)) {
+                <tr class="border-b border-gray-200 bg-gray-50">
+                  <td colspan="2" class="ui-table-cell">
+                    <form
+                      class="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-6"
+                      [formGroup]="updateForm"
+                      (ngSubmit)="onUpdate()">
+                      <div class="flex-1 min-w-0">
+                        <app-ui-input
+                          [required]="true"
+                          [id]="'article-tag-name-update-' + tag.id"
+                          formControlName="name"
+                          placeholder="Ex: Innovation, Technologie, Santé..." />
+                      </div>
+                      <div class="flex items-center gap-3 md:shrink-0">
+                        <app-ui-button
+                          type="button"
+                          size="small"
+                          variant="secondary"
+                          [outlined]="true"
+                          (clicked)="onCancelUpdate()">
+                          Annuler
+                        </app-ui-button>
+                        <app-ui-button
+                          type="submit"
+                          size="small"
+                          variant="primary"
+                          [disabled]="updateForm.invalid || store.isLoading()"
+                          [loading]="store.isLoading()">
+                          Mettre à jour
+                        </app-ui-button>
+                      </div>
+                    </form>
+                  </td>
+                </tr>
+              } @else {
                 <tr class="ui-table-row">
                   <td class="ui-table-cell whitespace-nowrap">
                     <p class="font-semibold text-gray-900 capitalize">{{ tag.name }}</p>
@@ -87,37 +122,6 @@
                   </td>
                 </tr>
               }
-              <tr [class.hidden]="!isEditing(tag.id)" class="border-b border-gray-200 bg-gray-50">
-                <td colspan="2" class="ui-table-cell">
-                  <form class="flex items-center gap-6" [formGroup]="updateForm" (ngSubmit)="onUpdate()">
-                    <div class="flex-1">
-                      <app-ui-input
-                        [required]="true"
-                        [id]="'article-tag-name-update-' + tag.id"
-                        formControlName="name"
-                        placeholder="Ex: Innovation, Technologie, Santé..." />
-                    </div>
-                    <div class="flex items-center gap-3">
-                      <app-ui-button
-                        type="button"
-                        size="small"
-                        variant="secondary"
-                        [outlined]="true"
-                        (clicked)="onCancelUpdate()">
-                        Annuler
-                      </app-ui-button>
-                      <app-ui-button
-                        type="submit"
-                        size="small"
-                        variant="primary"
-                        [disabled]="updateForm.invalid || store.isLoading()"
-                        [loading]="store.isLoading()">
-                        Mettre à jour
-                      </app-ui-button>
-                    </div>
-                  </form>
-                </td>
-              </tr>
             }
           </tbody>
         </table>

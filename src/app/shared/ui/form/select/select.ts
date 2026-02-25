@@ -7,7 +7,8 @@ import {
   signal,
   ElementRef,
   inject,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  effect
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ChevronDown, LucideAngularModule, Plus } from 'lucide-angular';
@@ -36,6 +37,7 @@ export class UiSelect implements ControlValueAccessor {
   id = input<string>('');
   invalid = input<boolean>(false);
   filter = input<boolean>(false);
+  filterPlaceholder = input<string>('Rechercher...');
   required = input<boolean>(false);
   optionLabel = input<string>('');
   optionValue = input<string>('');
@@ -43,12 +45,24 @@ export class UiSelect implements ControlValueAccessor {
   createPlaceholder = input<string>('Ajouter une option');
   createButtonLabel = input<string>('Ajouter');
   createDisabled = input<boolean>(false);
+  modelValue = input<unknown | undefined>(undefined);
   createOption = output<string>();
+  valueChange = output<unknown>();
+  searchTermChange = output<string>();
   icons = { ChevronDown, Plus };
   value = signal<unknown>('');
   isOpen = signal(false);
   createValue = signal('');
+  filterTerm = signal('');
   #elementRef = inject(ElementRef);
+  constructor() {
+    effect(() => {
+      const modelValue = this.modelValue();
+      if (modelValue !== undefined) {
+        this.value.set(modelValue ?? '');
+      }
+    });
+  }
 
   normalizedOptions = computed(() => {
     const opts = this.options();
@@ -68,6 +82,19 @@ export class UiSelect implements ControlValueAccessor {
   selectedOption = computed(() => {
     return this.normalizedOptions().find((opt) => String(opt.value) === String(this.value()));
   });
+  filteredOptions = computed(() => {
+    const options = this.normalizedOptions();
+    if (!this.filter()) {
+      return options;
+    }
+
+    const term = this.filterTerm().trim().toLowerCase();
+    if (!term) {
+      return options;
+    }
+
+    return options.filter((option) => option.label.toLowerCase().includes(term));
+  });
 
   displayText = computed(() => {
     const selected = this.selectedOption();
@@ -75,8 +102,8 @@ export class UiSelect implements ControlValueAccessor {
   });
   canCreate = computed(() => this.createValue().trim().length > 0 && !this.createDisabled());
 
-  #onChangeCallback!: (value: unknown) => void;
-  onTouched!: () => void;
+  #onChangeCallback: (value: unknown) => void = () => undefined;
+  onTouched: () => void = () => undefined;
 
   onDocumentClick(event: MouseEvent): void {
     if (!this.isOpen()) {
@@ -86,6 +113,8 @@ export class UiSelect implements ControlValueAccessor {
     const element = this.#elementRef.nativeElement;
     if (!element.contains(target)) {
       this.isOpen.set(false);
+      this.filterTerm.set('');
+      this.searchTermChange.emit('');
     }
   }
 
@@ -110,6 +139,9 @@ export class UiSelect implements ControlValueAccessor {
       this.isOpen.set(!this.isOpen());
       if (this.isOpen()) {
         this.onTouched();
+      } else {
+        this.filterTerm.set('');
+        this.searchTermChange.emit('');
       }
     }
   }
@@ -120,7 +152,10 @@ export class UiSelect implements ControlValueAccessor {
     }
     this.value.set(option.value);
     this.#onChangeCallback(this.value());
+    this.valueChange.emit(this.value());
     this.isOpen.set(false);
+    this.filterTerm.set('');
+    this.searchTermChange.emit('');
     this.onTouched();
   }
 
@@ -138,6 +173,17 @@ export class UiSelect implements ControlValueAccessor {
   onCreateInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.createValue.set(target.value);
+  }
+
+  onFilterInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const nextTerm = target.value ?? '';
+    this.filterTerm.set(nextTerm);
+    this.searchTermChange.emit(nextTerm);
+  }
+
+  onFilterKeydown(event: KeyboardEvent): void {
+    event.stopPropagation();
   }
 
   onCreateKeydown(event: KeyboardEvent): void {

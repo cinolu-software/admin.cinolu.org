@@ -1,38 +1,32 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GENDERS } from '@shared/data';
 import { markAllAsTouched } from '@shared/helpers';
 import { IExpertise } from '@shared/models';
-import { SelectOption, UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } from '@shared/ui';
+import { SelectOption, UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelect, UiSelect } from '@shared/ui';
 import { MentorsStore } from '../../store/mentors.store';
 import { ExpertisesStore } from '../../store/expertises.store';
 import { MentorType } from '../../enums/mentor.enum';
-import {
-  CreateExperienceDto,
-  CreateMentorDto,
-  CreateUserDto,
-  MentorRequestDto
-} from '../../dto/mentors/create-mentor.dto';
+import { CreateExperienceDto, CreateMentorDto, MentorRequestDto } from '../../dto/mentors/create-mentor.dto';
 
 @Component({
   selector: 'app-add-mentor',
   templateUrl: './add-mentor.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MentorsStore, ExpertisesStore],
-  imports: [UiInput, UiTextarea, UiDatepicker, UiSelect, UiMultiSelect, UiCheckbox, UiButton, ReactiveFormsModule]
+  imports: [UiInput, UiDatepicker, UiSelect, UiMultiSelect, UiCheckbox, UiButton, ReactiveFormsModule]
 })
 export class AddMentor {
   #fb = inject(FormBuilder);
   store = inject(MentorsStore);
   expertisesStore = inject(ExpertisesStore);
 
-  genders = GENDERS;
   mentorTypeOptions: SelectOption[] = [
     { label: 'Coach', value: MentorType.COACH },
     { label: 'Facilitator', value: MentorType.FACILITATOR }
   ];
-  minBirthDate = new Date(1960, 0, 1);
-  maxBirthDate = new Date(2020, 11, 31);
+  isSearchingUsers = this.store.isSearchingUsers;
+  currentUserSearchTerm = this.store.userSearchTerm;
+  userSearchOptions = computed<SelectOption[]>(() => this.store.userSearchOptions());
   form = this.#initForm();
 
   constructor() {
@@ -95,13 +89,6 @@ export class AddMentor {
   #initForm(): FormGroup {
     return this.#fb.group({
       email: ['', [Validators.required, Validators.email]],
-      name: ['', Validators.required],
-      phone_number: [''],
-      gender: [''],
-      city: [''],
-      birth_date: [''],
-      country: [''],
-      biography: [''],
       years_experience: [0, [Validators.required, Validators.min(0)]],
       expertises: [[], Validators.required],
       type: [''],
@@ -131,17 +118,6 @@ export class AddMentor {
 
   #buildPayload(): CreateMentorDto {
     const value = this.form.value;
-    const user: CreateUserDto = {
-      email: String(value['email']),
-      name: String(value['name']),
-      phone_number: this.#toOptionalString(value['phone_number']),
-      gender: this.#toOptionalString(value['gender']),
-      city: this.#toOptionalString(value['city']),
-      birth_date: this.#toOptionalApiDate(value['birth_date']),
-      country: this.#toOptionalString(value['country']),
-      biography: this.#toOptionalString(value['biography']),
-      google_image: this.#toOptionalString(value['google_image'])
-    };
 
     const experiences = this.experiences.controls.map((control) => {
       const row = control.value;
@@ -165,7 +141,7 @@ export class AddMentor {
       experiences
     };
 
-    return { user, mentor };
+    return { email: String(value['email']), mentor };
   }
 
   #toOptionalString(value: unknown): string | undefined {

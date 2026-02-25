@@ -11,7 +11,6 @@ import { MentorType } from '../../enums/mentor.enum';
 import {
   CreateExperienceDto,
   CreateMentorDto,
-  CreateUserDto,
   MentorRequestDto
 } from '../../dto/mentors/create-mentor.dto';
 
@@ -175,18 +174,6 @@ export class UpdateMentor implements OnInit {
   #buildPayload(): CreateMentorDto {
     const value = this.form.value;
 
-    const user: CreateUserDto = {
-      email: String(value['email']),
-      name: String(value['name']),
-      phone_number: this.#toOptionalString(value['phone_number']),
-      gender: this.#toOptionalString(value['gender']),
-      city: this.#toOptionalString(value['city']),
-      birth_date: this.#toOptionalApiDate(value['birth_date']),
-      country: this.#toOptionalString(value['country']),
-      biography: this.#toOptionalString(value['biography']),
-      google_image: this.#toOptionalString(value['google_image'])
-    };
-
     const experiences = this.experiences.controls.map((control) => {
       const row = control.value;
       const isCurrent = Boolean(row['is_current']);
@@ -209,7 +196,7 @@ export class UpdateMentor implements OnInit {
       experiences
     };
 
-    return { user, mentor };
+    return { email: String(value['email']), mentor };
   }
 
   #toOptionalString(value: unknown): string | undefined {

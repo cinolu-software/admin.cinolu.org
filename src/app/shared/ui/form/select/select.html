@@ -32,7 +32,22 @@
 
     @if (isOpen()) {
       <div class="ui-select-panel" [id]="id() + '-listbox'" role="listbox">
-        @for (option of normalizedOptions(); track option.value) {
+        @if (filter()) {
+          <div class="ui-select-filter-wrapper">
+            <input
+              [id]="id() + '-filter-input'"
+              type="text"
+              class="ui-select-filter-input"
+              [value]="filterTerm()"
+              [placeholder]="filterPlaceholder()"
+              autocomplete="off"
+              (click)="$event.stopPropagation()"
+              (input)="onFilterInput($event)"
+              (keydown)="onFilterKeydown($event)" />
+          </div>
+        }
+
+        @for (option of filteredOptions(); track option.value) {
           <div
             class="ui-select-option"
             [class.ui-select-option-selected]="isSelected(option.value)"
@@ -46,7 +61,7 @@
             <span class="ui-select-option-label">{{ option.label }}</span>
           </div>
         }
-        @if (normalizedOptions().length === 0) {
+        @if (filteredOptions().length === 0) {
           <div class="ui-select-empty">No options available</div>
         }
         @if (allowCreate()) {
@@ -58,6 +73,7 @@
               [value]="createValue()"
               [placeholder]="createPlaceholder()"
               [disabled]="createDisabled()"
+              autocomplete="off"
               (input)="onCreateInput($event)"
               (keydown)="onCreateKeydown($event)" />
             <button type="button" class="ui-select-create-button" [disabled]="!canCreate()" (click)="onCreateOption()">

@@ -3,6 +3,30 @@
     @apply cursor-pointer pr-10 opacity-60 hover:opacity-100 transition-opacity duration-200 ease-in-out;
   }
 
+  .ui-datepicker-wrapper {
+    @apply w-full;
+  }
+
+  .ui-datepicker-header-select {
+    @apply min-w-0;
+  }
+
+  .ui-datepicker-header-select .ui-select-trigger {
+    @apply min-h-9 px-2.5 py-1.5 text-sm;
+  }
+
+  .ui-datepicker-header-select .ui-select-panel {
+    @apply mt-1 max-h-52;
+  }
+
+  .ui-datepicker-header-select-year {
+    width: 6.75rem;
+  }
+
+  .ui-datepicker-header-select-month {
+    width: 7.5rem;
+  }
+
   .ui-datepicker-header-label {
     @apply font-semibold text-slate-900 text-sm;
   }

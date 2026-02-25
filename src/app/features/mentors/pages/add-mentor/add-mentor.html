@@ -1,77 +1,39 @@
 <section class="pt-32 dashboard-main-content flex flex-col gap-6">
-  <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 p-6 md:p-8">
-    <div class="relative flex flex-col gap-3">
-      <span
-        class="inline-flex w-fit items-center rounded-full border border-sky-200 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-700">
-        Gestion des mentors
-      </span>
-      <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Ajouter un mentor</h1>
-    </div>
-  </div>
-
   <form
     class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm md:p-7"
     [formGroup]="form"
+    autocomplete="off"
     (ngSubmit)="onSubmit()">
     <div class="mb-6 flex flex-col gap-2 border-b border-gray-100 pb-5">
       <h2 class="text-lg font-semibold text-gray-900">Informations utilisateur</h2>
-      <p class="text-sm text-gray-600">Ces informations alimentent le profil propriétaire du mentor.</p>
+      <p class="text-sm text-gray-600">
+        Recherchez puis sélectionnez un utilisateur existant comme propriétaire du profil mentor.
+      </p>
     </div>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <app-ui-input
-        [id]="'email'"
-        label="Email"
-        formControlName="email"
-        class="w-full"
-        placeholder="exemple@email.com" />
-      <app-ui-input
-        [id]="'name'"
-        label="Nom complet"
-        formControlName="name"
-        class="w-full"
-        placeholder="Nom du mentor" />
-      <app-ui-input
-        [id]="'phone_number'"
-        label="Numero de telephone"
-        formControlName="phone_number"
-        class="w-full"
-        placeholder="+243 XXX XXX XXX" />
       <app-ui-select
-        [id]="'gender'"
-        label="Genre"
-        [options]="genders"
-        formControlName="gender"
+        [id]="'email'"
+        label="Utilisateur"
+        [required]="true"
+        [filter]="true"
+        [filterPlaceholder]="'Nom ou email (minimum 2 caracteres)'"
+        [options]="userSearchOptions()"
+        formControlName="email"
+        (searchTermChange)="store.searchUsers($event)"
         class="w-full"
-        placeholder="Selectionner un genre" />
-      <app-ui-input [id]="'city'" label="Ville" formControlName="city" class="w-full" placeholder="Ex: Kinshasa" />
-      <app-ui-input [id]="'country'" label="Pays" formControlName="country" class="w-full" placeholder="Ex: RDC" />
-      <app-ui-datepicker
-        [id]="'birth_date'"
-        label="Date de naissance"
-        formControlName="birth_date"
-        [yearSelect]="true"
-        [minDate]="minBirthDate"
-        [maxDate]="maxBirthDate"
-        class="w-full" />
-      <div class="lg:col-span-2">
-        <app-ui-textarea
-          [id]="'biography'"
-          label="Biographie"
-          formControlName="biography"
-          class="w-full"
-          [rows]="4"
-          placeholder="Biographie du mentor" />
-      </div>
+        placeholder="Selectionner un utilisateur" />
     </div>
-
+    @if (isSearchingUsers()) {
+      <p class="mt-2 text-sm text-gray-500">Recherche en cours...</p>
+    } @else if (currentUserSearchTerm().length >= 2 && userSearchOptions().length === 0) {
+      <p class="mt-2 text-sm text-amber-600">Aucun utilisateur trouvé pour ce terme.</p>
+    }
     <div class="my-8 border-b border-gray-100"></div>
-
     <div class="mb-6 flex flex-col gap-2">
       <h2 class="text-lg font-semibold text-gray-900">Informations mentor</h2>
       <p class="text-sm text-gray-600">Ajoutez les expertises, annees d'experience et parcours professionnel.</p>
     </div>
-
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <app-ui-input
         [id]="'years_experience'"
@@ -104,9 +66,6 @@
     </div>
     <div class="mt-8 flex items-center justify-between">
       <h3 class="text-base font-semibold text-gray-900">Experiences professionnelles</h3>
-      <app-ui-button type="button" variant="secondary" [outlined]="true" (clicked)="addExperience()">
-        Ajouter une experience
-      </app-ui-button>
     </div>
     <div formArrayName="experiences" class="mt-4 space-y-4">
       @for (experienceControl of experiences.controls; track $index) {
@@ -125,11 +84,15 @@
               class="w-full"
               placeholder="Intitule du poste" />
             <app-ui-datepicker
+              [yearSelect]="true"
+              [monthSelect]="true"
               [id]="'start_date_' + $index"
               label="Date de debut"
               formControlName="start_date"
               class="w-full" />
             <app-ui-datepicker
+              [yearSelect]="true"
+              [monthSelect]="true"
               [id]="'end_date_' + $index"
               label="Date de fin"
               formControlName="end_date"
@@ -150,8 +113,12 @@
           </div>
         </div>
       }
+      <div class="flex items-end justify-end">
+        <app-ui-button type="button" variant="secondary" [outlined]="true" (clicked)="addExperience()">
+          Ajouter une experience
+        </app-ui-button>
+      </div>
     </div>
-
     <div class="mt-8 flex justify-end border-t border-gray-200 pt-6">
       <app-ui-button
         [size]="'small'"

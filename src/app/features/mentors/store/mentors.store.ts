@@ -1,7 +1,7 @@
-import { patchState, signalStore, withMethods, withProps, withState } from '@ngrx/signals';
-import { inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { buildQueryParams } from '@shared/helpers';
 import { IMentorProfile } from '@shared/models';
@@ -13,6 +13,9 @@ import { CreateMentorDto } from '../dto/mentors/create-mentor.dto';
 interface IMentorsStore {
   isLoading: boolean;
   isSaving: boolean;
+  isSearchingUsers: boolean;
+  userSearchTerm: string;
+  searchedUsers: { email: string; name: string }[];
   mentors: [IMentorProfile[], number];
   mentor: IMentorProfile | null;
 }
@@ -21,6 +24,9 @@ export const MentorsStore = signalStore(
   withState<IMentorsStore>({
     isLoading: false,
     isSaving: false,
+    isSearchingUsers: false,
+    userSearchTerm: '',
+    searchedUsers: [],
     mentors: [[], 0],
     mentor: null
   }),
@@ -28,6 +34,11 @@ export const MentorsStore = signalStore(
     _http: inject(HttpClient),
     _toast: inject(ToastrService),
     _router: inject(Router)
+  })),
+  withComputed(({ searchedUsers }) => ({
+    userSearchOptions: computed(() =>
+      searchedUsers().map((user) => ({ label: `${user.name} (${user.email})`, value: user.email }))
+    )
   })),
   withMethods(({ _http, _toast, _router, ...store }) => ({
     loadAll: rxMethod<FilterMentorsProfileDto>(
@@ -61,6 +72,31 @@ export const MentorsStore = signalStore(
             })
           )
         )
+      )
+    ),
+    searchUsers: rxMethod<string>(
+      pipe(
+        map((term) => term.trim()),
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((term) => {
+          patchState(store, { userSearchTerm: term });
+          if (term.length < 2) {
+            patchState(store, { isSearchingUsers: false });
+            return of(null);
+          }
+
+          patchState(store, { isSearchingUsers: true });
+          return _http.get<{ data: { email: string; name: string }[] }>('users/search', { params: { term } }).pipe(
+            map(({ data }) => {
+              patchState(store, { isSearchingUsers: false, searchedUsers: Array.isArray(data) ? data : [] });
+            }),
+            catchError(() => {
+              patchState(store, { isSearchingUsers: false, searchedUsers: [] });
+              return of(null);
+            })
+          );
+        })
       )
     ),
     approve: rxMethod<string>(

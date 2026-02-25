@@ -1,18 +1,5 @@
 import { MentorType } from '../../enums/mentor.enum';
 
-export interface CreateUserDto {
-  email: string;
-  name: string;
-  phone_number?: string;
-  gender?: string;
-  city?: string;
-  birth_date?: string;
-  country?: string;
-  biography?: string;
-  google_image?: string;
-  roles?: string[];
-}
-
 export interface CreateExperienceDto {
   id?: string;
   company_name: string;
@@ -30,6 +17,6 @@ export interface MentorRequestDto {
 }
 
 export interface CreateMentorDto {
-  user: CreateUserDto;
+  email: string;
   mentor: MentorRequestDto;
 }

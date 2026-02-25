@@ -1,12 +1,13 @@
-import { Component, input, forwardRef, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { LucideAngularModule, Calendar, ChevronLeft, ChevronRight } from 'lucide-angular';
+import { Calendar, ChevronLeft, ChevronRight, LucideAngularModule } from 'lucide-angular';
+import { SelectOption, UiSelect } from '../select/select';
 
 export type DatePickerView = 'date' | 'month' | 'year';
 
 @Component({
   selector: 'app-ui-datepicker',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, UiSelect],
   templateUrl: './datepicker.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -26,13 +27,15 @@ export class UiDatepicker implements ControlValueAccessor {
   minDate = input<Date | null>(null);
   maxDate = input<Date | null>(null);
   yearSelect = input<boolean>(false);
+  monthSelect = input<boolean>(false);
+
   isOpen = signal<boolean>(false);
   selectedDate = signal<Date | null>(null);
   currentViewDate = signal<Date>(new Date());
   icons = { Calendar, ChevronLeft, ChevronRight };
 
-  #onChangeCallback!: (value: Date | null) => void;
-  #onTouchedCallback!: () => void;
+  #onChangeCallback: (value: Date | null) => void = () => undefined;
+  #onTouchedCallback: () => void = () => undefined;
 
   writeValue(value: Date | string | null): void {
     if (value) {
@@ -61,15 +64,18 @@ export class UiDatepicker implements ControlValueAccessor {
     const year = current.getFullYear();
     const startYear = Math.floor(year / 10) * 10;
     const years: number[] = [];
+
     for (let i = startYear - 1; i <= startYear + 10; i++) {
       years.push(i);
     }
+
     return years;
   });
 
   months = computed(() => {
     const months: { name: string; value: number }[] = [];
     const date = new Date(2000, 0, 1);
+
     for (let i = 0; i < 12; i++) {
       date.setMonth(i);
       months.push({
@@ -77,8 +83,13 @@ export class UiDatepicker implements ControlValueAccessor {
         value: i
       });
     }
+
     return months;
   });
+
+  monthSelectOptions = computed<SelectOption[]>(() =>
+    this.months().map((month) => ({ label: month.name, value: month.value, disabled: this.isDisabledMonth(month.value) }))
+  );
 
   yearSelectOptions = computed(() => {
     const min = this.minDate();
@@ -91,8 +102,13 @@ export class UiDatepicker implements ControlValueAccessor {
     for (let year = startYear; year <= endYear; year++) {
       years.push(year);
     }
+
     return years;
   });
+
+  yearSelectOptionsForDropdown = computed<SelectOption[]>(() =>
+    this.yearSelectOptions().map((year) => ({ label: year.toString(), value: year, disabled: this.isDisabledYear(year) }))
+  );
 
   calendarDays = computed(() => {
     const date = this.currentViewDate();
@@ -152,8 +168,7 @@ export class UiDatepicker implements ControlValueAccessor {
   }
 
   selectYear(year: number): void {
-    const newDate = new Date(this.currentViewDate());
-    newDate.setFullYear(year);
+    const newDate = this.withUpdatedYearMonth(year, this.currentViewDate().getMonth());
     this.currentViewDate.set(newDate);
     this.selectedDate.set(newDate);
     this.#onChangeCallback(newDate);
@@ -161,16 +176,13 @@ export class UiDatepicker implements ControlValueAccessor {
   }
 
   selectMonth(month: number): void {
-    const newDate = new Date(this.currentViewDate());
-    newDate.setMonth(month);
+    const newDate = this.withUpdatedYearMonth(this.currentViewDate().getFullYear(), month);
     this.currentViewDate.set(newDate);
 
     if (this.view() === 'month') {
       this.selectedDate.set(newDate);
       this.#onChangeCallback(newDate);
       this.closeCalendar();
-    } else {
-      this.currentViewDate.set(newDate);
     }
   }
 
@@ -206,15 +218,23 @@ export class UiDatepicker implements ControlValueAccessor {
     this.currentViewDate.set(date);
   }
 
-  onYearSelectChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const year = Number(target.value);
-    if (Number.isNaN(year)) {
+  onYearSelectChange(value: unknown): void {
+    const year = Number(value);
+    if (Number.isNaN(year) || this.isDisabledYear(year)) {
       return;
     }
 
-    const nextDate = new Date(this.currentViewDate());
-    nextDate.setFullYear(year);
+    const nextDate = this.withUpdatedYearMonth(year, this.currentViewDate().getMonth());
+    this.currentViewDate.set(nextDate);
+  }
+
+  onMonthSelectChange(value: unknown): void {
+    const month = Number(value);
+    if (Number.isNaN(month) || this.isDisabledMonth(month)) {
+      return;
+    }
+
+    const nextDate = this.withUpdatedYearMonth(this.currentViewDate().getFullYear(), month);
     this.currentViewDate.set(nextDate);
   }
 
@@ -261,9 +281,12 @@ export class UiDatepicker implements ControlValueAccessor {
     const min = this.minDate();
     const max = this.maxDate();
     const current = this.currentViewDate();
-    const testDate = new Date(current.getFullYear(), month, 1);
-    if (min && testDate < min) return true;
-    if (max && testDate > max) return true;
+    const year = current.getFullYear();
+    const monthStart = new Date(year, month, 1);
+    const monthEnd = new Date(year, month + 1, 0);
+
+    if (min && monthEnd < this.stripTime(min)) return true;
+    if (max && monthStart > this.stripTime(max)) return true;
     return false;
   }
 
@@ -272,8 +295,8 @@ export class UiDatepicker implements ControlValueAccessor {
     const max = this.maxDate();
     const current = this.currentViewDate();
     const testDate = new Date(current.getFullYear(), current.getMonth(), day);
-    if (min && testDate < min) return true;
-    if (max && testDate > max) return true;
+    if (min && testDate < this.stripTime(min)) return true;
+    if (max && testDate > this.stripTime(max)) return true;
     return false;
   }
 
@@ -307,5 +330,17 @@ export class UiDatepicker implements ControlValueAccessor {
   calendarDayKey(index: number, day: number | null): string {
     const current = this.currentViewDate();
     return `${current.getFullYear()}-${current.getMonth()}-${index}-${day ?? 'empty'}`;
+  }
+
+  private withUpdatedYearMonth(year: number, month: number): Date {
+    const base = this.selectedDate() ?? this.currentViewDate();
+    const day = base.getDate();
+    const maxDay = new Date(year, month + 1, 0).getDate();
+    const normalizedDay = Math.min(day, maxDay);
+    return new Date(year, month, normalizedDay);
+  }
+
+  private stripTime(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   }
 }

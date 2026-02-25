@@ -1,11 +1,13 @@
 <div class="ui-datepicker-wrapper relative space-y-2">
   @if (label()) {
-  <label [for]="id()" class="block text-sm font-semibold text-gray-700">
-    {{ label() }} @if (required()) {
-    <span class="text-red-500">*</span>
-    }
-  </label>
+    <label [for]="id()" class="block text-sm font-semibold text-gray-700">
+      {{ label() }}
+      @if (required()) {
+        <span class="text-red-500">*</span>
+      }
+    </label>
   }
+
   <div class="relative">
     <input
       [id]="id()"
@@ -13,7 +15,12 @@
       [placeholder]="placeholder()"
       [disabled]="disabled()"
       [class]="inputClasses()"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
       (click)="toggleCalendar()" />
+
     <button
       type="button"
       [disabled]="disabled()"
@@ -22,87 +29,113 @@
       <i-lucide [name]="icons.Calendar" class="size-5" />
     </button>
   </div>
+
   <div
     [class.opacity-100]="isOpen()"
     [class.z-50]="isOpen()"
     [class.translate-y-1]="isOpen()"
     class="absolute opacity-0 -z-50 bg-white border border-slate-200/80 rounded-xl shadow-2xl min-w-[280px] transition-all duration-200 ease-in-out translate-y-0">
-    <div class="flex items-center justify-between p-4 border-b border-slate-100">
+    <div class="flex items-center justify-between gap-2 p-4 border-b border-slate-100">
       <button type="button" (click)="navigatePrevious()" class="ui-datepicker-nav-button">
         <i-lucide [name]="icons.ChevronLeft" class="size-4" />
       </button>
-      @if (yearSelect() && view() === 'date') {
-      <select
-        class="ui-datepicker-year-select"
-        [value]="currentViewDate().getFullYear()"
-        (change)="onYearSelectChange($event)">
-        @for (year of yearSelectOptions(); track year) {
-        <option [value]="year">{{ year }}</option>
-        }
-      </select>
+
+      @if (view() === 'date' && (yearSelect() || monthSelect())) {
+        <div class="flex items-center gap-2 flex-1 min-w-0">
+          @if (monthSelect()) {
+            <app-ui-select
+              class="ui-datepicker-header-select ui-datepicker-header-select-month"
+              [id]="id() + '-month-select'"
+              [placeholder]="'Month'"
+              [options]="monthSelectOptions()"
+              [disabled]="disabled()"
+              [modelValue]="currentViewDate().getMonth()"
+              (valueChange)="onMonthSelectChange($event)" />
+          }
+
+          @if (yearSelect()) {
+            <app-ui-select
+              class="ui-datepicker-header-select ui-datepicker-header-select-year"
+              [id]="id() + '-year-select'"
+              [placeholder]="'Year'"
+              [options]="yearSelectOptionsForDropdown()"
+              [disabled]="disabled()"
+              [modelValue]="currentViewDate().getFullYear()"
+              (valueChange)="onYearSelectChange($event)" />
+          }
+        </div>
       } @else {
-      <div class="ui-datepicker-header-label">{{ monthYearLabel() }}</div>
+        <div class="ui-datepicker-header-label">{{ monthYearLabel() }}</div>
       }
+
       <button type="button" (click)="navigateNext()" class="ui-datepicker-nav-button">
         <i-lucide [name]="icons.ChevronRight" class="size-4" />
       </button>
     </div>
+
     @if (view() === 'year') {
-    <div class="grid grid-cols-4 gap-2 p-4">
-      @for (year of years(); track year) {
-      <button
-        type="button"
-        [disabled]="isDisabledYear(year)"
-        (click)="selectYear(year)"
-        [class]="
-          'ui-datepicker-year-button ' +
-          (isSelectedYear(year) ? 'ui-datepicker-year-selected' : '') +
-          (isDisabledYear(year) ? ' ui-datepicker-year-disabled' : '')
-        ">
-        {{ year }}
-      </button>
-      }
-    </div>
-    } @if (view() === 'month') {
-    <div class="grid grid-cols-3 gap-2.5 p-4">
-      @for (month of months(); track month.value) {
-      <button
-        type="button"
-        [disabled]="isDisabledMonth(month.value)"
-        (click)="selectMonth(month.value)"
-        [class]="
-          'ui-datepicker-month-button ' +
-          (isSelectedMonth(month.value) ? 'ui-datepicker-month-selected' : '') +
-          (isDisabledMonth(month.value) ? ' ui-datepicker-month-disabled' : '')
-        ">
-        {{ month.name }}
-      </button>
-      }
-    </div>
-    } @if (view() === 'date') {
-    <div class="grid grid-cols-7 gap-1.5 mb-3 p-4">
-      @for (day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track day) {
-      <div class="ui-datepicker-weekday">{{ day }}</div>
-      }
-    </div>
-    <div class="grid grid-cols-7 gap-1.5 p-4 -mt-9">
-      @for (day of calendarDays(); track calendarDayKey($index, day)) { @if (day === null) {
-      <div class="aspect-square"></div>
-      } @else {
-      <button
-        type="button"
-        [disabled]="isDisabledDay(day)"
-        (click)="selectDay(day)"
-        [class]="
-          'ui-datepicker-day-button ' +
-          (isSelectedDay(day) ? 'ui-datepicker-day-selected' : '') +
-          (isToday(day) && !isSelectedDay(day) ? ' ui-datepicker-day-today' : '') +
-          (isDisabledDay(day) ? ' ui-datepicker-day-disabled' : '')
-        ">
-        {{ day }}
-      </button>
-      } }
-    </div>
+      <div class="grid grid-cols-4 gap-2 p-4">
+        @for (year of years(); track year) {
+          <button
+            type="button"
+            [disabled]="isDisabledYear(year)"
+            (click)="selectYear(year)"
+            [class]="
+              'ui-datepicker-year-button ' +
+              (isSelectedYear(year) ? 'ui-datepicker-year-selected' : '') +
+              (isDisabledYear(year) ? ' ui-datepicker-year-disabled' : '')
+            ">
+            {{ year }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (view() === 'month') {
+      <div class="grid grid-cols-3 gap-2.5 p-4">
+        @for (month of months(); track month.value) {
+          <button
+            type="button"
+            [disabled]="isDisabledMonth(month.value)"
+            (click)="selectMonth(month.value)"
+            [class]="
+              'ui-datepicker-month-button ' +
+              (isSelectedMonth(month.value) ? 'ui-datepicker-month-selected' : '') +
+              (isDisabledMonth(month.value) ? ' ui-datepicker-month-disabled' : '')
+            ">
+            {{ month.name }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (view() === 'date') {
+      <div class="grid grid-cols-7 gap-1.5 mb-3 p-4">
+        @for (day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track day) {
+          <div class="ui-datepicker-weekday">{{ day }}</div>
+        }
+      </div>
+
+      <div class="grid grid-cols-7 gap-1.5 p-4 -mt-9">
+        @for (day of calendarDays(); track calendarDayKey($index, day)) {
+          @if (day === null) {
+            <div class="aspect-square"></div>
+          } @else {
+            <button
+              type="button"
+              [disabled]="isDisabledDay(day)"
+              (click)="selectDay(day)"
+              [class]="
+                'ui-datepicker-day-button ' +
+                (isSelectedDay(day) ? 'ui-datepicker-day-selected' : '') +
+                (isToday(day) && !isSelectedDay(day) ? ' ui-datepicker-day-today' : '') +
+                (isDisabledDay(day) ? ' ui-datepicker-day-disabled' : '')
+              ">
+              {{ day }}
+            </button>
+          }
+        }
+      </div>
     }
   </div>
 </div>
