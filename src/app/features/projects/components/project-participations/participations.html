@@ -271,7 +271,6 @@
               </div>
             </div>
           }
-          <!-- Responsive Table -->
           <div class="ui-table-wrapper overflow-x-auto">
             <table class="ui-table">
               <thead class="ui-table-head hidden md:table-header-group">
@@ -281,7 +280,6 @@
                   </th>
                   <th class="ui-table-header" scope="col">Participant</th>
                   <th class="ui-table-header hidden lg:table-cell" scope="col">Email</th>
-                  <th class="ui-table-header hidden xl:table-cell" scope="col">Projet</th>
                   <th class="ui-table-header" scope="col">Phases</th>
                   <th class="ui-table-header" scope="col">
                     <span class="sr-only">Actions</span>
@@ -290,7 +288,6 @@
               </thead>
               <tbody class="ui-table-body divide-y divide-gray-100">
                 @for (participation of paginatedParticipations(); track participationKey(participation)) {
-                  <!-- Row -->
                   <tr
                     class="ui-table-row transition-colors duration-150 hover:bg-gray-50/50"
                     [class.bg-primary-50/50]="isSelected(participation)">
@@ -331,8 +328,6 @@
                         </div>
                       </div>
                     </td>
-
-                    <!-- Email (Desktop) -->
                     <td class="ui-table-cell hidden lg:table-cell text-sm text-gray-600">
                       @if (participation.user.email) {
                         <span class="truncate block">{{ participation.user.email }}</span>
@@ -340,17 +335,6 @@
                         <span class="text-gray-400">—</span>
                       }
                     </td>
-
-                    <!-- Project (Desktop) -->
-                    <td class="ui-table-cell hidden xl:table-cell text-sm">
-                      @if (participation.venture) {
-                        <span class="text-gray-700 truncate block">{{ participation.venture.name }}</span>
-                      } @else {
-                        <span class="text-gray-400">—</span>
-                      }
-                    </td>
-
-                    <!-- Phases -->
                     <td class="ui-table-cell">
                       @if (participation.phases.length > 0) {
                         <ul class="flex flex-wrap gap-1" role="list">
