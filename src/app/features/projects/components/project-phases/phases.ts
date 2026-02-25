@@ -17,6 +17,7 @@ import { IPhase } from '@shared/models';
 import { parseDate } from '@shared/helpers/form.helper';
 import { PhaseDeliverableDto, PhaseDto } from '../../dto/phases/phase.dto';
 import { PhasesStore } from '@features/projects/store/phases.store';
+import { PhaseSkeleton } from '@features/projects/ui/phase-skeleton/phase-skeleton';
 
 @Component({
   selector: 'app-phases',
@@ -33,7 +34,8 @@ import { PhasesStore } from '@features/projects/store/phases.store';
     UiMultiSelect,
     UiConfirmDialog,
     LucideAngularModule,
-    UiBadge
+    UiBadge,
+    PhaseSkeleton
   ]
 })
 export class Phases implements OnInit {
@@ -41,10 +43,9 @@ export class Phases implements OnInit {
   #confirmationService = inject(ConfirmationService);
   #fb = inject(FormBuilder);
   phasesStore = inject(PhasesStore);
-  createForm: FormGroup = this.#buildForm();
-  editForm: FormGroup = this.#buildForm();
+  form = this.#buildForm();
   editingPhaseId = signal<string | null>(null);
-  showCreateForm = signal(false);
+  showForm = signal(false);
   icons = { Plus, Pencil, Trash2, Calendar, FileText };
   mentorOptions = computed<SelectOption[]>(() =>
     this.phasesStore.mentors().map((mentor) => ({
@@ -80,12 +81,8 @@ export class Phases implements OnInit {
     });
   }
 
-  #getCurrentForm(): FormGroup {
-    return this.editingPhaseId() ? this.editForm : this.createForm;
-  }
-
   get deliverables(): FormArray {
-    return this.#getCurrentForm().get('deliverables') as FormArray;
+    return this.form.get('deliverables') as FormArray;
   }
 
   addDeliverable(deliverable?: PhaseDeliverableDto): void {
@@ -96,90 +93,72 @@ export class Phases implements OnInit {
     this.deliverables.removeAt(index);
   }
 
-  #setDeliverables(deliverables: PhaseDeliverableDto[] = [], form?: FormGroup): void {
-    const targetForm = form || this.#getCurrentForm();
-    const deliverableArray = targetForm.get('deliverables') as FormArray;
-    deliverableArray.clear();
-    for (const deliverable of deliverables) {
-      deliverableArray.push(this.#buildDeliverableForm(deliverable));
-    }
-  }
-
-  #extractMentorIds(phase: IPhase): string[] {
-    return (phase.mentors ?? []).map((mentor) => (typeof mentor === 'string' ? mentor : mentor.id));
+  #setDeliverables(deliverables: PhaseDeliverableDto[]): void {
+    this.deliverables.clear();
+    deliverables.forEach((deliverable) => this.deliverables.push(this.#buildDeliverableForm(deliverable)));
   }
 
   #buildPayload(): PhaseDto {
-    const formValue = this.#getCurrentForm().getRawValue();
-    const deliverables =
-      (formValue.deliverables as PhaseDeliverableDto[] | undefined)
-        ?.filter((d) => d.title?.length)
-        .map((d) => ({
-          title: d.title,
-          description: d.description || undefined
-        })) ?? [];
-    const mentors = (formValue.mentors as string[] | undefined)?.filter((m) => m?.length) ?? [];
+    const formValue = this.form.getRawValue();
+    const deliverables = (formValue.deliverables as PhaseDeliverableDto[])
+      .filter((d) => d.title?.length)
+      .map((d) => ({ title: d.title, description: d.description || undefined }));
+    const mentors = (formValue.mentors as string[]).filter((m) => m?.length);
     return {
       id: formValue.id ?? undefined,
       name: formValue.name,
       description: formValue.description,
       started_at: formValue.started_at,
       ended_at: formValue.ended_at,
-      mentors: mentors.length > 0 ? mentors : undefined,
-      deliverables: deliverables.length > 0 ? deliverables : undefined
+      mentors: mentors.length ? mentors : undefined,
+      deliverables: deliverables.length ? deliverables : undefined
     };
   }
 
   #resetForm(): void {
     this.editingPhaseId.set(null);
-    this.createForm.reset();
-    this.createForm.patchValue({ mentors: [] });
-    this.#setDeliverables([], this.createForm);
+    this.form.reset({ mentors: [] });
+    this.deliverables.clear();
   }
 
   onCreateClick(): void {
     this.#resetForm();
-    this.showCreateForm.set(true);
+    this.showForm.set(true);
   }
 
   onEdit(phase: IPhase): void {
-    this.showCreateForm.set(false);
+    this.showForm.set(false);
     this.editingPhaseId.set(phase.id);
-    this.editForm.reset();
-    this.editForm.patchValue({
+    const mentorIds = (phase.mentors ?? []).map((mentor) => (typeof mentor === 'string' ? mentor : mentor.id));
+    this.form.reset({
       ...phase,
-      mentors: this.#extractMentorIds(phase),
+      mentors: mentorIds,
       started_at: parseDate(phase.started_at),
       ended_at: parseDate(phase.ended_at)
     });
-    this.#setDeliverables(
-      (phase.deliverables ?? []).map((deliverable) => ({
-        title: deliverable.title,
-        description: deliverable.description
-      })),
-      this.editForm
-    );
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.#setDeliverables((phase.deliverables ?? []).map((d) => ({ title: d.title, description: d.description })));
   }
 
   onCancelForm(): void {
-    this.showCreateForm.set(false);
+    this.showForm.set(false);
     this.#resetForm();
   }
 
   onSubmit(): void {
-    if (this.createForm.invalid) return;
-    this.phasesStore.create({
-      projectId: this.projectId(),
-      dto: this.#buildPayload(),
-      onSuccess: () => this.onCancelForm()
-    });
-  }
-
-  onUpdate(): void {
-    const id = this.editForm.getRawValue().id as string | null;
-    if (!id || this.editForm.invalid) return;
-    this.phasesStore.update({ dto: { ...this.#buildPayload(), id }, onSuccess: () => this.onCancelForm() });
+    if (this.form.invalid) return;
+    const payload = this.#buildPayload();
+    if (this.editingPhaseId()) {
+      this.phasesStore.update({
+        dto: { ...payload, id: this.editingPhaseId()! },
+        onSuccess: () => this.onCancelForm()
+      });
+    } else {
+      this.phasesStore.create({
+        projectId: this.projectId(),
+        dto: payload,
+        onSuccess: () => this.onCancelForm()
+      });
+    }
   }
 
   onDelete(phase: IPhase): void {
@@ -188,9 +167,7 @@ export class Phases implements OnInit {
       message: `Êtes-vous sûr de vouloir supprimer la phase « ${phase.name} » ?`,
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      accept: () => {
-        this.phasesStore.delete(phase.id);
-      }
+      accept: () => this.phasesStore.delete(phase.id)
     });
   }
 

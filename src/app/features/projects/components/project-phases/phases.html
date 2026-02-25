@@ -5,7 +5,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <app-ui-badge [label]="sortedPhases.length.toString() + ' Phases'" />
     </div>
-    @if (!showCreateForm()) {
+    @if (!showForm()) {
       <app-ui-button type="button" variant="primary" size="small" (clicked)="onCreateClick()">
         <span class="flex items-center gap-2">
           <i-lucide [name]="icons.Plus" class="size-4" aria-hidden="true" />
@@ -14,261 +14,127 @@
       </app-ui-button>
     }
   </div>
-  @if (showCreateForm() || editingPhaseId()) {
+  @if (showForm() || editingPhaseId()) {
     <div
-      class="border border-gray-100 rounded-2xl bg-linear-to-br from-white via-gray-50/40 to-white p-6 md:p-8 shadow-sm"
+      class="border border-gray-100 rounded-2xl bg-50/40 to-white p-6 md:p-8 shadow-sm"
       aria-labelledby="phase-form-heading">
       <h4 id="phase-form-heading" class="sr-only">
         {{ editingPhaseId() ? 'Modifier la phase' : 'Nouvelle phase' }}
       </h4>
-      @if (showCreateForm()) {
-        <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-            <app-ui-input
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+          <app-ui-input
+            [required]="true"
+            [id]="'phase-name'"
+            label="Nom de la phase"
+            formControlName="name"
+            placeholder="Ex: Phase de sélection" />
+          <app-ui-multi-select
+            [id]="'phase-mentors'"
+            label="Mentors (optionnel)"
+            [options]="mentorOptions()"
+            formControlName="mentors"
+            placeholder="Sélectionner un ou plusieurs mentors" />
+          <div class="grid grid-cols-1 gap-5 lg:col-span-2 lg:grid-cols-2">
+            <app-ui-datepicker
               [required]="true"
-              [id]="'phase-name'"
-              label="Nom de la phase"
-              formControlName="name"
-              placeholder="Ex: Phase de sélection" />
-            <app-ui-multi-select
-              [id]="'phase-mentors'"
-              label="Mentors (optionnel)"
-              [options]="mentorOptions()"
-              formControlName="mentors"
-              placeholder="Sélectionner un ou plusieurs mentors" />
-            <div class="grid grid-cols-1 gap-5 lg:col-span-2 lg:grid-cols-2">
-              <app-ui-datepicker
-                [required]="true"
-                [id]="'phase-started_at'"
-                label="Date de début"
-                formControlName="started_at" />
-              <app-ui-datepicker
-                [required]="true"
-                [id]="'phase-ended_at'"
-                label="Date de fin"
-                formControlName="ended_at" />
-            </div>
-          </div>
-          <div class="mb-6">
-            <app-ui-textarea
+              [id]="'phase-started_at'"
+              label="Date de début"
+              formControlName="started_at" />
+            <app-ui-datepicker
               [required]="true"
-              [id]="'phase-description'"
-              label="Description"
-              formControlName="description"
-              [rows]="4"
-              placeholder="Décrivez les objectifs et le déroulement de cette phase..." />
+              [id]="'phase-ended_at'"
+              label="Date de fin"
+              formControlName="ended_at" />
           </div>
-          <div class="mb-6 border border-gray-100 rounded-xl p-5 bg-linear-to-br from-gray-50/50 to-white">
-            <div class="flex items-center justify-between gap-3 mb-4">
-              <h5 class="text-sm font-semibold text-gray-900">Livrables (optionnel)</h5>
-              <app-ui-button
-                type="button"
-                size="small"
-                variant="primary"
-                [outlined]="true"
-                (clicked)="addDeliverable()">
-                <span class="flex items-center gap-2">
-                  <i-lucide [name]="icons.Plus" class="size-4" aria-hidden="true" />
-                  Ajouter un livrable
-                </span>
-              </app-ui-button>
-            </div>
-            <div formArrayName="deliverables" class="space-y-3">
-              @for (deliverable of deliverables.controls; track $index) {
-                <div
-                  class="border border-gray-100 rounded-lg p-4 bg-white hover:bg-gray-50/50 transition-colors"
-                  [formGroupName]="$index">
-                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <app-ui-input
-                      [required]="true"
-                      [id]="'phase-deliverable-title-' + $index"
-                      label="Titre du livrable"
-                      formControlName="title"
-                      placeholder="Ex: Rapport d'évaluation" />
-                    <app-ui-textarea
-                      [id]="'phase-deliverable-description-' + $index"
-                      label="Description (optionnelle)"
-                      formControlName="description"
-                      [rows]="2"
-                      placeholder="Précisions sur ce livrable" />
-                  </div>
-                  <div class="mt-4 flex justify-end">
-                    <app-ui-button
-                      type="button"
-                      size="small"
-                      variant="danger"
-                      [outlined]="true"
-                      (clicked)="removeDeliverable($index)">
-                      Supprimer
-                    </app-ui-button>
-                  </div>
+        </div>
+        <div class="mb-6">
+          <app-ui-textarea
+            [required]="true"
+            [id]="'phase-description'"
+            label="Description"
+            formControlName="description"
+            [rows]="4"
+            placeholder="Décrivez les objectifs et le déroulement de cette phase..." />
+        </div>
+        <div class="mb-6 border border-gray-100 rounded-xl p-5 bg-gray-50/40 to-white">
+          <div class="flex items-center justify-between gap-3 mb-4">
+            <h5 class="text-sm font-semibold text-gray-900">Livrables (optionnel)</h5>
+            <app-ui-button type="button" size="small" variant="primary" [outlined]="true" (clicked)="addDeliverable()">
+              <span class="flex items-center gap-2">
+                <i-lucide [name]="icons.Plus" class="size-4" aria-hidden="true" />
+                Ajouter un livrable
+              </span>
+            </app-ui-button>
+          </div>
+          <div formArrayName="deliverables" class="space-y-3">
+            @for (deliverable of deliverables.controls; track $index) {
+              <div
+                class="border border-gray-100 rounded-lg p-4 bg-white hover:bg-gray-50/50 transition-colors"
+                [formGroupName]="$index">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <app-ui-input
+                    [required]="true"
+                    [id]="'phase-deliverable-title-' + $index"
+                    label="Titre du livrable"
+                    formControlName="title"
+                    placeholder="Ex: Rapport d'évaluation" />
+                  <app-ui-textarea
+                    [id]="'phase-deliverable-description-' + $index"
+                    label="Description (optionnelle)"
+                    formControlName="description"
+                    [rows]="2"
+                    placeholder="Précisions sur ce livrable" />
                 </div>
-              }
-            </div>
-          </div>
-          <div class="flex flex-wrap gap-3 justify-end border-t border-gray-100 pt-6">
-            <app-ui-button type="button" [outlined]="true" variant="secondary" size="small" (clicked)="onCancelForm()">
-              Annuler
-            </app-ui-button>
-            <app-ui-button
-              (click)="onSubmit()"
-              variant="primary"
-              size="small"
-              [loading]="isLoading"
-              [disabled]="isLoading || createForm.invalid">
-              Créer la phase
-            </app-ui-button>
-          </div>
-        </form>
-      }
-      @if (editingPhaseId()) {
-        <form [formGroup]="editForm" (ngSubmit)="onUpdate()">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-            <app-ui-input
-              [required]="true"
-              [id]="'phase-edit-name'"
-              label="Nom de la phase"
-              formControlName="name"
-              placeholder="Ex: Phase de sélection" />
-            <app-ui-multi-select
-              [id]="'phase-edit-mentors'"
-              label="Mentors (optionnel)"
-              [options]="mentorOptions()"
-              formControlName="mentors"
-              placeholder="Sélectionner un ou plusieurs mentors" />
-            <div class="grid grid-cols-1 gap-5 lg:col-span-2 lg:grid-cols-2">
-              <app-ui-datepicker
-                [required]="true"
-                [id]="'phase-edit-started_at'"
-                label="Date de début"
-                formControlName="started_at" />
-              <app-ui-datepicker
-                [required]="true"
-                [id]="'phase-edit-ended_at'"
-                label="Date de fin"
-                formControlName="ended_at" />
-            </div>
-          </div>
-          <div class="mb-6">
-            <app-ui-textarea
-              [required]="true"
-              [id]="'phase-edit-description'"
-              label="Description"
-              formControlName="description"
-              [rows]="4"
-              placeholder="Décrivez les objectifs et le déroulement de cette phase..." />
-          </div>
-          <div class="mb-6 border border-gray-100 rounded-xl p-5 bg-linear-to-br from-gray-50/50 to-white">
-            <div class="flex items-center justify-between gap-3 mb-4">
-              <h5 class="text-sm font-semibold text-gray-900">Livrables (optionnel)</h5>
-              <app-ui-button
-                type="button"
-                size="small"
-                variant="primary"
-                [outlined]="true"
-                (clicked)="addDeliverable()">
-                <span class="flex items-center gap-2">
-                  <i-lucide [name]="icons.Plus" class="size-4" aria-hidden="true" />
-                  Ajouter un livrable
-                </span>
-              </app-ui-button>
-            </div>
-            <div formArrayName="deliverables" class="space-y-3">
-              @for (deliverable of deliverables.controls; track $index) {
-                <div
-                  class="border border-gray-100 rounded-lg p-4 bg-white hover:bg-gray-50/50 transition-colors"
-                  [formGroupName]="$index">
-                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <app-ui-input
-                      [required]="true"
-                      [id]="'phase-edit-deliverable-title-' + $index"
-                      label="Titre du livrable"
-                      formControlName="title"
-                      placeholder="Ex: Rapport d'évaluation" />
-                    <app-ui-textarea
-                      [id]="'phase-edit-deliverable-description-' + $index"
-                      label="Description (optionnelle)"
-                      formControlName="description"
-                      [rows]="2"
-                      placeholder="Précisions sur ce livrable" />
-                  </div>
-                  <div class="mt-4 flex justify-end">
-                    <app-ui-button
-                      type="button"
-                      size="small"
-                      variant="danger"
-                      [outlined]="true"
-                      (clicked)="removeDeliverable($index)">
-                      Supprimer
-                    </app-ui-button>
-                  </div>
+                <div class="mt-4 flex justify-end">
+                  <app-ui-button
+                    type="button"
+                    size="small"
+                    variant="danger"
+                    [outlined]="true"
+                    (clicked)="removeDeliverable($index)">
+                    Supprimer
+                  </app-ui-button>
                 </div>
-              }
-            </div>
+              </div>
+            }
           </div>
-          <div class="flex flex-wrap gap-3 justify-end border-t border-gray-100 pt-6">
-            <app-ui-button type="button" [outlined]="true" variant="secondary" size="small" (clicked)="onCancelForm()">
-              Annuler
-            </app-ui-button>
-            <app-ui-button
-              type="submit"
-              variant="primary"
-              size="small"
-              [loading]="isLoading"
-              [disabled]="isLoading || editForm.invalid">
-              Enregistrer
-            </app-ui-button>
-          </div>
-        </form>
-      }
+        </div>
+        <div class="flex flex-wrap gap-2 justify-end border-t border-gray-200 pt-4">
+          <app-ui-button type="button" [outlined]="true" variant="secondary" size="small" (clicked)="onCancelForm()">
+            Annuler
+          </app-ui-button>
+          <app-ui-button
+            type="submit"
+            variant="primary"
+            size="small"
+            [loading]="isLoading"
+            [disabled]="isLoading || form.invalid">
+            {{ editingPhaseId() ? 'Enregistrer' : 'Créer la phase' }}
+          </app-ui-button>
+        </div>
+      </form>
     </div>
   }
   @if (isLoading) {
     <ol
-      class="relative space-y-6 before:absolute before:left-2.5 before:top-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-primary-100 before:via-primary-200 before:to-transparent before:rounded-full pl-10">
+      class="relative space-y-6 before:absolute before:left-2.5 before:top-0 before:h-full before:w-0.5 before:bg-primary-200/80 before:to-transparent before:rounded-full pl-10">
       @for (i of [1, 2, 3]; track i) {
-        <li class="relative" role="listitem">
-          <span
-            class="absolute -left-2 top-1.5 flex size-5 items-center justify-center rounded-full bg-linear-to-br from-primary-50 to-primary-100 ring-4 ring-white shadow-sm animate-pulse"></span>
-          <div
-            class="rounded-2xl border border-gray-100 bg-linear-to-br from-white to-gray-50/50 p-5 shadow-sm hover:shadow-md transition-all duration-200">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div class="min-w-0 flex-1 space-y-3">
-                <div
-                  class="h-5 w-48 max-w-full bg-linear-to-r from-gray-200 to-gray-100 rounded-lg animate-pulse"></div>
-                <div class="flex items-center gap-2">
-                  <div class="size-4 bg-gray-150 rounded-md animate-pulse"></div>
-                  <div class="h-4 w-40 bg-gray-150 rounded-md animate-pulse"></div>
-                </div>
-                <div class="mt-2 space-y-2">
-                  <div class="h-3 w-full bg-gray-100 rounded-md animate-pulse"></div>
-                  <div class="h-3 w-4/5 bg-gray-100 rounded-md animate-pulse"></div>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <div class="h-9 w-24 bg-gray-150 rounded-lg animate-pulse"></div>
-                <div class="h-9 w-24 bg-gray-150 rounded-lg animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-        </li>
+        <app-phase-skeleton />
       }
     </ol>
   }
-  @if (sortedPhases.length > 0 && !isLoading) {
-    <ol
-      class="relative space-y-6 before:absolute before:left-2.5 before:top-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-primary-200 before:via-primary-100 before:to-transparent before:rounded-full pl-10"
-      role="list"
-      aria-label="Phases du projet">
+  @if (sortedPhases.length > 0 && !isLoading && !showForm() && !editingPhaseId()) {
+    <ol class="relative space-y-6" role="list">
       @for (phase of sortedPhases; track phase.id) {
         <li class="relative" role="listitem">
           <span
-            class="absolute -left-2 top-1.5 flex size-5 items-center justify-center rounded-full bg-linear-to-br from-primary-400 to-primary-500 ring-4 ring-white shadow-sm"></span>
+            class="absolute -left-2 top-1.5 flex size-5 items-center justify-center rounded-full bg-primary-400 ring-4 ring-white shadow-sm"></span>
           <div
             [class.ring-2]="isEditing(phase)"
             [class.ring-primary-200]="isEditing(phase)"
             [class.shadow-lg]="isEditing(phase)"
-            class="rounded-2xl border border-gray-100 bg-linear-to-br from-white via-gray-50/30 to-gray-50/50 p-5 shadow-sm hover:shadow-md transition-all duration-200">
+            class="rounded-2xl border border-gray-100 bg-primary-50/30 p-5 shadow-sm hover:shadow-md transition-all duration-200">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <h4 class="font-semibold text-gray-900 leading-relaxed">{{ phase.name }}</h4>
@@ -287,7 +153,7 @@
                   <div class="mt-4 flex flex-wrap gap-2">
                     @for (mentorName of mentorNamesForPhase(phase); track mentorName) {
                       <span
-                        class="inline-flex items-center rounded-full bg-linear-to-r from-slate-50 to-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 border border-gray-200/50 shadow-xs">
+                        class="inline-flex items-center rounded-full bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 border border-gray-200/50 shadow-xs">
                         {{ mentorName }}
                       </span>
                     }
@@ -297,7 +163,7 @@
                   <div class="mt-4 flex flex-wrap gap-2">
                     @for (deliverable of phase.deliverables; track deliverable.id) {
                       <span
-                        class="inline-flex items-center rounded-full bg-linear-to-r from-primary-50/80 to-blue-50/80 px-3 py-1.5 text-xs font-medium text-primary-700 border border-primary-200/30 shadow-xs">
+                        class="inline-flex items-center rounded-full bg-blue-50/80 px-3 py-1.5 text-xs font-medium text-primary-700 border border-primary-200/30 shadow-xs">
                         {{ deliverable.title }}
                       </span>
                     }
@@ -331,12 +197,12 @@
       }
     </ol>
   }
-  @if (sortedPhases.length === 0 && !showCreateForm() && !isLoading) {
+  @if (sortedPhases.length === 0 && !showForm() && !isLoading) {
     <div
-      class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-linear-to-br from-gray-50/50 via-white to-gray-50/25 py-16 px-4 shadow-sm"
+      class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-gray-50/40 via-white to-gray-50/25 py-16 px-4 shadow-sm"
       role="status">
       <div
-        class="flex size-16 items-center justify-center rounded-full bg-linear-to-br from-primary-50 to-primary-100 text-primary-500 mb-5 shadow-sm">
+        class="flex size-16 items-center justify-center rounded-full bg-primary-50/80 text-primary-500 mb-5 shadow-sm">
         <i-lucide [name]="icons.FileText" class="size-8" aria-hidden="true" />
       </div>
       <p class="text-center text-gray-900 font-semibold text-lg">Aucune phase pour le moment</p>

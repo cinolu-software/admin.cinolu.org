@@ -6,7 +6,7 @@ import { SelectOption, UiButton, UiCheckbox, UiDatepicker, UiInput, UiMultiSelec
 import { MentorsStore } from '../../store/mentors.store';
 import { ExpertisesStore } from '../../store/expertises.store';
 import { MentorType } from '../../enums/mentor.enum';
-import { CreateExperienceDto, CreateMentorDto, MentorRequestDto } from '../../dto/mentors/create-mentor.dto';
+import { CreateExperienceDto, CreateMentorDto } from '../../dto/mentors/create-mentor.dto';
 
 @Component({
   selector: 'app-add-mentor',
@@ -110,48 +110,39 @@ export class AddMentor {
 
   #buildPayload(): CreateMentorDto {
     const value = this.form.value;
+    const toApiDate = (val: unknown): string | undefined => {
+      if (!val) return undefined;
+      const date = val instanceof Date ? val : new Date(String(val));
+      if (Number.isNaN(date.getTime())) return undefined;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const experiences = this.experiences.controls.map((control) => {
       const row = control.value;
       const isCurrent = Boolean(row['is_current']);
-      const startDate = this.#toOptionalApiDate(row['start_date']) ?? this.#toOptionalApiDate(new Date());
+      const id = typeof row['id'] === 'string' ? row['id'].trim() : undefined;
       return {
-        id: this.#toOptionalString(row['id']),
+        id: id || undefined,
         company_name: String(row['company_name']),
         job_title: String(row['job_title']),
         is_current: isCurrent,
-        start_date: startDate ?? '',
-        end_date: isCurrent ? undefined : this.#toOptionalApiDate(row['end_date'])
+        start_date: toApiDate(row['start_date']) || toApiDate(new Date()) || '',
+        end_date: isCurrent ? undefined : toApiDate(row['end_date'])
       } satisfies CreateExperienceDto;
     });
-    const mentor: MentorRequestDto = {
-      years_experience: Number(value['years_experience']),
-      expertises: (value['expertises'] as string[]) ?? [],
-      type: this.#toMentorType(value['type']),
-      experiences
+
+    const mentorType = value['type'];
+    return {
+      email: String(value['email']),
+      mentor: {
+        years_experience: Number(value['years_experience']),
+        expertises: (value['expertises'] as string[]) ?? [],
+        type: mentorType === MentorType.COACH || mentorType === MentorType.FACILITATOR ? mentorType : undefined,
+        experiences
+      }
     };
-    return { email: String(value['email']), mentor };
-  }
-
-  #toOptionalString(value: unknown): string | undefined {
-    if (typeof value !== 'string') return undefined;
-    const trimmedValue = value.trim();
-    return trimmedValue ? trimmedValue : undefined;
-  }
-
-  #toOptionalApiDate(value: unknown): string | undefined {
-    if (!value) return undefined;
-    const date = value instanceof Date ? value : new Date(String(value));
-    if (Number.isNaN(date.getTime())) return undefined;
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  #toMentorType(value: unknown): MentorType | undefined {
-    if (value === MentorType.COACH || value === MentorType.FACILITATOR) {
-      return value;
-    }
-    return undefined;
   }
 }
