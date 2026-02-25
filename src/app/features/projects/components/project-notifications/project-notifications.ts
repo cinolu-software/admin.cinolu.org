@@ -1,31 +1,19 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  OnInit,
-  signal
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CircleAlert, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox, LucideAngularModule } from 'lucide-angular';
 import {
-  ArrowLeft,
-  CircleAlert,
-  Paperclip,
-  Send,
-  Trash2,
-  Pencil,
-  Plus,
-  X,
-  Inbox,
-  LucideAngularModule
-} from 'lucide-angular';
-import { UiButton, UiInput, UiSelect, UiTextEditor, UiConfirmDialog, UiPagination, SelectOption, UiCheckbox } from '@shared/ui';
+  UiButton,
+  UiInput,
+  UiSelect,
+  UiTextEditor,
+  UiConfirmDialog,
+  UiPagination,
+  SelectOption,
+  UiCheckbox
+} from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { INotification } from '@shared/models';
 import { NotifyParticipantsDto } from '../../dto/notifications/notify-participants.dto';
@@ -59,7 +47,7 @@ interface AttachmentPreview {
     LucideAngularModule
   ]
 })
-export class ProjectNotifications implements OnInit {
+export class ProjectNotifications {
   projectId = input.required<string>();
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
@@ -68,20 +56,25 @@ export class ProjectNotifications implements OnInit {
   authStore = inject(AuthStore);
   notificationsStore = inject(NotificationsStore);
   phasesStore = inject(PhasesStore);
+
   form = this.#buildForm();
   attachments = signal<AttachmentPreview[]>([]);
   isComposing = signal(true);
   filterPhaseId = signal('');
   filterStatus = signal<NotificationStatus | null>(null);
   filterPage = signal<number | null>(null);
+
   queryParams = computed(() => ({
     phaseId: this.filterPhaseId(),
     status: this.filterStatus(),
     page: this.filterPage() === null ? null : String(this.filterPage())
   }));
+
   currentPage = computed(() => this.filterPage() ?? 1);
   itemsPerPage = 10;
-  icons = { ArrowLeft, CircleAlert, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox };
+
+  icons = { CircleAlert, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox };
+
   phaseOptions = computed(() => {
     const options = this.phasesStore.sortedPhases().map((phase) => ({
       label: phase.name,
@@ -97,23 +90,28 @@ export class ProjectNotifications implements OnInit {
     }));
     return [{ label: 'Toutes les phases', value: '' }, ...options];
   });
+
   statusFilterOptions: SelectOption[] = [
     { label: 'Tous', value: '' },
     { label: 'Brouillon', value: 'draft' },
     { label: 'Envoyée', value: 'sent' }
   ];
+
   activeNotification = computed(() => this.notificationsStore.activeNotification());
+
+  statusBadge = computed(() => {
+    const notification = this.activeNotification();
+    return notification?.status ?? null;
+  });
 
   constructor() {
     effect(() => {
       const projectId = this.projectId();
       if (!projectId) return;
       this.notificationsStore.loadAll({ projectId, filters: this.queryParams() });
+      this.phasesStore.loadAll(projectId);
     });
-  }
 
-  ngOnInit(): void {
-    this.phasesStore.loadAll(this.projectId());
     const phaseControl = this.form.get('phase_id');
     const notifyMentorsControl = this.form.get('notify_mentors');
     phaseControl?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((phaseId) => {
@@ -352,26 +350,9 @@ export class ProjectNotifications implements OnInit {
     return phase ? phase.name : 'Tous les participants';
   }
 
-  detailTitle(notification: INotification | null): string {
-    return notification?.title ?? '';
-  }
-
-  detailBody(notification: INotification | null): string {
-    return notification?.body ?? String(this.form.value.body ?? '');
-  }
-
   bodySafe(notification: INotification | null): SafeHtml {
-    return this.#sanitizer.bypassSecurityTrustHtml(this.detailBody(notification));
-  }
-
-  bodyPlainText(html: string | undefined, maxChars?: number): string {
-    if (!html) return '';
-    const text = html
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (maxChars != null && text.length > maxChars) return text.slice(0, maxChars) + '…';
-    return text;
+    const html = notification?.body ?? this.form.value.body ?? '';
+    return this.#sanitizer.bypassSecurityTrustHtml(html);
   }
 
   attachmentSummary(notification: INotification): string {
@@ -401,13 +382,12 @@ export class ProjectNotifications implements OnInit {
   }
 
   #buildNotifyDto(): NotifyParticipantsDto {
-    const rawPhase = this.form.value.phase_id;
+    const { phase_id: rawPhase, title, body, notify_mentors } = this.form.value;
     const phase_id = rawPhase ? String(rawPhase) : undefined;
-    const notify_mentors = phase_id ? !!this.form.value.notify_mentors : false;
     return {
-      title: String(this.form.value.title ?? ''),
-      body: String(this.form.value.body ?? ''),
-      ...(phase_id ? { phase_id, notify_mentors } : {})
+      title: String(title ?? ''),
+      body: String(body ?? ''),
+      ...(phase_id && { phase_id, notify_mentors: !!notify_mentors })
     };
   }
 }
