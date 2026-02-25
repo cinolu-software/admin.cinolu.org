@@ -6,17 +6,16 @@ import { TagsStore } from '../../store/tags.store';
 
 @Component({
   selector: 'app-article-add',
-  providers: [ArticlesStore, TagsStore],
-  imports: [ReactiveFormsModule, UiButton, UiInput, UiTextarea, UiMultiSelect, UiDatepicker, UiTextEditor],
   templateUrl: './add-article.html',
-
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ArticlesStore, TagsStore],
+  imports: [ReactiveFormsModule, UiButton, UiInput, UiTextarea, UiMultiSelect, UiDatepicker, UiTextEditor]
 })
 export class AddArticle {
   #fb = inject(FormBuilder);
-  form: FormGroup;
   store = inject(ArticlesStore);
   tagsStore = inject(TagsStore);
+  form: FormGroup;
 
   constructor() {
     this.form = this.#fb.group({
@@ -24,7 +23,7 @@ export class AddArticle {
       published_at: [new Date(), Validators.required],
       content: ['', Validators.required],
       summary: ['', Validators.required],
-      tags: [[], Validators.required]
+      tags: [[] as string[], Validators.required]
     });
     this.tagsStore.loadUpaginated();
   }
@@ -32,5 +31,32 @@ export class AddArticle {
   onAddArticle(): void {
     if (!this.form.valid) return;
     this.store.create(this.form.value);
+  }
+
+  onCreateTag(name: string): void {
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+
+    const existingTag = this.tagsStore
+      .allTags()
+      .find((tag) => tag.name.trim().toLowerCase() === trimmedName.toLowerCase());
+    const selectedTags = (this.form.get('tags')?.value as string[]) || [];
+
+    if (existingTag) {
+      if (!selectedTags.includes(existingTag.id)) {
+        this.form.patchValue({ tags: [...selectedTags, existingTag.id] });
+      }
+      return;
+    }
+
+    this.tagsStore.create({
+      payload: { name: trimmedName },
+      onSuccess: (tag) => {
+        const updatedTags = (this.form.get('tags')?.value as string[]) || [];
+        if (!updatedTags.includes(tag.id)) {
+          this.form.patchValue({ tags: [...updatedTags, tag.id] });
+        }
+      }
+    });
   }
 }

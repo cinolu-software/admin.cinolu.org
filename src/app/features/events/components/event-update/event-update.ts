@@ -1,5 +1,5 @@
 import { Component, inject, input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IEvent } from '@shared/models';
 import { extractCategoryIds, parseDate } from '@shared/helpers/form.helper';
 import { EventsStore } from '../../store/events.store';
@@ -13,7 +13,7 @@ import { UiButton, UiDatepicker, UiInput, UiMultiSelect, UiSelect, UiTextarea } 
   templateUrl: './event-update.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [EventsStore, CategoriesStore, UsersStore, SubprogramsStore],
-  imports: [FormsModule, ReactiveFormsModule, UiSelect, UiMultiSelect, UiInput, UiButton, UiTextarea, UiDatepicker]
+  imports: [ReactiveFormsModule, UiSelect, UiMultiSelect, UiInput, UiButton, UiTextarea, UiDatepicker]
 })
 export class EventUpdate implements OnInit {
   event = input.required<IEvent>();
@@ -22,17 +22,10 @@ export class EventUpdate implements OnInit {
   categoriesStore = inject(CategoriesStore);
   programsStore = inject(SubprogramsStore);
   usersStore = inject(UsersStore);
-  form = this.#initForm();
+  form: FormGroup;
 
-  ngOnInit(): void {
-    this.#patchForm(this.event());
-    this.programsStore.loadUnpaginated();
-    this.usersStore.loadStaff();
-    this.categoriesStore.loadUnpaginated();
-  }
-
-  #initForm(): FormGroup {
-    return this.#fb.group({
+  constructor() {
+    this.form = this.#fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
       place: [''],
@@ -41,15 +34,16 @@ export class EventUpdate implements OnInit {
       objectives: [''],
       duration_hours: [null, Validators.required],
       selection_criteria: [''],
-      started_at: ['', Validators.required],
-      ended_at: ['', Validators.required],
+      started_at: [null as Date | null, Validators.required],
+      ended_at: [null as Date | null, Validators.required],
       program: ['', Validators.required],
-      categories: [[], Validators.required],
+      categories: [[] as string[], Validators.required],
       event_manager: ['']
     });
   }
 
-  #patchForm(event: IEvent): void {
+  ngOnInit(): void {
+    const event = this.event();
     this.form.patchValue({
       ...event,
       started_at: parseDate(event.started_at),
@@ -58,9 +52,38 @@ export class EventUpdate implements OnInit {
       categories: extractCategoryIds(event.categories),
       event_manager: event.event_manager?.id ?? ''
     });
+    this.programsStore.loadUnpaginated();
+    this.usersStore.loadStaff();
+    this.categoriesStore.loadUnpaginated();
   }
 
   onSubmit(): void {
     if (this.form.valid) this.store.update(this.form.value);
+  }
+
+  onCreateCategory(name: string): void {
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+
+    const existingCategory = this.categoriesStore
+      .allCategories()
+      .find((category) => category.name.trim().toLowerCase() === trimmedName.toLowerCase());
+    const selectedCategories = (this.form.get('categories')?.value as string[]) ?? [];
+
+    if (existingCategory) {
+      if (!selectedCategories.includes(existingCategory.id)) {
+        this.form.patchValue({ categories: [...selectedCategories, existingCategory.id] });
+      }
+      return;
+    }
+
+    this.categoriesStore.create({
+      payload: { name: trimmedName },
+      onSuccess: (category) => {
+        if (!selectedCategories.includes(category.id)) {
+          this.form.patchValue({ categories: [...selectedCategories, category.id] });
+        }
+      }
+    });
   }
 }

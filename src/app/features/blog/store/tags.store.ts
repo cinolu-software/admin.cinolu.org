@@ -57,17 +57,22 @@ export const TagsStore = signalStore(
         })
       )
     ),
-    create: rxMethod<{ payload: ArticleTagDto; onSuccess: () => void }>(
+    create: rxMethod<{ payload: ArticleTagDto; onSuccess: (tag: ITag) => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ payload, onSuccess }) =>
           _http.post<{ data: ITag }>('tags', payload).pipe(
             map(({ data }) => {
               const [tags, count] = store.tags();
-              patchState(store, { tags: [[data, ...tags], count + 1] });
+              const allTags = store.allTags();
+              const hasTag = allTags.some((tag) => tag.id === data.id);
+              patchState(store, {
+                tags: [[data, ...tags], count + 1],
+                allTags: hasTag ? allTags : [data, ...allTags]
+              });
               _toast.showSuccess('Tag ajoutée avec succès');
               patchState(store, { isLoading: false });
-              onSuccess();
+              onSuccess(data);
             }),
             catchError(() => {
               _toast.showError("Échec de l'ajout du tag");

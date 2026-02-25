@@ -4,47 +4,52 @@
       <app-ui-input
         [required]="true"
         label="Titre de l'article"
-        [id]="'title'"
+        id="title"
         formControlName="title"
-        [placeholder]="'Ex: Les tendances du développement web en 2025'" />
+        placeholder="Ex: Les tendances du développement web en 2025" />
       <div class="grid md:grid-cols-2 gap-6">
         <app-ui-multi-select
           [required]="true"
           label="Tags de l'article"
-          [id]="'tags'"
+          id="tags"
           [options]="tagsStore.allTags()"
-          [optionLabel]="'name'"
-          [optionValue]="'id'"
-          [placeholder]="'Sélectionnez des tags'"
+          optionLabel="name"
+          optionValue="id"
+          [allowCreate]="true"
+          [createDisabled]="tagsStore.isLoading()"
+          createPlaceholder="Ajouter un tag"
+          createButtonLabel="Ajouter"
+          (createOption)="onCreateTag($event)"
+          placeholder="Sélectionnez des tags"
           formControlName="tags"
-          [display]="'chip'" />
+          display="chip" />
         <app-ui-datepicker
           [required]="true"
           label="Date de publication"
-          [id]="'published_at'"
+          id="published_at"
           formControlName="published_at"
-          [placeholder]="'Sélectionnez une date'" />
+          placeholder="Sélectionnez une date" />
       </div>
       <app-ui-textarea
         [required]="true"
         label="Résumé"
-        [id]="'summary'"
+        id="summary"
         formControlName="summary"
         [rows]="6"
-        [placeholder]="'Rédigez un résumé captivant de votre article...'"></app-ui-textarea>
+        placeholder="Rédigez un résumé captivant de votre article..."></app-ui-textarea>
       <app-ui-text-editor
         [required]="true"
         label="Contenu de l'article"
         formControlName="content"
-        [minHeight]="'400px'"
-        [placeholder]="'Commencez à écrire votre article...'"
-        [id]="'content'" />
+        minHeight="400px"
+        placeholder="Commencez à écrire votre article..."
+        id="content" />
     </div>
     <div class="flex justify-end gap-3 border-t border-gray-100 pt-6">
       <app-ui-button
-        [type]="'submit'"
-        [variant]="'primary'"
-        [size]="'small'"
+        type="submit"
+        variant="primary"
+        size="small"
         [loading]="store.isLoading()"
         [disabled]="store.isLoading() || form.invalid">
         Publier l'article

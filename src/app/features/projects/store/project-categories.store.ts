@@ -59,16 +59,22 @@ export const CategoriesStore = signalStore(
         )
       )
     ),
-    create: rxMethod<{ payload: ProjectCategoryDto; onSuccess: () => void }>(
+    create: rxMethod<{ payload: ProjectCategoryDto; onSuccess: (category: ICategory) => void }>(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ payload, onSuccess }) =>
           _http.post<{ data: ICategory }>('project-categories', payload).pipe(
             map(({ data }) => {
               const [list, count] = store.categories();
-              patchState(store, { isLoading: false, categories: [[data, ...list], count + 1] });
+              const allCategories = store.allCategories();
+              const hasCategory = allCategories.some((category) => category.id === data.id);
+              patchState(store, {
+                isLoading: false,
+                categories: [[data, ...list], count + 1],
+                allCategories: hasCategory ? allCategories : [data, ...allCategories]
+              });
               _toast.showSuccess('Catégorie ajoutée avec succès');
-              onSuccess();
+              onSuccess(data);
             }),
             catchError(() => {
               _toast.showError("Échec de l'ajout de la catégorie");

@@ -3,84 +3,77 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <app-ui-input
         [required]="true"
-        [id]="'name'"
+        id="name"
         label="Titre du projet"
         formControlName="name"
         placeholder="Ex: Programme d'incubation 2024" />
       <app-ui-input
         [required]="true"
         label="Durée estimée (en heures)"
-        [id]="'duration_hours'"
+        id="duration_hours"
         formControlName="duration_hours"
         placeholder="Ex: 120" />
       <app-ui-select
         [required]="true"
         label="Programme associé"
-        [id]="'program'"
+        id="program"
         [options]="programsStore.subprograms()"
-        [optionLabel]="'name'"
-        [optionValue]="'id'"
+        optionLabel="name"
+        optionValue="id"
         formControlName="program"
         placeholder="Sélectionner un programme" />
       <app-ui-select
         [required]="true"
         label="Chef de projet"
-        [id]="'project_manager'"
+        id="project_manager"
         [options]="usersStore.staff()"
-        [optionLabel]="'name'"
-        [optionValue]="'id'"
+        optionLabel="name"
+        optionValue="id"
         formControlName="project_manager"
         placeholder="Sélectionner un responsable" />
       <app-ui-multi-select
         [required]="true"
         label="Catégories"
-        [id]="'categories'"
+        id="categories"
         [options]="categoriesStore.allCategories()"
-        [optionLabel]="'name'"
-        [optionValue]="'id'"
+        optionLabel="name"
+        optionValue="id"
+        [allowCreate]="true"
+        [createDisabled]="categoriesStore.isLoading()"
+        createPlaceholder="Ajouter une catégorie"
+        createButtonLabel="Ajouter"
+        (createOption)="onCreateCategory($event)"
         formControlName="categories"
         placeholder="Choisir une ou plusieurs catégories" />
-      <app-ui-datepicker
-        [required]="true"
-        [id]="'started_at'"
-        label="Date de lancement"
-        showIcon
-        iconDisplay="input"
-        formControlName="started_at" />
-      <app-ui-datepicker
-        [required]="true"
-        [id]="'ended_at'"
-        label="Date de clôture"
-        showIcon
-        iconDisplay="input"
-        formControlName="ended_at" />
+      <app-ui-datepicker [required]="true" id="started_at" label="Date de lancement" formControlName="started_at" />
+      <app-ui-datepicker [required]="true" id="ended_at" label="Date de clôture" formControlName="ended_at" />
     </div>
     <div class="grid grid-cols-1 gap-6">
       <app-ui-textarea
         [required]="true"
         label="Présentation générale"
-        [id]="'description'"
+        id="description"
         formControlName="description"
         placeholder="Présentez le projet de manière claire et concise..." />
       <app-ui-textarea
         label="Contexte et justification"
-        [id]="'context'"
+        id="context"
         formControlName="context"
         placeholder="Décrivez le contexte dans lequel s'inscrit ce projet..." />
       <app-ui-textarea
         label="Objectifs visés"
-        [id]="'objectives'"
+        id="objectives"
         formControlName="objectives"
         placeholder="Listez les objectifs principaux et les résultats attendus..." />
       <app-ui-textarea
         label="Critères d'éligibilité"
-        [id]="'selection_criteria'"
+        id="selection_criteria"
         formControlName="selection_criteria"
         placeholder="Définissez les conditions d'accès et les prérequis..." />
     </div>
     <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
       <app-ui-button
-        [size]="'small'"
+        size="small"
         [loading]="store.isLoading()"
         [disabled]="store.isLoading() || form.invalid"
         variant="primary"
