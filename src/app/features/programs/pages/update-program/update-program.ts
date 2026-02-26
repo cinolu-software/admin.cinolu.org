@@ -57,6 +57,7 @@ export class UpdateProgram implements OnInit {
 
   ngOnInit(): void {
     if (this.slug) this.store.loadOne(this.slug);
+    this.store.loadUnpaginated();
     this.categoriesStore.loadUnpaginated();
   }
 

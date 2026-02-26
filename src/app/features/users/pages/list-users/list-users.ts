@@ -1,5 +1,15 @@
-import { Component, computed, DestroyRef, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { LucideAngularModule, Trash, Download, Search, Funnel, Pencil } from 'lucide-angular';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+  viewChild,
+  ElementRef
+} from '@angular/core';
+import { LucideAngularModule, Trash, Download, Search, Funnel, Pencil, Upload } from 'lucide-angular';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UsersStore } from '../../store/users.store';
@@ -39,7 +49,9 @@ export class ListUsers {
   searchForm: FormGroup;
   store = inject(UsersStore);
   itemsPerPage = 50;
-  icons = { Pencil, Trash, Search, Funnel, Download };
+  icons = { Pencil, Trash, Search, Funnel, Download, Upload };
+  selectedCsvFile = signal<File | null>(null);
+  csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   queryParams = signal<FilterUsersDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
     q: this.#route.snapshot.queryParamMap.get('q')
@@ -89,6 +101,33 @@ export class ListUsers {
       rejectLabel: 'Annuler',
       accept: () => {
         this.store.delete(userId);
+      }
+    });
+  }
+
+  triggerCsvFileSelect(): void {
+    this.csvFileInput()?.nativeElement?.click();
+  }
+
+  onCsvFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    this.selectedCsvFile.set(file?.name.toLowerCase().endsWith('.csv') ? file : null);
+    input.value = '';
+  }
+
+  clearCsvSelection(): void {
+    this.selectedCsvFile.set(null);
+  }
+
+  onImportCsv(): void {
+    const file = this.selectedCsvFile();
+    if (!file) return;
+    this.store.importCsv({
+      file,
+      onSuccess: () => {
+        this.store.loadAll(this.queryParams());
+        this.clearCsvSelection();
       }
     });
   }

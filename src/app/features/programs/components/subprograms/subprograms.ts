@@ -1,13 +1,23 @@
-import { Component, Input, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
-import { LucideAngularModule, Pencil, Trash, Eye, Star, Search, Funnel, Plus } from 'lucide-angular';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Input, inject, signal, ChangeDetectionStrategy, computed, input } from '@angular/core';
+import { LucideAngularModule, Pencil, Trash, Eye, Star, Plus } from 'lucide-angular';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SubprogramsStore } from '../../store/subprograms.store';
 import { ISubprogram } from '@shared/models';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { IProgram } from '@shared/models';
 import { ConfirmationService } from '@shared/services/confirmation';
 import { UiTableSkeleton } from '@shared/ui/table-skeleton/table-skeleton';
-import { UiButton, UiInput, UiConfirmDialog, FileUpload, UiAvatar, UiTextarea, UiBadge, UiPagination } from '@ui';
+import {
+  UiButton,
+  UiInput,
+  UiConfirmDialog,
+  FileUpload,
+  UiAvatar,
+  UiTextarea,
+  UiBadge,
+  UiPagination,
+  UiSelect
+} from '@ui';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -27,39 +37,34 @@ import { DatePipe } from '@angular/common';
     UiAvatar,
     UiTableSkeleton,
     UiTextarea,
-    UiButton,
     UiBadge,
-    UiPagination
+    UiPagination,
+    UiSelect
   ]
 })
 export class ListSubprograms {
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
-  store = inject(SubprogramsStore);
+  readonly store = inject(SubprogramsStore);
+  programs = input<IProgram[]>([]);
 
   @Input({ required: true })
   set program(value: IProgram | null) {
-    this.programSignal.set(value);
     const programId = value?.id || '';
-    this.createForm.patchValue({ programId });
+    this.form.patchValue({ programId });
     if (programId) {
       this.loadAll(programId);
     }
   }
-
-  programSignal = signal<IProgram | null>(null);
-  createForm: FormGroup = this.#fb.group({
+  form = this.#fb.nonNullable.group({
     programId: ['', Validators.required],
     name: ['', Validators.required],
     description: ['', Validators.required]
   });
-  updateForm: FormGroup = this.#fb.group({
-    name: ['', Validators.required],
-    description: ['', Validators.required]
-  });
-  icons = { Pencil, Plus, Trash, Eye, Star, Search, Funnel };
+  icons = { Pencil, Plus, Trash, Eye, Star };
   isCreating = signal(false);
-  editingSubprogramId = signal<string | null>(null);
+  editingSubprogram = signal<ISubprogram | null>(null);
+  isFormVisible = computed(() => this.isCreating() || !!this.editingSubprogram());
   currentPage = signal(1);
   itemsPerPage = 10;
 
@@ -71,7 +76,7 @@ export class ListSubprograms {
   });
 
   loadAll(programId?: string): void {
-    const id = programId ?? this.programSignal()?.id;
+    const id = programId;
     if (!id) return;
     this.store.loadAll(id);
   }
@@ -84,91 +89,70 @@ export class ListSubprograms {
     this.store.publish(id);
   }
 
-  onFileUploadLoaded(): void {
-    this.loadAll();
-  }
-
   onToggleCreation(): void {
-    this.isCreating.update((visible) => !visible);
-    if (!this.isCreating()) {
-      this.createForm.reset({
-        programId: this.programSignal()?.id || '',
-        name: '',
-        description: ''
-      });
+    if (this.isCreating()) {
+      this.onCancelForm();
+      return;
     }
+    this.editingSubprogram.set(null);
+    this.isCreating.set(true);
+    this.resetForm();
   }
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
   }
 
-  onCancelCreation(): void {
+  onCancelForm(): void {
     this.isCreating.set(false);
-    this.createForm.reset({
-      programId: this.programSignal()?.id || '',
-      name: '',
-      description: ''
-    });
-  }
-
-  onCreate(): void {
-    if (this.createForm.invalid) return;
-    const payload = this.createForm.getRawValue();
-    if (!payload.programId) {
-      payload.programId = this.programSignal()?.id || '';
-    }
-    this.store.create({
-      payload,
-      onSuccess: () => {
-        this.onCancelCreation();
-        this.loadAll();
-      }
-    });
+    this.editingSubprogram.set(null);
+    this.resetForm();
   }
 
   onEdit(subprogram: ISubprogram): void {
-    this.editingSubprogramId.set(subprogram.id);
-    this.updateForm.patchValue({
+    this.editingSubprogram.set(subprogram);
+    this.isCreating.set(true);
+    this.form.patchValue({
+      programId: subprogram.program?.id || '',
       name: subprogram.name,
       description: subprogram.description
     });
   }
 
-  onCancelUpdate(): void {
-    this.editingSubprogramId.set(null);
-    this.updateForm.reset({
-      name: '',
-      description: ''
-    });
-  }
+  onSubmit(): void {
+    if (this.form.invalid) return;
+    const values = this.form.getRawValue();
+    const programId = values.programId || '';
+    const editing = this.editingSubprogram();
 
-  onUpdate(): void {
-    if (this.updateForm.invalid) return;
-    const payload = this.updateForm.getRawValue();
-    const subprogramId = this.editingSubprogramId();
-    if (!subprogramId) return;
-    this.store.update({
+    if (editing) {
+      this.store.update({
+        payload: {
+          id: editing.id,
+          programId,
+          name: values.name,
+          description: values.description
+        },
+        onSuccess: () => {
+          this.onCancelForm();
+          this.loadAll();
+        }
+      });
+      return;
+    }
+
+    this.store.create({
       payload: {
-        id: subprogramId,
-        programId: this.programSignal()?.id || '',
-        ...payload
+        id: '',
+        programId,
+        name: values.name,
+        description: values.description
       },
       onSuccess: () => {
-        this.onCancelUpdate();
+        this.onCancelForm();
         this.loadAll();
       }
     });
-  }
-
-  isEditing(subprogramId: string): boolean {
-    return this.editingSubprogramId() === subprogramId;
-  }
-
-  getEditingSubprogram(): ISubprogram | null {
-    const id = this.editingSubprogramId();
-    if (!id) return null;
-    return this.store.subprograms().find((sp) => sp.id === id) || null;
   }
 
   onDelete(subprogramId: string): void {
@@ -182,5 +166,9 @@ export class ListSubprograms {
         this.loadAll();
       }
     });
+  }
+
+  private resetForm(): void {
+    this.form.reset({ programId: '', name: '', description: '' });
   }
 }

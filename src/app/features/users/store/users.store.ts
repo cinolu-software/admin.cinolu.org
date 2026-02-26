@@ -13,13 +13,21 @@ import { UserDto } from '../dto/users/user.dto';
 interface IUsersStore {
   isLoading: boolean;
   isUpdating: boolean;
+  isImportingCsv: boolean;
   users: [IUser[], number];
   user: IUser | null;
   staff: IUser[];
 }
 
 export const UsersStore = signalStore(
-  withState<IUsersStore>({ isLoading: false, isUpdating: false, users: [[], 0], user: null, staff: [] }),
+  withState<IUsersStore>({
+    isLoading: false,
+    isUpdating: false,
+    isImportingCsv: false,
+    users: [[], 0],
+    user: null,
+    staff: []
+  }),
   withProps(() => ({
     _http: inject(HttpClient),
     _toast: inject(ToastrService),
@@ -150,6 +158,27 @@ export const UsersStore = signalStore(
             }),
             catchError(() => {
               patchState(store, { isLoading: false });
+              return of(null);
+            })
+          );
+        })
+      )
+    ),
+    importCsv: rxMethod<{ file: File; onSuccess: () => void }>(
+      pipe(
+        tap(() => patchState(store, { isImportingCsv: true })),
+        switchMap(({ file, onSuccess }) => {
+          const formData = new FormData();
+          formData.append('file', file);
+          return _http.post<unknown>('users/import-csv', formData).pipe(
+            tap(() => {
+              _toast.showSuccess('Utilisateurs importés avec succès');
+              patchState(store, { isImportingCsv: false });
+              onSuccess();
+            }),
+            catchError(() => {
+              _toast.showError("Une erreur s'est produite lors de l'import des utilisateurs");
+              patchState(store, { isImportingCsv: false });
               return of(null);
             })
           );

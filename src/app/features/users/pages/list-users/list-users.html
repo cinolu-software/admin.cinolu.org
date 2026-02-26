@@ -1,10 +1,42 @@
 @let isLoading = store.isLoading();
+@let isImportingCsv = store.isImportingCsv();
 @let userCount = store.users()[1];
 @let users = store.users()[0];
 <div class="dashboard-main-content">
+  <input
+    #csvFileInput
+    [id]="'users-csv-input'"
+    type="file"
+    accept=".csv"
+    class="sr-only"
+    (change)="onCsvFileSelected($event)"
+    [disabled]="isImportingCsv" />
+
   <div class="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-4">
     <app-ui-badge [label]="userCount.toString() + ' Utilisateurs'" />
     <div class="flex items-center gap-2">
+      <app-ui-button
+        variant="primary"
+        [outlined]="true"
+        size="small"
+        [loading]="isImportingCsv"
+        [disabled]="isImportingCsv"
+        (clicked)="triggerCsvFileSelect()">
+        <i-lucide [name]="icons.Upload" class="size-4" />
+        @if (selectedCsvFile()) {
+          Changer le fichier
+        } @else {
+          Importer CSV
+        }
+      </app-ui-button>
+      @if (selectedCsvFile()) {
+        <app-ui-button variant="primary" size="small" [disabled]="isImportingCsv" (clicked)="onImportCsv()">
+          Importer
+        </app-ui-button>
+        <app-ui-button variant="primary" [outlined]="true" size="small" (clicked)="clearCsvSelection()">
+          Annuler
+        </app-ui-button>
+      }
       <app-ui-button
         variant="primary"
         [outlined]="true"
@@ -17,6 +49,11 @@
       <a [routerLink]="'/users/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel utilisateur </a>
     </div>
   </div>
+  @if (selectedCsvFile()) {
+    <p class="text-sm text-gray-500 mb-4 truncate max-w-[400px]" [title]="selectedCsvFile()?.name">
+      {{ selectedCsvFile()?.name }}
+    </p>
+  }
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
       <div class="search-input-icon">

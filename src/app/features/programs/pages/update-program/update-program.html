@@ -76,6 +76,6 @@
     </div>
   }
   @if (activeTab() === 'subprograms') {
-    <app-list-subprograms [program]="program" />
+    <app-list-subprograms [program]="program" [programs]="store.allPrograms()" />
   }
 </div>
