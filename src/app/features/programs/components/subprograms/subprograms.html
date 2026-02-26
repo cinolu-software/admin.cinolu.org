@@ -3,7 +3,7 @@
 @let editing = editingSubprogram();
 <div class="pt-6 pb-4 border-b border-gray-100">
   <div class="flex justify-end px-6">
-    <app-ui-button [disabled]="!program" (clicked)="onToggleCreation()" variant="primary" size="small">
+    <app-ui-button [disabled]="!programId" (clicked)="onToggleCreation()" variant="primary" size="small">
       {{ isCreating() ? 'Fermer' : 'Ajouter un sous-programme' }}
     </app-ui-button>
   </div>
@@ -79,7 +79,7 @@
         variant="primary"
         [outlined]="true"
         size="small"
-        [disabled]="!program">
+        [disabled]="!programId">
         Créer un sous-programme
       </app-ui-button>
     </div>

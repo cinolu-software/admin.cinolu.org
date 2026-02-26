@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GENDERS } from '@shared/data';
 import { markAllAsTouched, parseDate } from '@shared/helpers';
@@ -13,13 +14,25 @@ import {
   CreateMentorDto,
   MentorRequestDto
 } from '../../dto/mentors/create-mentor.dto';
+import { UpdateMentorSkeleton } from '../../ui/update-mentor-skeleton/update-mentor-skeleton';
 
 @Component({
   selector: 'app-update-mentor',
   templateUrl: './update-mentor.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MentorsStore, ExpertisesStore],
-  imports: [UiInput, UiTextarea, UiDatepicker, UiSelect, UiMultiSelect, UiCheckbox, UiButton, ReactiveFormsModule]
+  imports: [
+    UiInput,
+    UiTextarea,
+    UiDatepicker,
+    UiSelect,
+    UiMultiSelect,
+    UiCheckbox,
+    UiButton,
+    ReactiveFormsModule,
+    UpdateMentorSkeleton,
+    RouterLink
+  ]
 })
 export class UpdateMentor implements OnInit {
   #route = inject(ActivatedRoute);

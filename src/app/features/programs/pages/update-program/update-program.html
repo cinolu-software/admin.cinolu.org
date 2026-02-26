@@ -75,7 +75,7 @@
       </form>
     </div>
   }
-  @if (activeTab() === 'subprograms') {
-    <app-list-subprograms [program]="program" [programs]="store.allPrograms()" />
+  @if (activeTab() === 'subprograms' && program) {
+    <app-list-subprograms [programId]="program.id" [programs]="store.allPrograms()" />
   }
 </div>

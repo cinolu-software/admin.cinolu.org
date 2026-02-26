@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal, ChangeDetectionStrategy, computed, input } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, computed, input, OnInit } from '@angular/core';
 import { LucideAngularModule, Pencil, Trash, Eye, Star, Plus } from 'lucide-angular';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SubprogramsStore } from '../../store/subprograms.store';
@@ -42,21 +42,12 @@ import { DatePipe } from '@angular/common';
     UiSelect
   ]
 })
-export class ListSubprograms {
+export class ListSubprograms implements OnInit {
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   readonly store = inject(SubprogramsStore);
   programs = input<IProgram[]>([]);
-
-  @Input({ required: true })
-  set program(value: IProgram | null) {
-    const programId = value?.id || '';
-    this.form.patchValue({ programId });
-    if (programId) {
-      this.loadAll(programId);
-    }
-  }
-
+  programId = input.required<string>();
   form = this.#fb.nonNullable.group({
     programId: ['', Validators.required],
     name: ['', Validators.required],
@@ -68,13 +59,16 @@ export class ListSubprograms {
   isFormVisible = computed(() => this.isCreating() || !!this.editingSubprogram());
   currentPage = signal(1);
   itemsPerPage = 10;
-
   paginatedSubprograms = computed(() => {
     const subprograms = this.store.subprograms();
     const start = (this.currentPage() - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     return subprograms.slice(start, end);
   });
+
+  ngOnInit(): void {
+    this.loadAll(this.programId());
+  }
 
   loadAll(programId?: string): void {
     const id = programId;
