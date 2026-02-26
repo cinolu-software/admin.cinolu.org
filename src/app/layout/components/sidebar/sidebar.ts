@@ -13,28 +13,6 @@ import { NgOptimizedImage } from '@angular/common';
   selector: 'app-sidebar',
   imports: [RouterModule, LucideAngularModule, NgOptimizedImage],
   templateUrl: './sidebar.html',
-  styles: [`
-    .sidebar-submenu {
-      display: grid;
-      grid-template-rows: 0fr;
-      opacity: 0;
-      transform: translateY(-4px);
-      transition:
-        grid-template-rows 220ms ease,
-        opacity 180ms ease,
-        transform 180ms ease;
-    }
-
-    .sidebar-submenu.is-open {
-      grid-template-rows: 1fr;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .sidebar-submenu__inner {
-      overflow: hidden;
-    }
-  `],
 
   changeDetection: ChangeDetectionStrategy.OnPush
 })

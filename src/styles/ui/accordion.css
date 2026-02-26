@@ -1,0 +1,16 @@
+@layer components {
+  .accordion-content {
+    @apply grid opacity-0;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 220ms ease, opacity 180ms ease;
+  }
+
+  .accordion-content.is-open {
+    @apply opacity-100;
+    grid-template-rows: 1fr;
+  }
+
+  .accordion-content__inner {
+    @apply overflow-hidden;
+  }
+}
