@@ -6,7 +6,6 @@ import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IMentorProfile, IPhase } from '@shared/models';
 import { PhaseDto } from '../dto/phases/phase.dto';
 import { HttpClient } from '@angular/common/http';
-import { parseDate } from '@shared/helpers';
 
 interface IPhasesStore {
   isLoading: boolean;
@@ -30,7 +29,7 @@ export const PhasesStore = signalStore(
   })),
   withComputed(({ phases }) => ({
     sortedPhases: computed(() =>
-      phases().sort((a, b) => parseDate(a.started_at).getTime() - parseDate(b.started_at).getTime())
+      phases().sort((a, b) => new Date(a.started_at).getTime() - new Date(b.started_at).getTime())
     )
   })),
   withMethods(({ _http, _toast, ...store }) => ({
