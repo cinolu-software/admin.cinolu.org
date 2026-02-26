@@ -4,16 +4,18 @@ import { SquarePen, Images, ChartColumn, Star, Eye, Layers, Users, Bell, LucideA
 import { UiTabs, UiButton } from '@shared/ui';
 import { GalleryStore } from '../../store/project-gallery.store';
 import { ProjectsStore } from '../../store/projects.store';
-import { ProjectSheet } from '../../components/project-sheet/project-sheet';
-import { ProjectGallery } from '../../components/project-gallery/project-gallery';
-import { ProjectUpdate } from '../../components/project-update/project-update';
-import { Phases } from '../../components/project-phases/phases';
 import { ProjectDetailsSkeleton } from '../../ui/project-details-skeleton/project-details-skeleton';
-import { Participations } from '@features/projects/components/project-participations/participations';
-import { ProjectNotifications } from '@features/projects/components/project-notifications/project-notifications';
 import { SubprogramsStore } from '@features/programs/store/subprograms.store';
 import { CategoriesStore } from '@features/projects/store/project-categories.store';
 import { UsersStore } from '@features/users/store/users.store';
+import {
+  ProjectSheet,
+  ProjectGallery,
+  ProjectUpdate,
+  Phases,
+  ProjectNotifications
+} from '@features/projects/components';
+import { Participations } from '@features/projects/components/project-participations/participations';
 
 @Component({
   selector: 'app-project-details',
@@ -31,7 +33,7 @@ import { UsersStore } from '@features/users/store/users.store';
     ProjectDetailsSkeleton,
     LucideAngularModule,
     UiButton
-]
+  ]
 })
 export class ProjectDetails implements OnInit {
   #route = inject(ActivatedRoute);
