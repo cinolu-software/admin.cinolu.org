@@ -36,6 +36,12 @@
     @apply scroll-smooth hyphens-auto;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   .filepond--drop-label {
     @apply text-gray-700;
   }
@@ -84,6 +90,7 @@
   }
 
   .scrollbar-hide {
+    scrollbar-width: none;
     -ms-overflow-style: none;
   }
 
@@ -202,5 +209,11 @@
 
   .sidebar-submenu__inner {
     @apply overflow-hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-submenu {
+      transition: none;
+    }
   }
 }

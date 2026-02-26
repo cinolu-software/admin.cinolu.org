@@ -2,14 +2,20 @@
   .ui-input,
   .ui-textarea,
   .ui-select,
-  .ui-datepicker {
+  .ui-datepicker,
+  .ui-select-trigger,
+  .ui-multi-select-trigger {
     @apply w-full px-3.5 py-2.5 text-[15px] leading-6 text-slate-900 bg-white border border-slate-300 rounded-lg font-[inherit]   shadow-sm hover:border-slate-400/90 hover:shadow-sm transition-colors duration-200;
   }
 
   .ui-input:focus,
   .ui-textarea:focus,
   .ui-select:focus,
-  .ui-datepicker:focus {
+  .ui-datepicker:focus,
+  .ui-select-trigger:focus,
+  .ui-multi-select-trigger:focus,
+  .ui-select-trigger:focus-visible,
+  .ui-multi-select-trigger:focus-visible {
     @apply outline-none border-primary-500 ring-2 ring-offset-1 ring-primary-200 shadow-sm;
   }
 
@@ -21,21 +27,31 @@
   .ui-input-invalid,
   .ui-textarea-invalid,
   .ui-select-invalid,
-  .ui-datepicker-invalid {
+  .ui-datepicker-invalid,
+  .ui-select-trigger.ui-select-invalid,
+  .ui-multi-select-trigger.ui-select-invalid {
     @apply border-red-500 bg-red-50;
   }
 
   .ui-input-invalid:focus,
   .ui-textarea-invalid:focus,
   .ui-select-invalid:focus,
-  .ui-datepicker-invalid:focus {
+  .ui-datepicker-invalid:focus,
+  .ui-select-trigger.ui-select-invalid:focus,
+  .ui-multi-select-trigger.ui-select-invalid:focus,
+  .ui-select-trigger.ui-select-invalid:focus-visible,
+  .ui-multi-select-trigger.ui-select-invalid:focus-visible {
     @apply border-red-600 ring-2 ring-offset-1 ring-red-200 shadow-md;
   }
 
   .ui-input-disabled,
   .ui-textarea-disabled,
   .ui-select-disabled,
-  .ui-datepicker-disabled {
+  .ui-datepicker-disabled,
+  .ui-select-wrapper.ui-select-disabled .ui-select-trigger,
+  .ui-select-wrapper.ui-select-disabled .ui-multi-select-trigger,
+  .ui-select-trigger:disabled,
+  .ui-multi-select-trigger:disabled {
     @apply bg-slate-50 border-slate-200 cursor-not-allowed opacity-60 shadow-none;
   }
 

@@ -1,6 +1,7 @@
 @layer utilities {
   .ui-button {
     @apply inline-flex items-center justify-center gap-1 font-medium rounded-lg border cursor-pointer leading-6 relative overflow-hidden shadow-sm;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
   }
 
   .ui-button::before {
@@ -10,6 +11,12 @@
 
   .ui-button:hover:not(.ui-button-disabled)::before {
     @apply opacity-100 transform-gpu translate-x-full;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-button::before {
+      @apply transition-none;
+    }
   }
 
   .ui-button-small {

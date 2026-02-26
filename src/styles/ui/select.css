@@ -13,22 +13,9 @@
 
   /* Trigger Button */
   .ui-select-trigger {
-    @apply relative w-full px-3.5 py-2.5 text-[15px] leading-6 text-slate-900 bg-white border border-slate-300 rounded-lg font-[inherit] transition-all duration-300 ease-in-out shadow-sm cursor-pointer flex items-center justify-between;
+    @apply relative cursor-pointer flex items-center justify-between;
     padding-right: 3rem;
     min-height: 2.75rem;
-  }
-
-  .ui-select-trigger:hover:not(:disabled) {
-    @apply border-slate-400 shadow-md;
-  }
-
-  .ui-select-trigger:focus {
-    @apply outline-none border-primary-500 ring-2 ring-offset-1 ring-primary-200 shadow-md;
-  }
-
-  .ui-select-trigger:disabled,
-  .ui-select-wrapper.ui-select-disabled .ui-select-trigger {
-    @apply bg-slate-50 border-slate-200 cursor-not-allowed opacity-60 shadow-none;
   }
 
   .ui-select-placeholder {
@@ -66,10 +53,10 @@
   .ui-select-panel {
     @apply absolute z-50 w-full mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-60 overflow-auto;
     top: 100%;
-    animation: fadeInUp 0.2s ease-out;
+    animation: ui-select-panel-enter 0.2s ease-out;
   }
 
-  @keyframes fadeInUp {
+  @keyframes ui-select-panel-enter {
     from {
       opacity: 0;
       transform: translateY(-8px);
@@ -169,20 +156,9 @@
   }
 
   /* Invalid state */
-  .ui-select-invalid {
-    @apply border-red-500 bg-red-50/40;
-  }
-
-  .ui-select-invalid:hover:not(:disabled) {
-    @apply border-red-600 shadow-md;
-  }
-
-  .ui-select-invalid:focus {
-    @apply border-red-600 ring-2 ring-offset-1 ring-red-200 shadow-md;
-  }
-
   .ui-select-wrapper .ui-select-invalid ~ .ui-select-icon,
-  .ui-select-container:has(.ui-select-invalid:focus) .ui-select-icon {
+  .ui-select-container:has(.ui-select-invalid:focus, .ui-select-invalid:focus-visible)
+    .ui-select-icon {
     @apply text-red-500;
   }
 }

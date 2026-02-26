@@ -1,21 +1,7 @@
 @layer utilities {
   .ui-select-wrapper .ui-multi-select-trigger {
-    @apply w-full px-3.5 py-2.5 text-[15px] leading-6 text-slate-900 bg-white border border-slate-300 rounded-lg font-[inherit] transition-all duration-300 ease-in-out shadow-sm cursor-pointer min-h-[42px] flex items-center justify-between relative;
+    @apply cursor-pointer min-h-[42px] flex items-center justify-between relative;
     padding-right: 3rem;
-  }
-
-  .ui-select-wrapper .ui-multi-select-trigger:hover:not(:disabled) {
-    @apply border-slate-400 shadow-md;
-  }
-
-  .ui-select-wrapper .ui-multi-select-trigger:focus,
-  .ui-select-wrapper .ui-multi-select-trigger:focus-visible {
-    @apply outline-none border-primary-500 ring-2 ring-offset-1 ring-primary-200 shadow-md;
-  }
-
-  .ui-select-wrapper.ui-select-disabled .ui-multi-select-trigger,
-  .ui-select-wrapper .ui-multi-select-trigger:disabled {
-    @apply bg-slate-50 border-slate-200 cursor-not-allowed opacity-60 shadow-none;
   }
 
   .ui-multi-select-placeholder {
@@ -119,20 +105,12 @@
     @apply cursor-not-allowed opacity-50;
   }
 
-  .ui-select-wrapper .ui-multi-select-trigger.ui-select-invalid {
-    @apply border-red-500 bg-red-50/40;
-  }
-
-  .ui-select-wrapper .ui-multi-select-trigger.ui-select-invalid:hover:not(:disabled) {
-    @apply border-red-600 shadow-md;
-  }
-
-  .ui-select-wrapper .ui-multi-select-trigger.ui-select-invalid:focus {
-    @apply border-red-600 ring-2 ring-offset-1 ring-red-200 shadow-md;
-  }
-
   .ui-select-wrapper .ui-multi-select-trigger.ui-select-invalid ~ .ui-select-icon,
-  .ui-select-container:has(.ui-multi-select-trigger.ui-select-invalid:focus) .ui-select-icon {
+  .ui-select-container:has(
+      .ui-multi-select-trigger.ui-select-invalid:focus,
+      .ui-multi-select-trigger.ui-select-invalid:focus-visible
+    )
+    .ui-select-icon {
     @apply text-red-500;
   }
 }
