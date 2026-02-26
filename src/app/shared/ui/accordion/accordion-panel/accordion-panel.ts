@@ -4,7 +4,6 @@ import { UiAccordion } from '../accordion';
 @Component({
   selector: 'app-ui-accordion-panel',
   templateUrl: './accordion-panel.html',
-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiAccordionPanel {
