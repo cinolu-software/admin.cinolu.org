@@ -119,7 +119,9 @@
   @if (isLoading) {
     <ol class="relative space-y-4" role="list">
       @for (i of [1, 2, 3]; track i) {
-        <app-phase-skeleton />
+        <div class="space-y-4">
+          <app-phase-skeleton />
+        </div>
       }
     </ol>
   }

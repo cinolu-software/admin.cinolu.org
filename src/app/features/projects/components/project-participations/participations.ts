@@ -19,8 +19,7 @@ import {
   Check,
   Upload,
   Trash2,
-  ChevronDown,
-  ChevronUp
+  ChevronDown
 } from 'lucide-angular';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
 import { UiAvatar, UiBadge, UiButton, UiPagination, UiSelect } from '@shared/ui';
@@ -28,18 +27,7 @@ import { IPhase, IProject, IProjectParticipation } from '@shared/models';
 import { PhasesStore } from '@features/projects/store/phases.store';
 import { ProjectsStore } from '@features/projects/store/projects.store';
 import { ParticipationDetail } from './participation-detail/participation-detail';
-
-const PAGE_SIZE = 20;
-const OPERATION_MOVE = 'move';
-const OPERATION_REMOVE = 'remove';
-const OPERATION_TYPE_OPTIONS = [
-  { label: 'Déplacer', value: OPERATION_MOVE },
-  { label: 'Retirer', value: OPERATION_REMOVE }
-];
-
-function getParticipationKey(p: IProjectParticipation): string {
-  return `${p.user.id}-${p.venture?.id ?? 'none'}`;
-}
+import { getParticipationKey } from '@features/projects/helpers';
 
 @Component({
   selector: 'app-participations',
@@ -67,17 +55,17 @@ export class Participations {
   currentPage = signal(1);
   selectedIds = signal<Set<string>>(new Set());
   expandedParticipationKey = signal<string | null>(null);
-  operationType = signal(OPERATION_MOVE);
+  operationType = signal('move');
   moveTargetPhase = signal<string | null>(null);
   removeTargetPhase = signal<string | null>(null);
   selectedCsvFile = signal<File | null>(null);
   csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   sortedPhases = signal<IPhase[]>([]);
-  icons = { Users, Search, CircleArrowRight, X, Check, Upload, Trash2, ChevronDown, ChevronUp };
-  pageSize = PAGE_SIZE;
-  operationMove = OPERATION_MOVE;
-  operationRemove = OPERATION_REMOVE;
-  operationTypeOptions = OPERATION_TYPE_OPTIONS;
+  icons = { Users, Search, CircleArrowRight, X, Check, Upload, Trash2, ChevronDown };
+  operationTypeOptions = [
+    { label: 'Déplacer', value: 'move' },
+    { label: 'Retirer', value: 'remove' }
+  ];
   movePhaseOptions = computed(() => this.sortedPhases().map((p) => ({ label: p.name, value: p.id })));
   selectedCount = computed(() => this.selectedIds().size);
   isAllFilteredSelected = computed(() => {
@@ -97,17 +85,14 @@ export class Participations {
     const q = this.searchQuery().trim().toLowerCase();
     if (!q) return list;
     return list.filter(
-      (p) =>
-        (p.user.name ?? '').toLowerCase().includes(q) ||
-        (p.user.email ?? '').toLowerCase().includes(q) ||
-        (p.venture?.name ?? '').toLowerCase().includes(q)
+      (p) => (p.user.name ?? '').toLowerCase().includes(q) || (p.user.email ?? '').toLowerCase().includes(q)
     );
   });
   paginatedParticipations = computed(() => {
     const list = this.filteredParticipations();
     const page = this.currentPage();
-    const start = (page - 1) * PAGE_SIZE;
-    return list.slice(start, start + PAGE_SIZE);
+    const start = (page - 1) * 20;
+    return list.slice(start, start + 20);
   });
   currentPhase = computed(() => {
     const phaseId = this.selectedPhase();
@@ -213,20 +198,22 @@ export class Participations {
     const ids = this.getParticipationsIds();
     const proj = this.project();
     if (!phaseId || ids.length === 0 || !proj?.slug) return;
-
     const handler =
       operation === 'move' ? this.projectsStore.moveParticipations : this.projectsStore.removeParticipations;
     const targetSignal = operation === 'move' ? this.moveTargetPhase : this.removeTargetPhase;
-
     handler.call(this.projectsStore, {
       dto: { ids, phaseId },
       onSuccess: () => {
-        this.projectsStore.loadOne(proj.slug);
-        if (proj.id) this.projectsStore.loadParticipations(proj.id);
+        this.refreshProjectData(proj);
         this.clearSelection();
         targetSignal.set(null);
       }
     });
+  }
+
+  private refreshProjectData(proj: IProject): void {
+    this.projectsStore.loadOne(proj.slug);
+    if (proj.id) this.projectsStore.loadParticipations(proj.id);
   }
 
   private getParticipationsIds(): string[] {
@@ -259,8 +246,7 @@ export class Participations {
       projectId: proj.id,
       file,
       onSuccess: () => {
-        this.projectsStore.loadOne(proj.slug);
-        if (proj.id) this.projectsStore.loadParticipations(proj.id);
+        this.refreshProjectData(proj);
         this.clearCsvSelection();
       }
     });

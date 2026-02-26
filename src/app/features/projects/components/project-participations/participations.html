@@ -3,19 +3,6 @@
 
 @if (project()) {
   <div class="relative flex flex-col gap-6 lg:gap-7">
-    <header
-      class="flex flex-col gap-4 rounded-2xl border border-slate-200/70 bg-white/85 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-      <div class="space-y-1">
-        <p class="text-lg font-semibold text-slate-900 sm:text-xl">Gestion des participations</p>
-        <p class="text-xs text-slate-500">Filtrer, sélectionner et exécuter des actions par phase.</p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2">
-        <app-ui-badge [variant]="'default'" [label]="totalCount + ' total'" />
-        <app-ui-badge [variant]="currentPhase() ? 'info' : 'default'" [label]="totalFiltered + ' visibles'" />
-      </div>
-    </header>
-
     <div class="rounded-2xl border border-slate-200/70 bg-white/85 p-4 sm:p-5">
       <input
         #csvFileInput
@@ -73,13 +60,13 @@
 
     @if (totalCount > 0) {
       <div class="grid gap-3 rounded-2xl border border-slate-200/70 bg-white/85 p-4 sm:grid-cols-[250px_1fr] sm:p-5">
-          <app-ui-select
-            class="participations-phase-select"
-            id="phase-filter-select"
-            [options]="phaseFilterOptions()"
-            [ngModel]="selectedPhase() ?? ''"
-            (ngModelChange)="selectPhase($event || null)"
-            placeholder="Sélectionner une phase" />
+        <app-ui-select
+          class="participations-phase-select"
+          id="phase-filter-select"
+          [options]="phaseFilterOptions()"
+          [ngModel]="selectedPhase() ?? ''"
+          (ngModelChange)="selectPhase($event || null)"
+          placeholder="Sélectionner une phase" />
 
         <label
           for="participants-search-input"
@@ -161,9 +148,9 @@
           <app-ui-badge [variant]="currentPhase() ? 'info' : 'default'" [label]="totalFiltered + ' participation(s)'" />
         </div>
 
-          @if (selectedCount() > 0) {
-            <div class="participations-bulk-actions border-b border-slate-100 bg-stone-50/90 px-4 py-4 sm:px-6">
-              <div class="grid gap-3 lg:grid-cols-[1fr_1fr_auto_auto] lg:items-end">
+        @if (selectedCount() > 0) {
+          <div class="participations-bulk-actions border-b border-slate-100 bg-stone-50/90 px-4 py-4 sm:px-6">
+            <div class="grid gap-3 lg:grid-cols-[1fr_1fr_auto_auto] lg:items-end">
               <div class="min-w-0">
                 <label
                   for="operation-type-select"
@@ -179,7 +166,7 @@
                   placeholder="Sélectionner une opération" />
               </div>
 
-              @if (operationType() === operationMove) {
+              @if (operationType() === 'move') {
                 <div class="min-w-0">
                   <label
                     for="move-phase-select"
@@ -210,7 +197,7 @@
                 </app-ui-button>
               }
 
-              @if (operationType() === operationRemove) {
+              @if (operationType() === 'remove') {
                 <div class="min-w-0">
                   <label
                     for="remove-phase-select"
@@ -335,62 +322,58 @@
                     }
                   </td>
 
-                    <td class="px-4 py-3 text-right sm:px-6">
-                      <button
-                        type="button"
-                        [class.is-open]="isDetailExpanded(participation)"
-                        class="participation-detail-toggle inline-flex rounded-xl border border-slate-200 bg-white p-2 text-slate-400 hover:border-slate-300 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
-                        [attr.aria-expanded]="isDetailExpanded(participation)"
-                        (click)="toggleDetail(participation)">
-                        <i-lucide [name]="icons.ChevronDown" class="size-5" />
-                      </button>
-                    </td>
+                  <td class="px-4 py-3 text-right sm:px-6">
+                    <button
+                      type="button"
+                      [class.is-open]="isDetailExpanded(participation)"
+                      class="participation-detail-toggle inline-flex rounded-xl border border-slate-200 bg-white p-2 text-slate-400 hover:border-slate-300 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+                      [attr.aria-expanded]="isDetailExpanded(participation)"
+                      (click)="toggleDetail(participation)">
+                      <i-lucide [name]="icons.ChevronDown" class="size-5" />
+                    </button>
+                  </td>
                 </tr>
 
-                  <tr class="md:hidden">
-                    <td class="p-0" colspan="6">
-                      <div
-                        class="participations-detail-accordion"
-                        [class.is-open]="isDetailExpanded(participation)">
-                        <div class="participations-detail-accordion__inner">
-                          @if (isDetailExpanded(participation)) {
+                <tr class="md:hidden">
+                  <td class="p-0" colspan="6">
+                    <div class="participations-detail-accordion" [class.is-open]="isDetailExpanded(participation)">
+                      <div class="participations-detail-accordion__inner">
+                        @if (isDetailExpanded(participation)) {
+                          <app-participation-detail
+                            [participation]="participation"
+                            [participationId]="getParticipationKey(participation)" />
+                        }
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="hidden md:table-row">
+                  <td class="p-0" colspan="6">
+                    <div class="participations-detail-accordion" [class.is-open]="isDetailExpanded(participation)">
+                      <div class="participations-detail-accordion__inner">
+                        @if (isDetailExpanded(participation)) {
+                          <div class="border-t border-slate-100 bg-stone-50/90">
                             <app-participation-detail
                               [participation]="participation"
                               [participationId]="getParticipationKey(participation)" />
-                          }
-                        </div>
+                          </div>
+                        }
                       </div>
-                    </td>
-                  </tr>
-
-                  <tr class="hidden md:table-row">
-                    <td class="p-0" colspan="6">
-                      <div
-                        class="participations-detail-accordion"
-                        [class.is-open]="isDetailExpanded(participation)">
-                        <div class="participations-detail-accordion__inner">
-                          @if (isDetailExpanded(participation)) {
-                            <div class="border-t border-slate-100 bg-stone-50/90">
-                              <app-participation-detail
-                                [participation]="participation"
-                                [participationId]="getParticipationKey(participation)" />
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </td>
+                </tr>
               }
             </tbody>
           </table>
         </div>
 
-        @if (totalFiltered > pageSize) {
+        @if (totalFiltered > 20) {
           <div class="flex justify-center border-t border-slate-100 bg-stone-50/80 px-4 py-4 sm:justify-end sm:px-6">
             <app-ui-pagination
               [currentPage]="currentPage()"
               [totalItems]="totalFiltered"
-              [itemsPerPage]="pageSize"
+              [itemsPerPage]="20"
               (pageChange)="onPageChange($event)" />
           </div>
         }
