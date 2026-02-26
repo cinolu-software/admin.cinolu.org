@@ -46,14 +46,12 @@
               (keydown)="onFilterKeydown($event)" />
           </div>
         }
-
         @for (option of filteredOptions(); track option.value) {
           <div
             class="ui-select-option"
             [class.ui-select-option-selected]="isSelected(option.value)"
             [class.ui-select-option-disabled]="option.disabled"
             (click)="selectOption(option)"
-            (keyup.enter)="selectOption(option)"
             (keyup.space)="selectOption(option)"
             [tabindex]="option.disabled ? -1 : 0"
             role="option"
