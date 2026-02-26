@@ -139,7 +139,21 @@
   }
 
   .ui-table-wrapper {
-    @apply overflow-x-auto  rounded-lg border border-gray-200;
+    @apply overflow-x-auto rounded-lg border border-gray-200;
+    position: relative;
+    isolation: isolate;
+
+    /* Scroll-x affordance: edge shadows appear only when horizontal overflow exists. */
+    --table-scroll-bg: #ffffff;
+    --table-scroll-shadow: rgb(31 41 55 / 0.2);
+    background:
+      linear-gradient(to right, var(--table-scroll-bg) 30%, transparent) left center / 24px 100% no-repeat local,
+      linear-gradient(to left, var(--table-scroll-bg) 30%, transparent) right center / 24px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, var(--table-scroll-shadow), transparent) left center / 10px 100% no-repeat
+        scroll,
+      radial-gradient(farthest-side at 100% 50%, var(--table-scroll-shadow), transparent) right center / 10px 100%
+        no-repeat scroll;
+
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary-400) var(--color-primary-100);
   }
