@@ -19,11 +19,11 @@
   }
 
   .ui-select-placeholder {
-    @apply text-slate-400;
+    @apply block w-full min-w-0 truncate whitespace-nowrap text-slate-400;
   }
 
   .ui-select-value {
-    @apply text-slate-900;
+    @apply block w-full min-w-0 truncate whitespace-nowrap text-slate-900;
   }
 
   .ui-select-icon {
