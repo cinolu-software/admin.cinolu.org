@@ -60,8 +60,8 @@ function getParticipationKey(p: IProjectParticipation): string {
 })
 export class Participations {
   project = input.required<IProject | null>();
-  readonly phasesStore = inject(PhasesStore);
-  readonly projectsStore = inject(ProjectsStore);
+  phasesStore = inject(PhasesStore);
+  projectsStore = inject(ProjectsStore);
   selectedPhase = signal<string | null>(null);
   searchQuery = signal('');
   currentPage = signal(1);
@@ -73,12 +73,12 @@ export class Participations {
   selectedCsvFile = signal<File | null>(null);
   csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   sortedPhases = signal<IPhase[]>([]);
-  readonly icons = { Users, Search, CircleArrowRight, X, Check, Upload, Trash2, ChevronDown, ChevronUp };
-  readonly pageSize = PAGE_SIZE;
-  readonly operationMove = OPERATION_MOVE;
-  readonly operationRemove = OPERATION_REMOVE;
-  readonly operationTypeOptions = OPERATION_TYPE_OPTIONS;
-  readonly movePhaseOptions = computed(() => this.sortedPhases().map((p) => ({ label: p.name, value: p.id })));
+  icons = { Users, Search, CircleArrowRight, X, Check, Upload, Trash2, ChevronDown, ChevronUp };
+  pageSize = PAGE_SIZE;
+  operationMove = OPERATION_MOVE;
+  operationRemove = OPERATION_REMOVE;
+  operationTypeOptions = OPERATION_TYPE_OPTIONS;
+  movePhaseOptions = computed(() => this.sortedPhases().map((p) => ({ label: p.name, value: p.id })));
   selectedCount = computed(() => this.selectedIds().size);
   isAllFilteredSelected = computed(() => {
     const ids = this.selectedIds();
@@ -152,7 +152,7 @@ export class Participations {
     });
   }
 
-  readonly getParticipationKey = getParticipationKey;
+  getParticipationKey = getParticipationKey;
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
