@@ -122,4 +122,12 @@ export class VentureDetails implements OnInit {
     if (!current) return null;
     return { ...current, index };
   }
+
+  formatExternalUrl(url: string | undefined): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  }
 }
