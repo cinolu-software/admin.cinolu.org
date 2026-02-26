@@ -1,4 +1,4 @@
-export interface IAdminStatsGeneral {
+export interface IGeneralStats {
   totalUsers: number;
   totalProjects: number;
   totalEvents: number;
@@ -26,13 +26,15 @@ export interface IProgramParticipations {
   subprograms: ISubprogramParticipations[];
 }
 
-export interface IAdminStatsByYear {
+export interface IStatsSummary {
+  totalProjectParticipations: number;
+  totalEventParticipations: number;
+  totalParticipations: number;
+}
+
+export interface IStatsByYear {
   year: number;
-  summary: {
-    totalProjectParticipations: number;
-    totalEventParticipations: number;
-    totalParticipations: number;
-  };
+  summary: IStatsSummary;
   detailedParticipations: {
     programs: IProgramParticipations[];
   };

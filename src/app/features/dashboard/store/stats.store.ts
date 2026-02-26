@@ -3,13 +3,13 @@ import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import type { IAdminStatsGeneral, IAdminStatsByYear } from '../types/stats.type';
+import type { IGeneralStats, IStatsByYear } from '../types/stats.type';
 
 interface IStatsStore {
   isLoadingGeneral: boolean;
   isLoadingByYear: boolean;
-  general: IAdminStatsGeneral | null;
-  byYear: IAdminStatsByYear | null;
+  general: IGeneralStats | null;
+  byYear: IStatsByYear | null;
   selectedYear: number;
 }
 
@@ -31,7 +31,7 @@ export const StatsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoadingGeneral: true })),
         switchMap(() =>
-          _http.get<{ data: IAdminStatsGeneral } | IAdminStatsGeneral>('stats/admin/overview').pipe(
+          _http.get<{ data: IGeneralStats } | IGeneralStats>('stats/admin/overview').pipe(
             map((res) => ('data' in res ? res.data : res)),
             tap((data) => patchState(store, { isLoadingGeneral: false, general: data })),
             catchError(() => {
@@ -46,16 +46,14 @@ export const StatsStore = signalStore(
       pipe(
         tap((year) => patchState(store, { isLoadingByYear: true, selectedYear: year })),
         switchMap((year) =>
-          _http
-            .get<{ data: IAdminStatsByYear } | IAdminStatsByYear>(`stats/admin/year/${year}`)
-            .pipe(
-              map((res) => ('data' in res ? res.data : res)),
-              tap((data) => patchState(store, { isLoadingByYear: false, byYear: data })),
-              catchError(() => {
-                patchState(store, { isLoadingByYear: false, byYear: null });
-                return of(null);
-              })
-            )
+          _http.get<{ data: IStatsByYear } | IStatsByYear>(`stats/admin/year/${year}`).pipe(
+            map((res) => ('data' in res ? res.data : res)),
+            tap((data) => patchState(store, { isLoadingByYear: false, byYear: data })),
+            catchError(() => {
+              patchState(store, { isLoadingByYear: false, byYear: null });
+              return of(null);
+            })
+          )
         )
       )
     )

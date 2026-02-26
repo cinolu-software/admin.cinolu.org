@@ -1,29 +1,26 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import {
-  CalendarDays,
-  ChartBar,
-  ChevronDown,
-  ChevronRight,
-  FolderKanban,
-  LayoutList,
-  LucideAngularModule,
-  Rocket,
-  Users,
-  FolderOpen,
-  Folder,
-  FileCode,
-  Calendar
-} from 'lucide-angular';
+import { LucideAngularModule, LayoutList } from 'lucide-angular';
 import { UiSelect } from '@ui';
 import type { SelectOption } from '@shared/ui';
 import { StatsStore } from '../store/stats.store';
+import { IProgramParticipations } from '../types';
+import { StatsOverview, YearSummary, ProgramTabs, ProgramDetails } from '../components';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  imports: [RouterModule, FormsModule, LucideAngularModule, UiSelect],
+  imports: [
+    RouterModule,
+    FormsModule,
+    LucideAngularModule,
+    UiSelect,
+    StatsOverview,
+    YearSummary,
+    ProgramTabs,
+    ProgramDetails
+  ],
   providers: [StatsStore],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -31,27 +28,26 @@ export class Dashboard implements OnInit {
   store = inject(StatsStore);
   currentYear = new Date().getFullYear();
   selectedYear = signal(this.currentYear);
+  selectedProgram = signal<string | null>(null);
   icons = {
-    Users,
-    FolderKanban,
-    CalendarDays,
-    Rocket,
-    ChartBar,
-    LayoutList,
-    ChevronRight,
-    ChevronDown,
-    FolderOpen,
-    Folder,
-    FileCode,
-    Calendar
+    LayoutList
   };
-
-  expandedPrograms = signal<Set<string>>(new Set());
-  expandedSubprograms = signal<Set<string>>(new Set());
 
   constructor() {
     effect(() => {
       this.store.loadByYear(this.selectedYear());
+    });
+
+    // Auto-select program with most participants when data changes
+    effect(() => {
+      const data = this.store.byYear();
+      if ((data?.detailedParticipations?.programs?.length || 0) > 0) {
+        const programs = data?.detailedParticipations.programs;
+        const maxProgram = programs?.reduce((prev, current) =>
+          current.participations > prev.participations ? current : prev
+        );
+        this.selectedProgram.set(maxProgram?.id || null);
+      }
     });
   }
 
@@ -63,31 +59,12 @@ export class Dashboard implements OnInit {
     [2024, 2025, 2026, 2027].map((y) => ({ label: String(y), value: y }))
   );
 
-  toggleProgram(programId: string): void {
-    const expanded = new Set(this.expandedPrograms());
-    if (expanded.has(programId)) {
-      expanded.delete(programId);
-    } else {
-      expanded.add(programId);
-    }
-    this.expandedPrograms.set(expanded);
+  selectProgram(programId: string): void {
+    this.selectedProgram.set(this.selectedProgram() === programId ? null : programId);
   }
 
-  toggleSubprogram(subprogramId: string): void {
-    const expanded = new Set(this.expandedSubprograms());
-    if (expanded.has(subprogramId)) {
-      expanded.delete(subprogramId);
-    } else {
-      expanded.add(subprogramId);
-    }
-    this.expandedSubprograms.set(expanded);
-  }
-
-  isProgramExpanded(programId: string): boolean {
-    return this.expandedPrograms().has(programId);
-  }
-
-  isSubprogramExpanded(subprogramId: string): boolean {
-    return this.expandedSubprograms().has(subprogramId);
+  getSelectedProgram(programs: IProgramParticipations[]): IProgramParticipations | null {
+    const programId = this.selectedProgram();
+    return programId ? (programs.find((p) => p.id === programId) ?? null) : null;
   }
 }

@@ -1,0 +1,28 @@
+<div class="rounded-lg border border-gray-200 bg-white shadow-sm p-4">
+  <div class="flex flex-wrap gap-3">
+    @for (program of programs(); track program.id) {
+      <button
+        type="button"
+        (click)="onSelectProgram(program.id)"
+        [class.bg-primary-100]="selectedProgramId() === program.id"
+        [class.text-primary-700]="selectedProgramId() === program.id"
+        [class.bg-gray-50]="selectedProgramId() !== program.id"
+        [class.text-gray-700]="selectedProgramId() !== program.id"
+        class="flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-all duration-200"
+        [class.border-primary-200]="selectedProgramId() === program.id"
+        [class.border-gray-200]="selectedProgramId() !== program.id"
+        [class.shadow-sm]="selectedProgramId() === program.id">
+        <i-lucide [name]="icons.Folder" class="size-4 shrink-0" />
+        <span class="font-medium whitespace-nowrap">{{ program.name }}</span>
+        <span
+          [class.bg-primary-200]="selectedProgramId() === program.id"
+          [class.text-primary-800]="selectedProgramId() === program.id"
+          [class.bg-gray-100]="selectedProgramId() !== program.id"
+          [class.text-gray-600]="selectedProgramId() !== program.id"
+          class="ml-1 px-2 py-0.5 text-xs font-semibold rounded-full tabular-nums">
+          {{ program.participations }}
+        </span>
+      </button>
+    }
+  </div>
+</div>

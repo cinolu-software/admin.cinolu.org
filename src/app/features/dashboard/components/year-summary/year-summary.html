@@ -1,0 +1,35 @@
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+        <i-lucide [name]="icons.ChartBar" class="size-5" />
+      </div>
+      <div>
+        <p class="text-xl font-bold text-gray-900 tabular-nums">{{ summary().totalParticipations }}</p>
+        <p class="text-xs font-medium text-gray-500">Total participations</p>
+      </div>
+    </div>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+        <i-lucide [name]="icons.FolderKanban" class="size-5" />
+      </div>
+      <div>
+        <p class="text-xl font-bold text-gray-900 tabular-nums">{{ summary().totalProjectParticipations }}</p>
+        <p class="text-xs font-medium text-gray-500">Participants aux projets</p>
+      </div>
+    </div>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="inline-flex size-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+        <i-lucide [name]="icons.CalendarDays" class="size-5" />
+      </div>
+      <div>
+        <p class="text-xl font-bold text-gray-900 tabular-nums">{{ summary().totalEventParticipations }}</p>
+        <p class="text-xs font-medium text-gray-500">Participants aux événements</p>
+      </div>
+    </div>
+  </div>
+</div>
