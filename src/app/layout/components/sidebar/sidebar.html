@@ -53,7 +53,7 @@
                   <div class="pt-1">
                     @for (child of link.children; track child.name) {
                       <a
-                        class="group relative flex items-center gap-2 mb-2 last:mb-0 text-primary-200 text-sm rounded-lg hover:text-white transition-all duration-150 group-[.active-link]:bg-primary-700/50 group-[.active-link]:text-white group-[.active-link]:font-medium group-[.active-link]:shadow-sm"
+                        class="group relative flex items-center gap-1.5 mb-2 last:mb-0 text-primary-200 text-sm rounded-lg hover:text-white transition-all duration-150 group-[.active-link]:bg-primary-700/50 group-[.active-link]:text-white group-[.active-link]:font-medium group-[.active-link]:shadow-sm"
                         [routerLink]="child.path"
                         [routerLinkActive]="'active-link text-white'"
                         [routerLinkActiveOptions]="{ exact: child.exactUrl || false }">
