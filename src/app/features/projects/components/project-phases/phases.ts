@@ -105,11 +105,8 @@ export class Phases implements OnInit {
       .map((d) => ({ title: d.title, description: d.description || undefined }));
     const mentors = (formValue.mentors as string[]).filter((m) => m?.length);
     return {
+      ...formValue,
       id: formValue.id ?? undefined,
-      name: formValue.name,
-      description: formValue.description,
-      started_at: formValue.started_at,
-      ended_at: formValue.ended_at,
       mentors: mentors.length ? mentors : undefined,
       deliverables: deliverables.length ? deliverables : undefined
     };
@@ -180,5 +177,17 @@ export class Phases implements OnInit {
 
   isEditing(phase: IPhase): boolean {
     return this.editingPhaseId() === phase.id;
+  }
+
+  phaseStatus(phase: IPhase): 'coming' | 'past' {
+    const endDate = new Date(phase.ended_at);
+    if (Number.isNaN(endDate.getTime())) {
+      return 'coming';
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return endDate < today ? 'past' : 'coming';
   }
 }
