@@ -56,25 +56,22 @@ export class ProjectNotifications {
   authStore = inject(AuthStore);
   notificationsStore = inject(NotificationsStore);
   phasesStore = inject(PhasesStore);
-
   form = this.#buildForm();
   attachments = signal<AttachmentPreview[]>([]);
   isComposing = signal(true);
+  composeActionLoading = signal<'save' | 'send' | null>(null);
+  listActionLoading = signal<'send' | null>(null);
   filterPhaseId = signal('');
   filterStatus = signal<NotificationStatus | null>(null);
   filterPage = signal<number | null>(null);
-
   queryParams = computed(() => ({
     phaseId: this.filterPhaseId(),
     status: this.filterStatus(),
     page: this.filterPage() === null ? null : String(this.filterPage())
   }));
-
   currentPage = computed(() => this.filterPage() ?? 1);
   itemsPerPage = 10;
-
   icons = { CircleAlert, Paperclip, Send, Trash2, Pencil, Plus, X, Inbox };
-
   phaseOptions = computed(() => {
     const options = this.phasesStore.sortedPhases().map((phase) => ({
       label: phase.name,
@@ -82,7 +79,6 @@ export class ProjectNotifications {
     }));
     return [{ label: 'Tous les participants', value: '' }, ...options];
   });
-
   phaseFilterOptions = computed(() => {
     const options = this.phasesStore.sortedPhases().map((phase) => ({
       label: phase.name,
@@ -90,15 +86,12 @@ export class ProjectNotifications {
     }));
     return [{ label: 'Toutes les phases', value: '' }, ...options];
   });
-
   statusFilterOptions: SelectOption[] = [
     { label: 'Tous', value: '' },
     { label: 'Brouillon', value: 'draft' },
     { label: 'Envoyée', value: 'sent' }
   ];
-
   activeNotification = computed(() => this.notificationsStore.activeNotification());
-
   statusBadge = computed(() => {
     const notification = this.activeNotification();
     return notification?.status ?? null;
@@ -117,6 +110,12 @@ export class ProjectNotifications {
     phaseControl?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((phaseId) => {
       if (phaseId || !notifyMentorsControl?.value) return;
       notifyMentorsControl.setValue(false, { emitEvent: false });
+    });
+
+    effect(() => {
+      if (this.notificationsStore.isSaving()) return;
+      this.composeActionLoading.set(null);
+      this.listActionLoading.set(null);
     });
   }
 
@@ -203,6 +202,7 @@ export class ProjectNotifications {
 
   onSaveDraft(): void {
     if (this.form.invalid || this.notificationsStore.isSaving()) return;
+    this.composeActionLoading.set('save');
     const dto = this.#buildNotifyDto();
     const files = this.attachments().map((a) => a.file);
     const current = this.activeNotification();
@@ -248,33 +248,11 @@ export class ProjectNotifications {
   }
 
   onSend(): void {
-    if (this.form.invalid || this.notificationsStore.isSaving()) return;
+    const current = this.activeNotification();
+    if (!current || this.form.invalid || this.notificationsStore.isSaving()) return;
+    this.composeActionLoading.set('send');
     const dto = this.#buildNotifyDto();
     const files = this.attachments().map((a) => a.file);
-    const current = this.activeNotification();
-
-    if (!current) {
-      this.notificationsStore.createNotifyAndSend({
-        projectId: this.projectId(),
-        dto,
-        attachments: files.length > 0 ? files : undefined,
-        onSuccess: () => {
-          this.attachments.set([]);
-          this.isComposing.set(false);
-          if (files.length > 0) {
-            const id = this.notificationsStore.activeNotification()?.id;
-            if (id) {
-              this.notificationsStore.loadAllAndSelectNotification({
-                projectId: this.projectId(),
-                filters: this.queryParams(),
-                notificationId: id
-              });
-            }
-          }
-        }
-      });
-      return;
-    }
 
     this.notificationsStore.updateWithAttachments({
       id: current.id,
@@ -301,6 +279,7 @@ export class ProjectNotifications {
 
   resendNotification(notification: INotification): void {
     if (this.notificationsStore.isSaving()) return;
+    this.listActionLoading.set('send');
     this.notificationsStore.send({
       notificationId: notification.id
     });
