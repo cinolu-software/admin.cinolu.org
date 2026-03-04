@@ -15,7 +15,7 @@ import {
   UiCheckbox
 } from '@shared/ui';
 import { ConfirmationService } from '@shared/services/confirmation';
-import { INotification } from '@shared/models';
+import { INotification, IPhase } from '@shared/models';
 import { NotifyParticipantsDto } from '../../dto/notifications/notify-participants.dto';
 import { NotificationsStore } from '../../store/notifications.store';
 import { PhasesStore } from '@features/projects/store/phases.store';
@@ -45,6 +45,10 @@ import { AttachmentPreview } from '@features/projects/types/attachment-preview.t
 })
 export class ProjectNotifications {
   projectId = input.required<string>();
+  projectName = input<string>('');
+  projectStartedAt = input<string | null | undefined>('');
+  projectEndedAt = input<string | null | undefined>('');
+  projectPhases = input<IPhase[] | null>([]);
   #fb = inject(FormBuilder);
   #confirmationService = inject(ConfirmationService);
   #sanitizer = inject(DomSanitizer);
@@ -356,11 +360,18 @@ export class ProjectNotifications {
 
   #impactReportTemplate(): string {
     const reportDate = new Date().toLocaleDateString('fr-FR');
+    const reporterName = this.authStore.user()?.name || 'Équipe projet';
+    const reporterEmail = this.authStore.user()?.email || 'Non renseigné';
+    const projectName = this.projectName() || this.projectId();
+    const startedAt = this.#formatDate(this.projectStartedAt());
+    const endedAt = this.#formatDate(this.projectEndedAt());
+    const resultsObservedList = this.#resultsObservedList();
     return `
       <h2>Rapport d'impact</h2>
       <p><strong>Date du rapport:</strong> ${reportDate}</p>
-      <p><strong>Projet:</strong> [Nom du projet]</p>
-      <p><strong>Période couverte:</strong> [Ex: Janvier - Mars 2026]</p>
+      <p><strong>Projet:</strong> ${projectName}</p>
+      <p><strong>Rédigé par:</strong> ${reporterName} (${reporterEmail})</p>
+      <p><strong>Période couverte:</strong> ${startedAt} - ${endedAt}</p>
       <h3>1. Actions réalisées</h3>
       <ul>
         <li>[Action clé 1]</li>
@@ -368,10 +379,7 @@ export class ProjectNotifications {
         <li>[Action clé 3]</li>
       </ul>
       <h3>2. Résultats observés</h3>
-      <ul>
-        <li>[Indicateur / résultat mesurable]</li>
-        <li>[Indicateur / résultat mesurable]</li>
-      </ul>
+      <ul>${resultsObservedList}</ul>
       <h3>3. Impact sur les bénéficiaires</h3>
       <p>[Décrire l'impact concret et les changements observés.]</p>
       <h3>4. Difficultés rencontrées</h3>
@@ -384,6 +392,37 @@ export class ProjectNotifications {
       <h3>6. Prochaines étapes</h3>
       <p>[Décrire les activités prévues et l'échéance.]</p>
     `.trim();
+  }
+
+  #resultsObservedList(): string {
+    const phases = this.projectPhases() ?? [];
+    if (!phases.length) return "<li>Aucune phase disponible pour calculer les participations.</li>";
+    const phaseItems = phases.map((phase) => {
+      const participantsCount = phase.participationsCount ?? phase.participations?.length ?? 0;
+      return `<li><strong>${this.#escapeHtml(phase.name)}</strong>: ${participantsCount} participation${participantsCount > 1 ? 's' : ''}</li>`;
+    });
+    const totalParticipations = phases.reduce(
+      (total, phase) => total + (phase.participationsCount ?? phase.participations?.length ?? 0),
+      0
+    );
+    phaseItems.push(`<li><strong>Total participations (toutes phases):</strong> ${totalParticipations}</li>`);
+    return phaseItems.join('');
+  }
+
+  #formatDate(value: string | null | undefined): string {
+    if (!value) return 'Non renseignée';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Non renseignée';
+    return date.toLocaleDateString('fr-FR');
+  }
+
+  #escapeHtml(value: string): string {
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
   }
 
   #attachmentKey(file: File): string {
