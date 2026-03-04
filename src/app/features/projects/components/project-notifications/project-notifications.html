@@ -225,20 +225,32 @@
           <!-- Form -->
           <div class="min-h-0 flex-1 overflow-y-auto">
             <div class="mx-auto w-full max-w-2xl space-y-5 px-4 py-5 sm:px-6">
-              <div class="space-y-2">
-                <app-ui-select
-                  [id]="'phase_id'"
-                  label="Destinataires"
-                  [options]="phaseOptions()"
-                  formControlName="phase_id"
-                  placeholder="Tous les participants" />
+              <div class="space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-3">
+                <app-ui-checkbox
+                  [id]="'notify_staff'"
+                  formControlName="notify_staff"
+                  label="Notifier le staff (rapport d'impact prérempli)" />
               </div>
-              @if (form.value.phase_id) {
-                <div class="space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-3">
-                  <app-ui-checkbox
-                    [id]="'notify_mentors'"
-                    formControlName="notify_mentors"
-                    label="Notifier uniquement les mentors de la phase" />
+              @if (!form.value.notify_staff) {
+                <div class="space-y-2">
+                  <app-ui-select
+                    [id]="'phase_id'"
+                    label="Destinataires"
+                    [options]="phaseOptions()"
+                    formControlName="phase_id"
+                    placeholder="Tous les participants" />
+                </div>
+                @if (form.value.phase_id) {
+                  <div class="space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-3">
+                    <app-ui-checkbox
+                      [id]="'notify_mentors'"
+                      formControlName="notify_mentors"
+                      label="Notifier uniquement les mentors de la phase" />
+                  </div>
+                }
+              } @else {
+                <div class="rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-700">
+                  Message orienté staff activé: le contenu est prérempli au format rapport d'impact.
                 </div>
               }
               <div class="space-y-2">

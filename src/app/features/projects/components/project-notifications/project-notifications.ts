@@ -49,7 +49,7 @@ export class ProjectNotifications {
   #confirmationService = inject(ConfirmationService);
   #sanitizer = inject(DomSanitizer);
   #destroyRef = inject(DestroyRef);
-  #defaultFormValue = { title: '', body: '', phase_id: '', notify_mentors: false };
+  #defaultFormValue = { title: '', body: '', phase_id: '', notify_mentors: false, notify_staff: false };
   authStore = inject(AuthStore);
   notificationsStore = inject(NotificationsStore);
   phasesStore = inject(PhasesStore);
@@ -92,7 +92,8 @@ export class ProjectNotifications {
       title: ['', [Validators.required, Validators.minLength(3)]],
       body: ['', [Validators.required, Validators.minLength(10)]],
       phase_id: [''],
-      notify_mentors: [false]
+      notify_mentors: [false],
+      notify_staff: [false]
     });
   }
 
@@ -114,9 +115,35 @@ export class ProjectNotifications {
   #setupFormListeners(): void {
     const phaseControl = this.form.get('phase_id');
     const notifyMentorsControl = this.form.get('notify_mentors');
+    const notifyStaffControl = this.form.get('notify_staff');
+    const bodyControl = this.form.get('body');
+    const titleControl = this.form.get('title');
     phaseControl?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((phaseId) => {
-      if (phaseId || !notifyMentorsControl?.value) return;
-      notifyMentorsControl.setValue(false, { emitEvent: false });
+      if (!phaseId && notifyMentorsControl?.value) {
+        notifyMentorsControl.setValue(false, { emitEvent: false });
+      }
+      if (phaseId && notifyStaffControl?.value) {
+        notifyStaffControl.setValue(false, { emitEvent: false });
+      }
+    });
+    notifyMentorsControl?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((notifyMentors) => {
+      if (!notifyMentors || !notifyStaffControl?.value) return;
+      notifyStaffControl.setValue(false, { emitEvent: false });
+    });
+    notifyStaffControl?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((notifyStaff) => {
+      if (!notifyStaff) return;
+      if (phaseControl?.value) {
+        phaseControl.setValue('', { emitEvent: false });
+      }
+      if (notifyMentorsControl?.value) {
+        notifyMentorsControl.setValue(false, { emitEvent: false });
+      }
+      if (!String(bodyControl?.value ?? '').trim()) {
+        bodyControl?.setValue(this.#impactReportTemplate(), { emitEvent: false });
+      }
+      if (!String(titleControl?.value ?? '').trim()) {
+        titleControl?.setValue("Rapport d'impact du projet", { emitEvent: false });
+      }
     });
   }
 
@@ -156,7 +183,8 @@ export class ProjectNotifications {
       title: current.title,
       body: current.body,
       phase_id: current.phase_id ?? current.phase?.id ?? '',
-      notify_mentors: !!current.notify_mentors
+      notify_mentors: !!current.notify_mentors,
+      notify_staff: !!current.notify_staff
     });
     this.notificationsStore.clearError();
     this.#startCompose(false);
@@ -273,6 +301,7 @@ export class ProjectNotifications {
   }
 
   phaseLabel(notification: INotification): string {
+    if (notification.notify_staff) return "Destinataires: staff (rapport d'impact)";
     if (!notification.phase?.name) return 'Tous les participants';
     return notification.notify_mentors
       ? `Phase: ${notification.phase.name} · mentors uniquement`
@@ -311,13 +340,50 @@ export class ProjectNotifications {
   }
 
   #buildNotifyDto(): NotifyParticipantsDto {
-    const { phase_id: rawPhase, title, body, notify_mentors } = this.form.value;
+    const { phase_id: rawPhase, title, body, notify_mentors, notify_staff } = this.form.value;
     const phase_id = rawPhase ? String(rawPhase) : undefined;
+    const isStaffNotification = !!notify_staff;
     return {
       title: String(title ?? ''),
       body: String(body ?? ''),
-      ...(phase_id && { phase_id, notify_mentors: !!notify_mentors })
+      ...(isStaffNotification
+        ? { notify_staff: true }
+        : {
+            ...(phase_id && { phase_id, notify_mentors: !!notify_mentors })
+          })
     };
+  }
+
+  #impactReportTemplate(): string {
+    const reportDate = new Date().toLocaleDateString('fr-FR');
+    return `
+      <h2>Rapport d'impact</h2>
+      <p><strong>Date du rapport:</strong> ${reportDate}</p>
+      <p><strong>Projet:</strong> [Nom du projet]</p>
+      <p><strong>Période couverte:</strong> [Ex: Janvier - Mars 2026]</p>
+      <h3>1. Actions réalisées</h3>
+      <ul>
+        <li>[Action clé 1]</li>
+        <li>[Action clé 2]</li>
+        <li>[Action clé 3]</li>
+      </ul>
+      <h3>2. Résultats observés</h3>
+      <ul>
+        <li>[Indicateur / résultat mesurable]</li>
+        <li>[Indicateur / résultat mesurable]</li>
+      </ul>
+      <h3>3. Impact sur les bénéficiaires</h3>
+      <p>[Décrire l'impact concret et les changements observés.]</p>
+      <h3>4. Difficultés rencontrées</h3>
+      <p>[Décrire les principaux défis et les causes.]</p>
+      <h3>5. Besoins d'appui du staff</h3>
+      <ul>
+        <li>[Besoin prioritaire 1]</li>
+        <li>[Besoin prioritaire 2]</li>
+      </ul>
+      <h3>6. Prochaines étapes</h3>
+      <p>[Décrire les activités prévues et l'échéance.]</p>
+    `.trim();
   }
 
   #attachmentKey(file: File): string {

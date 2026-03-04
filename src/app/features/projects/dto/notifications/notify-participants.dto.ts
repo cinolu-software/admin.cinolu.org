@@ -3,4 +3,5 @@ export interface NotifyParticipantsDto {
   body: string;
   phase_id?: string;
   notify_mentors?: boolean;
+  notify_staff?: boolean;
 }

@@ -14,6 +14,7 @@ export interface INotification extends IBase {
   phase_id?: string | null;
   sender?: IUser | null;
   notify_mentors?: boolean | null;
+  notify_staff?: boolean | null;
   attachments?: INotificationAttachment[];
   status?: 'draft' | 'sent';
 }
