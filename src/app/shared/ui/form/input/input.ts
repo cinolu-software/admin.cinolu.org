@@ -19,8 +19,8 @@ export class UiInput implements ControlValueAccessor {
   required = input<boolean>(false);
   value = '';
 
-  onChange: (value: string) => void = () => {};
-  onTouched: () => void = () => {};
+  onChange!: (value: string) => void;
+  onTouched!: () => void;
 
   writeValue(value: string): void {
     this.value = value || '';
