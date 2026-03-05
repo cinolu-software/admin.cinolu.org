@@ -1,4 +1,4 @@
-export interface PhaseDeliverableDto {
+export interface DeliverableDto {
   title: string;
   description?: string;
 }
@@ -10,5 +10,5 @@ export interface PhaseDto {
   started_at: Date;
   ended_at: Date;
   mentors?: string[];
-  deliverables?: PhaseDeliverableDto[];
+  deliverables?: DeliverableDto[];
 }

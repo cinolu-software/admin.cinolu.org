@@ -15,7 +15,7 @@ import {
 import { ConfirmationService } from '@shared/services/confirmation';
 import { IPhase } from '@shared/models';
 import { parseDate } from '@shared/helpers/form.helper';
-import { PhaseDeliverableDto, PhaseDto } from '../../dto/phases/phase.dto';
+import { DeliverableDto, PhaseDto } from '../../dto/phases/phase.dto';
 import { PhasesStore } from '@features/projects/store/phases.store';
 import { PhaseSkeleton } from '@features/projects/ui/phase-skeleton/phase-skeleton';
 
@@ -44,7 +44,7 @@ export class Phases implements OnInit {
   #fb = inject(FormBuilder);
   phasesStore = inject(PhasesStore);
   form = this.#buildForm();
-  editingPhaseId = signal<string | null>(null);
+  phaseId = signal<string | null>(null);
   showForm = signal(false);
   icons = { Plus, Pencil, Trash2, Calendar, FileText };
   mentorOptions = computed<SelectOption[]>(() =>
@@ -74,7 +74,7 @@ export class Phases implements OnInit {
     });
   }
 
-  #buildDeliverableForm(deliverable?: PhaseDeliverableDto): FormGroup {
+  #buildDeliverableForm(deliverable?: DeliverableDto): FormGroup {
     return this.#fb.group({
       title: [deliverable?.title ?? '', [Validators.required, Validators.minLength(2)]],
       description: [deliverable?.description ?? undefined]
@@ -85,7 +85,7 @@ export class Phases implements OnInit {
     return this.form.get('deliverables') as FormArray;
   }
 
-  addDeliverable(deliverable?: PhaseDeliverableDto): void {
+  addDeliverable(deliverable?: DeliverableDto): void {
     this.deliverables.push(this.#buildDeliverableForm(deliverable));
   }
 
@@ -93,27 +93,22 @@ export class Phases implements OnInit {
     this.deliverables.removeAt(index);
   }
 
-  #setDeliverables(deliverables: PhaseDeliverableDto[]): void {
+  #setDeliverables(deliverables: DeliverableDto[]): void {
     this.deliverables.clear();
     deliverables.forEach((deliverable) => this.deliverables.push(this.#buildDeliverableForm(deliverable)));
   }
 
   #buildPayload(): PhaseDto {
     const formValue = this.form.getRawValue();
-    const deliverables = (formValue.deliverables as PhaseDeliverableDto[])
+    const deliverables = (formValue.deliverables as DeliverableDto[])
       .filter((d) => d.title?.length)
       .map((d) => ({ title: d.title, description: d.description || undefined }));
     const mentors = (formValue.mentors as string[]).filter((m) => m?.length);
-    return {
-      ...formValue,
-      id: formValue.id ?? undefined,
-      mentors: mentors.length ? mentors : undefined,
-      deliverables: deliverables.length ? deliverables : undefined
-    };
+    return { ...formValue, mentors, deliverables };
   }
 
   #resetForm(): void {
-    this.editingPhaseId.set(null);
+    this.phaseId.set(null);
     this.form.reset({ mentors: [] });
     this.deliverables.clear();
   }
@@ -125,11 +120,11 @@ export class Phases implements OnInit {
 
   onEdit(phase: IPhase): void {
     this.showForm.set(false);
-    this.editingPhaseId.set(phase.id);
-    const mentorIds = (phase.mentors ?? []).map((mentor) => (typeof mentor === 'string' ? mentor : mentor.id));
+    this.phaseId.set(phase.id);
+    const mentors = (phase.mentors ?? []).map((mentor) => (typeof mentor === 'string' ? mentor : mentor.id));
     this.form.reset({
       ...phase,
-      mentors: mentorIds,
+      mentors,
       started_at: parseDate(phase.started_at),
       ended_at: parseDate(phase.ended_at)
     });
@@ -144,9 +139,9 @@ export class Phases implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) return;
     const payload = this.#buildPayload();
-    if (this.editingPhaseId()) {
+    if (this.phaseId()) {
       this.phasesStore.update({
-        dto: { ...payload, id: this.editingPhaseId()! },
+        dto: { ...payload, id: this.phaseId()! },
         onSuccess: () => this.onCancelForm()
       });
     } else {
@@ -171,23 +166,19 @@ export class Phases implements OnInit {
   mentorNamesForPhase(phase: IPhase): string[] {
     const mentorMap = this.mentorNameById();
     return (phase.mentors ?? [])
-      .map((mentor) => (typeof mentor === 'string' ? mentorMap.get(mentor) : mentor.name) ?? '')
+      .map((mentor) => (typeof mentor === 'string' ? mentorMap.get(mentor) : mentor.owner.name) ?? '')
       .filter(Boolean);
   }
 
   isEditing(phase: IPhase): boolean {
-    return this.editingPhaseId() === phase.id;
+    return this.phaseId() === phase.id;
   }
 
   phaseStatus(phase: IPhase): 'coming' | 'past' {
     const endDate = new Date(phase.ended_at);
-    if (Number.isNaN(endDate.getTime())) {
-      return 'coming';
-    }
-
+    if (Number.isNaN(endDate.getTime())) return 'coming';
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     return endDate < today ? 'past' : 'coming';
   }
 }

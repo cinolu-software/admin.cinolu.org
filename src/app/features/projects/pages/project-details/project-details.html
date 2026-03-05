@@ -49,12 +49,7 @@
     <app-participations [project]="project" />
   }
   @if (activeTab() === 'notifications' && project) {
-    <app-project-notifications
-      [projectId]="project.id"
-      [projectName]="project.name"
-      [projectStartedAt]="project.started_at"
-      [projectEndedAt]="project.ended_at"
-      [projectPhases]="project.phases" />
+    <app-project-notifications [project]="project" />
   }
   @if (activeTab() === 'edit' && project) {
     <app-project-update

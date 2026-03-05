@@ -7,7 +7,7 @@ import { ToastrService } from '@shared/services/toast/toastr.service';
 import { INotification, INotificationAttachment } from '@shared/models';
 import { NotifyParticipantsDto } from '../dto/notifications/notify-participants.dto';
 import { buildQueryParams } from '@shared/helpers';
-import { NotificationStatus } from '../types/notification-status.enum';
+import { NotificationStatus } from '../types/notifications.types';
 
 export interface FilterProjectNotificationsDto {
   phaseId: string;

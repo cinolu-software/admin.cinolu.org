@@ -1,4 +1,4 @@
-import { Component, input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject, input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -8,6 +8,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiInput), multi: true }]
 })
 export class UiInput implements ControlValueAccessor {
+  readonly #cdr = inject(ChangeDetectorRef);
   type = input<string>('text');
   placeholder = input<string>('');
   name = input<string>('');
@@ -18,11 +19,12 @@ export class UiInput implements ControlValueAccessor {
   required = input<boolean>(false);
   value = '';
 
-  onChange!: (value: string) => void;
-  onTouched!: () => void;
+  onChange: (value: string) => void = () => {};
+  onTouched: () => void = () => {};
 
   writeValue(value: string): void {
     this.value = value || '';
+    this.#cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -35,6 +37,7 @@ export class UiInput implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     void isDisabled;
+    this.#cdr.markForCheck();
   }
 
   onInput(event: Event): void {

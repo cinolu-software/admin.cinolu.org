@@ -14,12 +14,10 @@
       </app-ui-button>
     }
   </div>
-  @if (showForm() || editingPhaseId()) {
-    <div
-      class="border border-gray-100 rounded-2xl bg-50/40 to-white p-6 md:p-8 shadow-sm"
-      aria-labelledby="phase-form-heading">
+  @if (showForm() || phaseId()) {
+    <div class="border border-gray-100 rounded-2xl bg-50/40 to-white p-6 md:p-8 shadow-sm">
       <h4 id="phase-form-heading" class="sr-only">
-        {{ editingPhaseId() ? 'Modifier la phase' : 'Nouvelle phase' }}
+        {{ phaseId() ? 'Modifier la phase' : 'Nouvelle phase' }}
       </h4>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
@@ -110,7 +108,7 @@
             size="small"
             [loading]="isLoading"
             [disabled]="isLoading || form.invalid">
-            {{ editingPhaseId() ? 'Enregistrer' : 'Créer la phase' }}
+            {{ phaseId() ? 'Enregistrer' : 'Créer la phase' }}
           </app-ui-button>
         </div>
       </form>
@@ -125,7 +123,7 @@
       }
     </ol>
   }
-  @if (sortedPhases.length > 0 && !isLoading && !showForm() && !editingPhaseId()) {
+  @if (sortedPhases.length > 0 && !isLoading && !showForm() && !phaseId()) {
     <ol
       class="relative space-y-4 before:absolute before:left-4 before:top-0 before:h-full before:w-px before:bg-gray-200 before:content-['']"
       role="list">
@@ -190,22 +188,11 @@
                 }
               </div>
               <div class="flex shrink-0 items-center gap-2">
-                <app-ui-button
-                  type="button"
-                  size="small"
-                  variant="primary"
-                  [outlined]="true"
-                  (clicked)="onEdit(phase)"
-                  [attr.aria-label]="'Modifier la phase ' + phase.name">
+                <app-ui-button type="button" size="small" variant="primary" [outlined]="true" (clicked)="onEdit(phase)">
                   <i-lucide [name]="icons.Pencil" class="size-4" aria-hidden="true" />
                   Modifier
                 </app-ui-button>
-                <app-ui-button
-                  type="button"
-                  size="small"
-                  variant="danger"
-                  (clicked)="onDelete(phase)"
-                  [attr.aria-label]="'Supprimer la phase ' + phase.name">
+                <app-ui-button type="button" size="small" variant="danger" (clicked)="onDelete(phase)">
                   <i-lucide [name]="icons.Trash2" class="size-4" aria-hidden="true" />
                   Supprimer
                 </app-ui-button>
