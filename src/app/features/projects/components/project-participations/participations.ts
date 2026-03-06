@@ -22,7 +22,7 @@ import {
   ChevronDown
 } from 'lucide-angular';
 import { ApiImgPipe } from '@shared/pipes/api-img.pipe';
-import { UiAvatar, UiBadge, UiButton, UiPagination, UiSelect } from '@shared/ui';
+import { SelectOption, UiAvatar, UiBadge, UiButton, UiPagination, UiSelect } from '@shared/ui';
 import { IProject, IProjectParticipation } from '@shared/models';
 import { PhasesStore } from '@features/projects/store/phases.store';
 import { ProjectsStore } from '@features/projects/store/projects.store';
@@ -60,6 +60,7 @@ export class Participations {
   selectedCsvFile = signal<File | null>(null);
   csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   icons = { Users, Search, CircleArrowRight, X, Check, Upload, Trash2, ChevronDown };
+  isAllSelected = signal<boolean>(false);
   operationTypeOptions = [
     { label: 'Déplacer', value: 'move' },
     { label: 'Retirer', value: 'remove' }
@@ -73,17 +74,17 @@ export class Participations {
     phaseId: this.selectedPhase()
   }));
   participationsList = computed(() => this.projectsStore.participations()[0]);
-  phaseFilterOptions = computed(() => {
-    const phases = this.phasesStore.sortedPhases();
-    const options = [{ label: `Tous (${this.projectsStore.participations()[1]})`, value: '' }];
-    for (const phase of phases) {
-      options.push({ label: `${phase.name} (${phase?.participationsCount})`, value: phase.id });
-    }
-    return options;
-  });
+  phaseFilterOptions = computed(() => this.#buildPhaseOptions(`Tous (${this.projectsStore.participations()[1]})`));
 
   constructor() {
     this.setupEffects();
+  }
+
+  #buildPhaseOptions(defaultLabel: string): SelectOption[] {
+    return [
+      { label: defaultLabel, value: '' },
+      ...this.phasesStore.sortedPhases().map((phase) => ({ label: phase.name, value: phase.id }))
+    ];
   }
 
   onActiveParticipationChange(id: string): void {
@@ -104,6 +105,7 @@ export class Participations {
 
   onSelectAll(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
+    this.isAllSelected.set(checked);
     if (!checked) {
       this.selectedIds().clear();
       return;
@@ -113,7 +115,8 @@ export class Participations {
   }
 
   clearSelection(): void {
-    this.selectedIds.set(new Set());
+    this.selectedIds().clear();
+    this.isAllSelected.set(false);
   }
 
   isSelected(p: IProjectParticipation): boolean {
