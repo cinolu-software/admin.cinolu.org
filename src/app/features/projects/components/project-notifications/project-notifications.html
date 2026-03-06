@@ -33,7 +33,6 @@
       @if (isComposing()) {
         <app-notification-compose
           [state]="composeState()"
-          (cancelCompose)="onCancelCompose()"
           (saveDraft)="onSaveDraft($event)"
           (sendNotification)="onSend($event)" />
       }

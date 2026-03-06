@@ -119,11 +119,6 @@ export class ProjectNotifications {
     this.#startCompose();
   }
 
-  onCancelCompose(): void {
-    this.isComposing.set(false);
-    this.notificationsStore.clearError();
-  }
-
   onPageChange(page: number): void {
     this.filterPage.set(page === 1 ? null : page);
   }
