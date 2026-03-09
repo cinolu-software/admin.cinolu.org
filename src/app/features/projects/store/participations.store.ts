@@ -2,7 +2,7 @@ import { computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
+import { catchError, of, pipe, switchMap, tap } from 'rxjs';
 import { buildQueryParams } from '@shared/helpers';
 import { IProjectParticipation } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
@@ -16,11 +16,7 @@ interface ParticipationsStoreState {
 }
 
 export const ParticipationsStore = signalStore(
-  withState<ParticipationsStoreState>({
-    isLoading: false,
-    isSaving: false,
-    participations: [[], 0]
-  }),
+  withState<ParticipationsStoreState>({ isLoading: false, isSaving: false, participations: [[], 0] }),
   withProps(() => ({
     http: inject(HttpClient),
     toast: inject(ToastrService)
@@ -35,7 +31,6 @@ export const ParticipationsStore = signalStore(
       patchState(store, { isSaving: false, isLoading: false, ...patch });
       return of(null);
     };
-
     const updateParticipation = (
       participationId: string,
       updater: (item: IProjectParticipation) => IProjectParticipation
@@ -45,7 +40,6 @@ export const ParticipationsStore = signalStore(
         participations: [list.map((item) => (item.id === participationId ? updater(item) : item)), total]
       });
     };
-
     return {
       loadAll: rxMethod<{ projectId: string; filters: FilterParticipationsDto }>(
         pipe(
