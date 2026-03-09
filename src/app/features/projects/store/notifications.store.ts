@@ -129,12 +129,14 @@ export const NotificationsStore = signalStore(
               tap((notification) => patchState(store, upsertNotificationState(notification))),
               concatMap((notification) => {
                 if (attachments.length === 0) {
+                  _toast.showSuccess('La notification a ete creee avec succes');
                   patchState(store, { isSaving: false, error: null });
                   onSuccess?.(notification);
                   return of(notification);
                 }
                 return uploadAttachments(notification.id, attachments).pipe(
                   tap((notificationWithAttachments) => {
+                    _toast.showSuccess('La notification a ete creee avec succes');
                     patchState(store, {
                       isSaving: false,
                       error: null,
@@ -256,7 +258,7 @@ export const NotificationsStore = signalStore(
         id: string;
         dto: NotifyParticipantsDto;
         attachments?: File[];
-        onSuccess?: () => void;
+        onSuccess?: (data: INotification) => void;
       }>(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null })),
@@ -269,8 +271,9 @@ export const NotificationsStore = signalStore(
                 return uploadAttachments(id, attachments);
               }),
               tap((notification) => {
+                _toast.showSuccess('La notification a ete mise a jour avec succes');
                 patchState(store, { isSaving: false, error: null, ...upsertNotificationState(notification) });
-                onSuccess?.();
+                onSuccess?.(notification);
               }),
               catchError(() => failSaving("Une erreur s'est produite lors de la mise à jour"))
             )

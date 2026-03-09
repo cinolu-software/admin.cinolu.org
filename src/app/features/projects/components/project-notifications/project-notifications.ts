@@ -135,15 +135,18 @@ export class ProjectNotifications {
   onSend(payload: SubmitNotification): void {
     const current = this.activeNotification();
     if (!current) return;
-    const hasAttachments = payload.attachments.length > 0;
     this.notificationsStore.updateWithAttachments({
       id: current.id,
       dto: payload.dto,
-      attachments: hasAttachments ? payload.attachments : undefined,
-      onSuccess: () => {
+      attachments: payload.attachments.length > 0 ? payload.attachments : undefined,
+      onSuccess: (updatedNotification) => {
         this.notificationsStore.send({
-          notificationId: current.id,
-          onSuccess: () => this.#handleComposeSuccess({ notificationId: current.id, hasAttachments })
+          notificationId: updatedNotification.id,
+          onSuccess: (sentNotification) =>
+            this.#handleComposeSuccess({
+              notificationId: sentNotification.id,
+              activeNotification: sentNotification
+            })
         });
       }
     });
@@ -180,8 +183,7 @@ export class ProjectNotifications {
         onSuccess: (createdNotification) => {
           this.#handleComposeSuccess({
             notificationId: createdNotification.id,
-            hasAttachments,
-            activeNotification: hasAttachments ? undefined : createdNotification
+            activeNotification: createdNotification
           });
         }
       });
@@ -191,24 +193,28 @@ export class ProjectNotifications {
       id: params.currentNotificationId,
       dto: params.dto,
       attachments: hasAttachments ? params.attachments : undefined,
-      onSuccess: () => this.#handleComposeSuccess({ notificationId: params.currentNotificationId, hasAttachments })
+      onSuccess: (updatedNotification) =>
+        this.#handleComposeSuccess({
+          notificationId: updatedNotification.id,
+          activeNotification: updatedNotification
+        })
     });
   }
 
   #handleComposeSuccess(params: {
-    hasAttachments: boolean;
     activeNotification?: INotification;
     notificationId?: string;
   }): void {
-    this.isComposing.set(false);
-    if (!params.hasAttachments) {
-      if (params.activeNotification) this.notificationsStore.setActiveNotification(params.activeNotification);
+    this.isComposing.set(true);
+    if (params.activeNotification) {
+      this.notificationsStore.setActiveNotification(params.activeNotification);
       return;
     }
+    if (!params.notificationId) return;
     this.notificationsStore.loadAllAndSelectNotification({
       projectId: this.project()?.id,
       filters: this.queryParams(),
-      notificationId: params.notificationId || ''
+      notificationId: params.notificationId
     });
   }
 }

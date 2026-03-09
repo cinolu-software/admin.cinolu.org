@@ -79,7 +79,7 @@
       class="flex flex-col gap-3 border-b border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <label class="ui-checkbox-wrapper flex items-center gap-2.5 cursor-pointer">
         <div class="ui-checkbox-container relative">
-          <input type="checkbox" class="ui-checkbox-input" (change)="onSelectAll($event)" />
+          <input type="checkbox" class="ui-checkbox-input" [value]="isAllSelected()" (change)="onSelectAll($event)" />
           <div class="ui-checkbox-checkmark">
             <i-lucide [name]="icons.Check" class="size-4 shrink-0" />
           </div>

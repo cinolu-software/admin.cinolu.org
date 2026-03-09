@@ -59,10 +59,15 @@ export class NotificationCompose {
         this.attachments.set([]);
       }
     });
+    effect(() => {
+      if (!this.state().isSaving) {
+        this.actionLoading.set(null);
+      }
+    });
   }
 
   submitForm(action: 'save' | 'send'): void {
-    if (!this.form.invalid) return;
+    if (!this.form.valid) return;
     this.actionLoading.set(action);
     const emiter = action === 'save' ? this.saveDraft : this.sendNotification;
     emiter.emit({

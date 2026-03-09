@@ -93,6 +93,7 @@ export class Participations {
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
+    this.isAllSelected.set(false);
   }
 
   toggleSelect(id: string): void {
