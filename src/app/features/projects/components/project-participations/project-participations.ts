@@ -74,9 +74,6 @@ export class ProjectParticipations {
     return list.length > 0 && list.every((item) => this.selectedIds().includes(item.id));
   });
   hasSelection = computed(() => this.selectedIds().length > 0);
-  totalVotes = computed(() =>
-    this.participationsStore.list().reduce((sum, participation) => sum + (participation.upvotesCount ?? 0), 0)
-  );
   canMoveToPhase = computed(() => this.hasSelection() && this.actionPhaseId() && !this.participationsStore.isSaving());
   canRemoveFromPhase = computed(
     () => this.hasSelection() && !!this.phaseFilterId() && !this.participationsStore.isSaving()

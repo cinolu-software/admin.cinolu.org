@@ -13,7 +13,9 @@
           [outlined]="true"
           [loading]="projectsStore.isImportingCsv()"
           (clicked)="csvInput.click()">
-          <i-lucide [name]="icons.Upload" class="size-4" />
+          @if (!projectsStore.isImportingCsv()) {
+            <i-lucide [name]="icons.Upload" class="size-4" />
+          }
           Importer
         </app-ui-button>
       </div>

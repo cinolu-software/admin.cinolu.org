@@ -24,20 +24,8 @@
         @if (!isImportingCsv) {
           <i-lucide [name]="icons.Upload" class="size-4" />
         }
-        @if (selectedCsvFile()) {
-          Changer le fichier
-        } @else {
-          Importer CSV
-        }
+        Importer CSV
       </app-ui-button>
-      @if (selectedCsvFile()) {
-        <app-ui-button variant="primary" size="small" [disabled]="isImportingCsv" (clicked)="onImportCsv()">
-          Importer
-        </app-ui-button>
-        <app-ui-button variant="primary" [outlined]="true" size="small" (clicked)="clearCsvSelection()">
-          Annuler
-        </app-ui-button>
-      }
       @let isDownloading = store.isDownloading();
       <app-ui-button
         variant="primary"
@@ -58,11 +46,6 @@
       <a [routerLink]="'/users/add'" class="ui-button ui-button-small ui-button-primary"> Nouvel utilisateur </a>
     </div>
   </div>
-  @if (selectedCsvFile()) {
-    <p class="text-sm text-gray-500 mb-4 truncate max-w-[400px]" [title]="selectedCsvFile()?.name">
-      {{ selectedCsvFile()?.name }}
-    </p>
-  }
   <form [formGroup]="searchForm" class="search-input-wrapper">
     <div class="search-input-group">
       <div class="search-input-icon">

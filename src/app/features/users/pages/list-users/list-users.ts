@@ -49,7 +49,6 @@ export class ListUsers {
   store = inject(UsersStore);
   itemsPerPage = 50;
   icons = { Pencil, Trash, Search, Funnel, Download, Upload };
-  selectedCsvFile = signal<File | null>(null);
   csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
   queryParams = signal<FilterUsersDto>({
     page: this.#route.snapshot.queryParamMap.get('page'),
@@ -116,23 +115,14 @@ export class ListUsers {
   onCsvFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    this.selectedCsvFile.set(file?.name.toLowerCase().endsWith('.csv') ? file : null);
+
+    if (file?.name.toLowerCase().endsWith('.csv')) {
+      this.store.importCsv({
+        file,
+        onSuccess: () => this.store.loadAll(this.queryParams())
+      });
+    }
+
     input.value = '';
-  }
-
-  clearCsvSelection(): void {
-    this.selectedCsvFile.set(null);
-  }
-
-  onImportCsv(): void {
-    const file = this.selectedCsvFile();
-    if (!file) return;
-    this.store.importCsv({
-      file,
-      onSuccess: () => {
-        this.store.loadAll(this.queryParams());
-        this.clearCsvSelection();
-      }
-    });
   }
 }
