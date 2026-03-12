@@ -47,13 +47,11 @@
             <app-ui-checkbox
               [id]="'notify_mentors'"
               formControlName="notify_mentors"
-              label="Les mentors uniquement"
-              [disabled]="!state().isEditable || !form.getRawValue().phase_id" />
+              label="Les mentors uniquement" />
             <app-ui-checkbox
               [id]="'notify_staff'"
               formControlName="notify_staff"
-              label="Les membres du staff"
-              [disabled]="(form.getRawValue().phase_id ? true : false) || !state().isEditable" />
+              label="Les membres du staff" />
           </div>
         </div>
       </div>

@@ -100,7 +100,6 @@ export class ProjectParticipations {
 
     effect(() => {
       const projectId = this.projectId();
-      console.log(this.filters());
       this.participationsStore.loadAll({ projectId, filters: this.filters() });
       this.selectedIds.set([]);
     });

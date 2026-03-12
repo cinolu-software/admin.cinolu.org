@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { environment } from '@env/environment';
 import { AttachmentPreview } from '@features/projects/types/attachments.type';
@@ -31,6 +32,10 @@ export class NotificationCompose {
   });
 
   constructor() {
+    this.form.controls.phase_id.valueChanges.pipe(takeUntilDestroyed()).subscribe((phaseId) => {
+      this.syncRecipientControls(this.state().isEditable, !!phaseId);
+    });
+
     effect(() => {
       const notification = this.state().activeNotification;
       this.attachments.set([]);
@@ -44,14 +49,7 @@ export class NotificationCompose {
         },
         { emitEvent: false }
       );
-      if (this.state().isEditable) {
-        this.form.enable({ emitEvent: false });
-      } else {
-        this.form.disable({ emitEvent: false });
-      }
-      if (!this.form.getRawValue().phase_id) {
-        this.form.patchValue({ notify_mentors: false }, { emitEvent: false });
-      }
+      this.syncRecipientControls(this.state().isEditable, !!this.form.controls.phase_id.getRawValue());
     });
 
     effect(() => {
@@ -118,5 +116,25 @@ export class NotificationCompose {
       },
       attachments: this.attachments().map((item) => item.file)
     };
+  }
+
+  private syncRecipientControls(isEditable: boolean, hasPhase: boolean): void {
+    if (!isEditable) {
+      this.form.disable({ emitEvent: false });
+      return;
+    }
+
+    this.form.enable({ emitEvent: false });
+
+    if (hasPhase) {
+      this.form.controls.notify_mentors.enable({ emitEvent: false });
+      this.form.controls.notify_staff.disable({ emitEvent: false });
+      this.form.controls.notify_staff.setValue(false, { emitEvent: false });
+      return;
+    }
+
+    this.form.controls.notify_mentors.disable({ emitEvent: false });
+    this.form.controls.notify_mentors.setValue(false, { emitEvent: false });
+    this.form.controls.notify_staff.enable({ emitEvent: false });
   }
 }

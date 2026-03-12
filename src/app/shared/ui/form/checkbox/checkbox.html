@@ -5,7 +5,7 @@
       [id]="id()"
       [name]="name()"
       [checked]="value"
-      [disabled]="disabled()"
+      [disabled]="isDisabled()"
       [class]="checkboxClasses()"
       (change)="onCheckboxChange($event)"
       class="ui-checkbox-input" />
@@ -27,7 +27,7 @@
     }
   </div>
   @if (label()) {
-    <label [for]="id()" class="ui-checkbox-label" [class.ui-checkbox-label-disabled]="disabled()">
+    <label [for]="id()" class="ui-checkbox-label" [class.ui-checkbox-label-disabled]="isDisabled()">
       {{ label() }}
       @if (required()) {
         <span class="text-red-500">*</span>

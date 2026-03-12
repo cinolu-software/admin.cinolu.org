@@ -3,8 +3,8 @@
   @let total = participationsStore.total();
   @let isLoading = participationsStore.isLoading();
   <div class="space-y-4">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-8">
-      <div class="flex items-center gap-3">
+    <div class="mb-6 flex flex-col gap-4 sm:mb-8 lg:flex-row lg:items-center lg:justify-between">
+      <div class="min-w-0 flex items-center gap-3">
         <input #csvInput type="file" class="hidden" accept=".csv,text/csv" (change)="onImportCsvSelection(csvInput)" />
         <app-ui-button
           type="button"
@@ -19,31 +19,33 @@
           Importer
         </app-ui-button>
       </div>
-      <div class="flex gap-3">
+      <div class="flex min-w-0 gap-3">
         <app-ui-badge [label]="total.toString() + ' participants'" />
       </div>
     </div>
     <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_300px]">
-      <form [formGroup]="filtersForm">
+      <form [formGroup]="filtersForm" class="min-w-0">
         <app-ui-input
           [id]="'participation-search'"
           class="placeholder:text-sm"
           formControlName="q"
           placeholder="Rechercher par nom ou email" />
       </form>
-      <app-ui-select
-        [id]="'participation-phase-filter'"
-        [options]="phaseOptions()"
-        [(ngModel)]="phaseFilterId"
-        placeholder="Toutes les phases" />
+      <div class="min-w-0">
+        <app-ui-select
+          [id]="'participation-phase-filter'"
+          [options]="phaseOptions()"
+          [(ngModel)]="phaseFilterId"
+          placeholder="Toutes les phases" />
+      </div>
     </div>
   </div>
   @if (hasSelection()) {
     <div
-      class="sticky bottom-4 z-10 mx-auto flex w-full flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-sm">
+      class="sticky bottom-4 z-10 mx-auto flex w-full min-w-0 flex-col gap-3 rounded-xl border border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
       <app-ui-badge [label]="selectedIds().length.toString() + ' sélectionnés'" variant="info" />
-      <div class="flex flex-wrap items-center gap-2">
-        <div class="w-64">
+      <div class="flex min-w-0 w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+        <div class="w-full sm:w-64">
           <app-ui-select
             [id]="'participation-bulk-phase'"
             [options]="bulkPhaseOptions()"
@@ -55,6 +57,7 @@
           type="button"
           size="small"
           variant="primary"
+          class="w-full sm:w-auto"
           [disabled]="!canMoveToPhase()"
           [loading]="participationsStore.isSaving()"
           (clicked)="onMoveToPhase()">
@@ -66,6 +69,7 @@
             type="button"
             size="small"
             variant="danger"
+            class="w-full sm:w-auto"
             [outlined]="true"
             [disabled]="!canRemoveFromPhase()"
             [loading]="participationsStore.isSaving()"
@@ -205,11 +209,12 @@
                 </td>
                 <td class="px-4 py-3.5">
                   @if (participation.phases.length > 0) {
-                    <div class="flex flex-wrap gap-1.5">
-                      @for (phase of participation.phases; track phase.id) {
-                        <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
-                          {{ phase.name }}
-                        </span>
+                    <div class="min-w-0 space-y-1">
+                      <p class="truncate text-sm font-medium text-slate-700">
+                        {{ participation.phases[0].name }}
+                      </p>
+                      @if (participation.phases.length > 1) {
+                        <p class="text-xs text-slate-400">+{{ participation.phases.length - 1 }} autres phases</p>
                       }
                     </div>
                   } @else {

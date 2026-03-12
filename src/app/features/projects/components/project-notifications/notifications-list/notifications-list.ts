@@ -36,4 +36,9 @@ export class NotificationsHistoryList {
     if (notification.phase?.name) return notification.phase.name;
     return 'Tous les participants';
   }
+
+  bodyPreview(body: string): string {
+    const doc = new DOMParser().parseFromString(body, 'text/html');
+    return doc.body.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+  }
 }

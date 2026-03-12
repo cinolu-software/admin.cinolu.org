@@ -1,6 +1,7 @@
 import { Component, input, forwardRef, ChangeDetectionStrategy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { signal } from '@angular/core';
 
 @Component({
   selector: 'app-ui-checkbox',
@@ -17,6 +18,7 @@ export class UiCheckbox implements ControlValueAccessor {
   name = input<string>('');
   invalid = input<boolean>(false);
   @Input() value!: boolean;
+  isControlDisabled = signal(false);
 
   onChange!: (value: boolean) => void;
   onTouched!: () => void;
@@ -34,7 +36,7 @@ export class UiCheckbox implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    void isDisabled;
+    this.isControlDisabled.set(isDisabled);
   }
 
   onCheckboxChange(event: Event): void {
@@ -47,7 +49,11 @@ export class UiCheckbox implements ControlValueAccessor {
   checkboxClasses(): string {
     const baseClasses = 'ui-checkbox-input';
     const invalidClasses = this.invalid() ? 'ui-checkbox-invalid' : '';
-    const disabledClasses = this.disabled() ? 'ui-checkbox-disabled' : '';
+    const disabledClasses = this.isDisabled() ? 'ui-checkbox-disabled' : '';
     return [baseClasses, invalidClasses, disabledClasses].filter(Boolean).join(' ');
+  }
+
+  isDisabled(): boolean {
+    return this.disabled() || this.isControlDisabled();
   }
 }
