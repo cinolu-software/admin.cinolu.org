@@ -112,7 +112,7 @@ export const ResourcesStore = signalStore(
           switchMap(({ id, file }) => {
             const formData = new FormData();
             formData.append('file', file);
-            return http.patch<{ data: IResource }>(`ressources/file/${id}`, formData).pipe(
+            return http.patch<{ data: IResource }>(`resources/file/${id}`, formData).pipe(
               tap(({ data }) => {
                 upsert(data);
                 patchState(store, { isSaving: false });
