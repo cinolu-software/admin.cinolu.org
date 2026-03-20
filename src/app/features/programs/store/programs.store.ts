@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap, exhaustMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FilterProgramsDto } from '../dto/programs/filter-programs.dto';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { Program } from '@shared/models';
 import { Router } from '@angular/router';
 import { ToastrService } from '@shared/services/toast';
@@ -84,8 +84,8 @@ export const ProgramsStore = signalStore(
               _toast.showSuccess('Programme ajouté');
               patchState(store, { isLoading: false });
             }),
-            catchError(() => {
-              _toast.showError("Échec de l'ajout du rôle");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Échec de l'ajout du rôle"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -97,7 +97,7 @@ export const ProgramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ programId, payload }) =>
-          _http.patch<{ data: Program }>(`programs/${programId}`, payload).pipe(
+          _http.patch<{ data: Program }>(`programs/id/${programId}`, payload).pipe(
             map(({ data }) => {
               _toast.showSuccess('Programme mis à jour');
               _router.navigate(['/programs']);
@@ -105,8 +105,8 @@ export const ProgramsStore = signalStore(
               const updated = list.map((p) => (p.id === data.id ? data : p));
               patchState(store, { isLoading: false, program: data, programs: [updated, count] });
             }),
-            catchError(() => {
-              _toast.showError('Échec de la mise à jour');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la mise à jour'));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -118,16 +118,16 @@ export const ProgramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.delete<void>(`programs/${id}`).pipe(
+          _http.delete<void>(`programs/id/${id}`).pipe(
             map(() => {
               const [programs, count] = store.programs();
               const filtered = programs.filter((program) => program.id !== id);
               _toast.showSuccess('Programme supprimé');
               patchState(store, { isLoading: false, programs: [filtered, Math.max(0, count - 1)] });
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError('Échec de la suppression');
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la suppression'));
               return of(null);
             })
           )
@@ -140,7 +140,7 @@ export const ProgramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: Program }>(`programs/${id}/publish`, {}).pipe(
+          _http.patch<{ data: Program }>(`programs/id/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.programs();
               const updated = list.map((p) => (p.id === data.id ? data : p));
@@ -158,7 +158,7 @@ export const ProgramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: Program }>(`programs/${id}/highlight`, {}).pipe(
+          _http.patch<{ data: Program }>(`programs/id/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.programs();
               const updated = list.map((p) => (p.id === data.id ? data : p));
@@ -167,8 +167,8 @@ export const ProgramsStore = signalStore(
               );
               patchState(store, { isLoading: false, program: data, programs: [updated, count] });
             }),
-            catchError(() => {
-              _toast.showError('Erreur lors de la mise en avant du programme');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Erreur lors de la mise en avant du programme'));
               patchState(store, { isLoading: false });
               return of(null);
             })

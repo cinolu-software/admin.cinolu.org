@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FilterRolesDto } from '../dto/roles/filter-roles.dto';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IRole } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { RoleDto } from '../dto/roles/role.dto';
@@ -70,9 +70,9 @@ export const RolesStore = signalStore(
               _toast.showSuccess('Rôle ajouté avec succès');
               onSuccess();
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError("Échec de l'ajout du rôle");
+              _toast.showError(extractApiErrorMessage(error, "Échec de l'ajout du rôle"));
               return of(null);
             })
           )
@@ -83,7 +83,7 @@ export const RolesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ id, payload, onSuccess }) =>
-          _http.patch<{ data: IRole }>(`roles/${id}`, payload).pipe(
+          _http.patch<{ data: IRole }>(`roles/id/${id}`, payload).pipe(
             map(({ data }) => {
               const [roles, count] = store.roles();
               const updated = roles.map((r) => (r.id === data.id ? data : r));
@@ -96,9 +96,9 @@ export const RolesStore = signalStore(
               _toast.showSuccess('Rôle mis à jour avec succès');
               onSuccess();
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError('Erreur lors de la mise à jour du rôle');
+              _toast.showError(extractApiErrorMessage(error, 'Erreur lors de la mise à jour du rôle'));
               return of(null);
             })
           )
@@ -109,7 +109,7 @@ export const RolesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.delete<void>(`roles/${id}`).pipe(
+          _http.delete<void>(`roles/id/${id}`).pipe(
             map(() => {
               const [roles, count] = store.roles();
               const filtered = roles.filter((role) => role.id !== id);
@@ -121,9 +121,9 @@ export const RolesStore = signalStore(
               });
               _toast.showSuccess('Rôle supprimé avec succès');
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError('Échec de la suppression du rôle');
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la suppression du rôle'));
               return of(null);
             })
           )

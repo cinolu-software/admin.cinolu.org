@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { SubprogramDto } from '../dto/subprograms/subprogram.dto';
 import { ISubprogram } from '@shared/models';
+import { extractApiErrorMessage } from '@shared/helpers';
 
 interface IProgramsStore {
   isLoading: boolean;
@@ -47,8 +48,8 @@ export const SubprogramsStore = signalStore(
               patchState(store, { isLoading: false });
               onSuccess();
             }),
-            catchError(() => {
-              _toast.showError("Échec de l'ajout du sous programme");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Échec de l'ajout du sous programme"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -60,7 +61,7 @@ export const SubprogramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ payload, onSuccess }) =>
-          _http.patch<{ data: ISubprogram }>(`subprograms/${payload.id}`, payload).pipe(
+          _http.patch<{ data: ISubprogram }>(`subprograms/id/${payload.id}`, payload).pipe(
             map(({ data }) => {
               const list = store.subprograms();
               const updated = list.map((sp) => (sp.id === data.id ? data : sp));
@@ -69,8 +70,8 @@ export const SubprogramsStore = signalStore(
               patchState(store, { isLoading: false });
               onSuccess();
             }),
-            catchError(() => {
-              _toast.showError('Échec de la mise à jour');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la mise à jour'));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -82,16 +83,16 @@ export const SubprogramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.delete<void>(`subprograms/${id}`).pipe(
+          _http.delete<void>(`subprograms/id/${id}`).pipe(
             map(() => {
               const list = store.subprograms();
               const filtered = list.filter((subprogram) => subprogram.id !== id);
               patchState(store, { subprograms: filtered, isLoading: false });
               _toast.showSuccess('Programme supprimé');
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError('Échec de la suppression');
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la suppression'));
               return of(null);
             })
           )
@@ -102,7 +103,7 @@ export const SubprogramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: ISubprogram }>(`subprograms/${id}/publish`, {}).pipe(
+          _http.patch<{ data: ISubprogram }>(`subprograms/id/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const list = store.subprograms();
               const updated = list.map((sp) => (sp.id === data.id ? data : sp));
@@ -120,7 +121,7 @@ export const SubprogramsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: ISubprogram }>(`subprograms/${id}/highlight`, {}).pipe(
+          _http.patch<{ data: ISubprogram }>(`subprograms/id/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const list = store.subprograms();
               const updated = list.map((sp) => (sp.id === data.id ? data : sp));
@@ -130,8 +131,8 @@ export const SubprogramsStore = signalStore(
               );
               patchState(store, { isLoading: false });
             }),
-            catchError(() => {
-              _toast.showError('Erreur lors de la mise en avant du programme');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Erreur lors de la mise en avant du programme'));
               patchState(store, { isLoading: false });
               return of(null);
             })

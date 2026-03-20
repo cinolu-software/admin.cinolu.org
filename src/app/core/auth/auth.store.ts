@@ -6,6 +6,7 @@ import { computed, inject } from '@angular/core';
 import { ToastrService } from '../../shared/services/toast/toastr.service';
 import { Router } from '@angular/router';
 import { IUser } from '@shared/models';
+import { extractApiErrorMessage } from '@shared/helpers';
 
 interface IAuthStore {
   user: IUser | null;
@@ -52,8 +53,8 @@ export const AuthStore = signalStore(
               patchState(store, { user: null });
               toast.showSuccess('Déconnexion réussie');
             }),
-            catchError(() => {
-              toast.showError('Erreur lors de la déconnexion');
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, 'Erreur lors de la déconnexion'));
               return of(null);
             })
           )

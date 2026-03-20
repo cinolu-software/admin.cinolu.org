@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IProjectParticipation } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { FilterParticipationsDto } from '../dto/phases/filter-participations.dto';
@@ -32,7 +32,7 @@ export const ParticipationsStore = signalStore(
         switchMap(({ projectId, filters }) => {
           const params = buildQueryParams(filters);
           return _http
-            .get<{ data: [IProjectParticipation[], number] }>(`projects/${projectId}/participations`, { params })
+            .get<{ data: [IProjectParticipation[], number] }>(`projects/id/${projectId}/participations`, { params })
             .pipe(
               map(({ data }) => {
                 patchState(store, { isLoading: false, participations: data });
@@ -55,8 +55,8 @@ export const ParticipationsStore = signalStore(
               _toast.showSuccess('Les participants ont été ajoutés à la phase');
               onSuccess?.();
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors du déplacement des participants");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors du déplacement des participants"));
               patchState(store, { isSaving: false });
               return of(null);
             })
@@ -74,8 +74,8 @@ export const ParticipationsStore = signalStore(
               _toast.showSuccess('Les participants ont été retirés de la phase');
               onSuccess?.();
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors du retrait des participants");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors du retrait des participants"));
               patchState(store, { isLoading: false });
               return of(null);
             })

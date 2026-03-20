@@ -1,4 +1,4 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 
 export type QueryParamValue = string | number | boolean | null | undefined;
 
@@ -24,4 +24,42 @@ export function buildQueryParams(q: unknown): HttpParams | undefined {
     params = params.set(key, String(value));
   });
   return params.keys().length ? params : undefined;
+}
+
+export function extractApiErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof HttpErrorResponse) {
+    const payload = error.error;
+
+    if (typeof payload === 'string' && payload.trim()) {
+      return payload;
+    }
+
+    if (payload && typeof payload === 'object') {
+      const message = 'message' in payload ? payload.message : null;
+
+      if (typeof message === 'string' && message.trim()) {
+        return message;
+      }
+
+      if (Array.isArray(message) && message.length) {
+        const firstMessage = message.find((item) => typeof item === 'string' && item.trim());
+        if (firstMessage) {
+          return firstMessage;
+        }
+      }
+    }
+
+    if (typeof error.message === 'string' && error.message.trim()) {
+      return error.message;
+    }
+  }
+
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = error.message;
+    if (typeof message === 'string' && message.trim()) {
+      return message;
+    }
+  }
+
+  return fallback;
 }

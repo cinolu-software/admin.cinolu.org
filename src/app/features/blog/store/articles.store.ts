@@ -5,7 +5,7 @@ import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FilterArticlesTagsDto } from '../dto/filter-tags.dto';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IArticle, IImage } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { ArticleDto } from '../dto/article.dto';
@@ -75,8 +75,8 @@ export const ArticlesStore = signalStore(
               router.navigate(['/blog/articles']);
               patchState(store, { isLoading: false, article: data });
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de l'ajout");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de l'ajout"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -88,7 +88,7 @@ export const ArticlesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) =>
-          http.patch<{ data: IArticle }>(`articles/${payload.id}`, payload).pipe(
+          http.patch<{ data: IArticle }>(`articles/id/${payload.id}`, payload).pipe(
             map(({ data }) => {
               toast.showSuccess("L'article a été mis à jour avec succès");
               router.navigate(['/blog/articles']);
@@ -96,8 +96,8 @@ export const ArticlesStore = signalStore(
               const updated = list.map((a) => (a.id === data.id ? data : a));
               patchState(store, { isLoading: false, article: data, articles: [updated, count] });
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de la mise à jour");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la mise à jour"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -109,15 +109,15 @@ export const ArticlesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          http.delete<void>(`articles/${id}`).pipe(
+          http.delete<void>(`articles/id/${id}`).pipe(
             map(() => {
               const [list, count] = store.articles();
               const filtered = list.filter((a) => a.id !== id);
               toast.showSuccess("L'article a été supprimé avec succès");
               patchState(store, { isLoading: false, articles: [filtered, Math.max(0, count - 1)] });
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de la suppression");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la suppression"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -129,7 +129,7 @@ export const ArticlesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          http.patch<{ data: IArticle }>(`articles/${id}/highlight`, {}).pipe(
+          http.patch<{ data: IArticle }>(`articles/id/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.articles();
               const updated = list.map((a) => (a.id === data.id ? data : a));
@@ -138,8 +138,8 @@ export const ArticlesStore = signalStore(
               );
               patchState(store, { isLoading: false, articles: [updated, count], article: data });
             }),
-            catchError(() => {
-              toast.showError("Erreur lors de la mise en avant de l'article");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Erreur lors de la mise en avant de l'article"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -174,9 +174,9 @@ export const ArticlesStore = signalStore(
               patchState(store, { isLoading: false, gallery: filtered });
               toast.showSuccess('Image supprimée avec succès');
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              toast.showError("Échec de la suppression de l'image");
+              toast.showError(extractApiErrorMessage(error, "Échec de la suppression de l'image"));
               return of(null);
             })
           )

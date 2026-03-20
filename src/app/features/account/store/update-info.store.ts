@@ -7,6 +7,7 @@ import { UpdateInfoDto } from '../dto/update-info.dto';
 import { AuthStore } from '@core/auth/auth.store';
 import { IUser } from '@shared/models/user.model';
 import { ToastrService } from '@shared/services/toast';
+import { extractApiErrorMessage } from '@shared/helpers';
 
 interface IUpdateInfoStore {
   isLoading: boolean;
@@ -30,9 +31,9 @@ export const UpdateInfoStore = signalStore(
               _toast.showSuccess('Profil mis à jour');
               _authStore.setUser(data);
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError('Erreur lors de la mise à jour');
+              _toast.showError(extractApiErrorMessage(error, 'Erreur lors de la mise à jour'));
               return of(null);
             })
           );

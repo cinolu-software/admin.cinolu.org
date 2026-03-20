@@ -4,7 +4,7 @@ import { patchState, signalStore, withComputed, withMethods, withProps, withStat
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { computed } from '@angular/core';
 import { catchError, of, pipe, switchMap, tap } from 'rxjs';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IResource } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { CreateResourceDto, UpdateResourceDto } from '../dto/resources/create-resource.dto';
@@ -77,9 +77,9 @@ export const ResourcesStore = signalStore(
                 toast.showSuccess('La ressource a été créée avec succès');
                 onSuccess?.();
               }),
-              catchError(() => {
+              catchError((error) => {
                 patchState(store, { isSaving: false });
-                toast.showError("Une erreur s'est produite lors de la création de la ressource");
+                toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la création de la ressource"));
                 return of(null);
               })
             );
@@ -90,16 +90,16 @@ export const ResourcesStore = signalStore(
         pipe(
           tap(() => patchState(store, { isSaving: true })),
           switchMap(({ id, dto, onSuccess }) =>
-            http.patch<{ data: IResource }>(`resources/${id}`, dto).pipe(
+            http.patch<{ data: IResource }>(`resources/id/${id}`, dto).pipe(
               tap(({ data }) => {
                 upsert(data);
                 patchState(store, { isSaving: false });
                 toast.showSuccess('La ressource a été mise à jour');
                 onSuccess?.();
               }),
-              catchError(() => {
+              catchError((error) => {
                 patchState(store, { isSaving: false });
-                toast.showError("Une erreur s'est produite lors de la mise à jour");
+                toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la mise à jour"));
                 return of(null);
               })
             )
@@ -118,9 +118,9 @@ export const ResourcesStore = signalStore(
                 patchState(store, { isSaving: false });
                 toast.showSuccess('Le fichier a été remplacé');
               }),
-              catchError(() => {
+              catchError((error) => {
                 patchState(store, { isSaving: false });
-                toast.showError("Une erreur s'est produite lors du remplacement du fichier");
+                toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors du remplacement du fichier"));
                 return of(null);
               })
             );
@@ -131,7 +131,7 @@ export const ResourcesStore = signalStore(
         pipe(
           tap(() => patchState(store, { isSaving: true })),
           switchMap((id) =>
-            http.delete<void>(`resources/${id}`).pipe(
+            http.delete<void>(`resources/id/${id}`).pipe(
               tap(() => {
                 const [list, total] = store.resources();
                 patchState(store, {
@@ -140,9 +140,9 @@ export const ResourcesStore = signalStore(
                 });
                 toast.showSuccess('La ressource a été supprimée');
               }),
-              catchError(() => {
+              catchError((error) => {
                 patchState(store, { isSaving: false });
-                toast.showError("Une erreur s'est produite lors de la suppression");
+                toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la suppression"));
                 return of(null);
               })
             )

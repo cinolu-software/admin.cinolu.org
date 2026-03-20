@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { ICategory } from '@shared/models';
 import { FilterProjectCategoriesDto } from '../dto/categories/filter-categories.dto';
@@ -76,8 +76,8 @@ export const CategoriesStore = signalStore(
               _toast.showSuccess('Catégorie ajoutée avec succès');
               onSuccess(data);
             }),
-            catchError(() => {
-              _toast.showError("Échec de l'ajout de la catégorie");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Échec de l'ajout de la catégorie"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -89,7 +89,7 @@ export const CategoriesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ id, payload, onSuccess }) =>
-          _http.patch<{ data: ICategory }>(`project-categories/${id}`, payload).pipe(
+          _http.patch<{ data: ICategory }>(`project-categories/id/${id}`, payload).pipe(
             map(({ data }) => {
               _toast.showSuccess('Catégorie mise à jour');
               const [list, count] = store.categories();
@@ -97,8 +97,8 @@ export const CategoriesStore = signalStore(
               patchState(store, { isLoading: false, categories: [updated, count] });
               onSuccess();
             }),
-            catchError(() => {
-              _toast.showError('Échec de la mise à jour');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la mise à jour'));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -110,7 +110,7 @@ export const CategoriesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ id }) =>
-          _http.delete<void>(`project-categories/${id}`).pipe(
+          _http.delete<void>(`project-categories/id/${id}`).pipe(
             map(() => {
               const [list, count] = store.categories();
               const filtered = list.filter((c) => c.id !== id);
@@ -118,8 +118,8 @@ export const CategoriesStore = signalStore(
               _toast.showSuccess('Catégorie supprimée avec succès');
               patchState(store, { isLoading: false });
             }),
-            catchError(() => {
-              _toast.showError('Échec de la suppression de la catégorie');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la suppression de la catégorie'));
               patchState(store, { isLoading: false });
               return of(null);
             })

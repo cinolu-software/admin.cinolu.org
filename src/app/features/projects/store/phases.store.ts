@@ -6,6 +6,7 @@ import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IMentorProfile, IPhase } from '@shared/models';
 import { PhaseDto } from '../dto/phases/phase.dto';
 import { HttpClient } from '@angular/common/http';
+import { extractApiErrorMessage } from '@shared/helpers';
 
 interface IPhasesStore {
   isLoading: boolean;
@@ -70,15 +71,15 @@ export const PhasesStore = signalStore(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, projectId, onSuccess }) => {
           delete dto?.id;
-          return _http.post<{ data: IPhase }>(`phases/${projectId}`, dto).pipe(
+          return _http.post<{ data: IPhase }>(`phases/project/${projectId}`, dto).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été créée avec succès');
               const phases = [...store.phases(), data];
               patchState(store, { isLoading: false, phases, phase: data });
               onSuccess();
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors de la création de la phase");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la création de la phase"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -90,15 +91,15 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ dto, onSuccess }) => {
-          return _http.patch<{ data: IPhase }>(`phases/${dto.id}`, dto).pipe(
+          return _http.patch<{ data: IPhase }>(`phases/id/${dto.id}`, dto).pipe(
             map(({ data }) => {
               _toast.showSuccess('La phase a été mise à jour avec succès');
               const phases = store.phases().map((p) => (p.id === data.id ? data : p));
               patchState(store, { isLoading: false, phases });
               onSuccess();
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors de la mise à jour");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la mise à jour"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -110,14 +111,14 @@ export const PhasesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.delete<void>(`phases/${id}`).pipe(
+          _http.delete<void>(`phases/id/${id}`).pipe(
             tap(() => {
               _toast.showSuccess('La phase a été supprimée avec succès');
               const phases = store.phases().filter((p) => p.id !== id);
               patchState(store, { isLoading: false, phases, phase: null });
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors de la suppression");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la suppression"));
               patchState(store, { isLoading: false });
               return of(null);
             })

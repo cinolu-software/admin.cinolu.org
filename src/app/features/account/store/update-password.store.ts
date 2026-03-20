@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { ToastrService } from '@shared/services/toast';
 import { IUser } from '@shared/models/user.model';
+import { extractApiErrorMessage } from '@shared/helpers';
 
 interface IUpdatePasswordStore {
   isLoading: boolean;
@@ -27,8 +28,8 @@ export const UpdatePasswordStore = signalStore(
               _toast.showSuccess('Mot de passe mis à jour');
               patchState(store, { isLoading: false });
             }),
-            catchError(() => {
-              _toast.showError('Erreur lors de la mise à jour');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Erreur lors de la mise à jour'));
               patchState(store, { isLoading: false });
               return of(null);
             })

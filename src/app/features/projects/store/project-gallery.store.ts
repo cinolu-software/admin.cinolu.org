@@ -5,6 +5,7 @@ import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IImage } from '@shared/models';
+import { extractApiErrorMessage } from '@shared/helpers';
 
 interface IGalleryStore {
   isLoading: boolean;
@@ -45,9 +46,9 @@ export const GalleryStore = signalStore(
               patchState(store, { isLoading: false, gallery: filtered });
               _toast.showSuccess('Image supprimée avec succès');
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError("Échec de la suppression de l'image");
+              _toast.showError(extractApiErrorMessage(error, "Échec de la suppression de l'image"));
               return of(null);
             })
           )

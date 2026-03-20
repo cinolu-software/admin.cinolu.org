@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FilterUsersDto } from '../dto/users/filter-users.dto';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IUser } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { Router } from '@angular/router';
@@ -73,7 +73,7 @@ export const UsersStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((email) =>
-          http.get<{ data: IUser }>(`users/${email}`).pipe(
+          http.get<{ data: IUser }>(`users/by-email/${email}`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, user: data });
             }),
@@ -95,8 +95,8 @@ export const UsersStore = signalStore(
               toast.showSuccess('Utilisateur ajouté avec succès');
               patchState(store, { isLoading: false, user: data });
             }),
-            catchError(() => {
-              toast.showError("Erreur lors de l'ajout de l'utilisateur");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Erreur lors de l'ajout de l'utilisateur"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -108,14 +108,14 @@ export const UsersStore = signalStore(
       pipe(
         tap(() => patchState(store, { isUpdating: true })),
         switchMap((params) =>
-          http.patch<{ data: IUser }>(`users/${params.id}`, params.dto).pipe(
+          http.patch<{ data: IUser }>(`users/id/${params.id}`, params.dto).pipe(
             map(({ data }) => {
               router.navigate(['/users']);
               toast.showSuccess('Utilisateur mis à jour avec succès');
               patchState(store, { isUpdating: false, user: data });
             }),
-            catchError(() => {
-              toast.showError("Erreur lors de la mise à jour de l'utilisateur");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Erreur lors de la mise à jour de l'utilisateur"));
               patchState(store, { isUpdating: false });
               return of(null);
             })
@@ -127,16 +127,16 @@ export const UsersStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((userId) =>
-          http.delete<void>(`users/${userId}`).pipe(
+          http.delete<void>(`users/id/${userId}`).pipe(
             map(() => {
               const [list, count] = store.users();
               const filtered = list.filter((u) => u.id !== userId);
               patchState(store, { isLoading: false, users: [filtered, Math.max(0, count - 1)] });
               toast.showSuccess('Utilisateur supprimé avec succès');
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              toast.showError("Échec de la suppression de l'utilisateur");
+              toast.showError(extractApiErrorMessage(error, "Échec de la suppression de l'utilisateur"));
               return of(null);
             })
           )
@@ -153,9 +153,9 @@ export const UsersStore = signalStore(
               toast.showSuccess('Utilisateurs invalides supprimés avec succès');
               onSuccess();
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              toast.showError('Échec de la suppression des utilisateurs invalides');
+              toast.showError(extractApiErrorMessage(error, 'Échec de la suppression des utilisateurs invalides'));
               return of(null);
             })
           )
@@ -197,8 +197,8 @@ export const UsersStore = signalStore(
               patchState(store, { isImportingCsv: false });
               onSuccess();
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de l'import des utilisateurs");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de l'import des utilisateurs"));
               patchState(store, { isImportingCsv: false });
               return of(null);
             })

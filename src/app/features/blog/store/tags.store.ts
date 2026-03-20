@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, exhaustMap, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FilterArticlesTagsDto } from '../dto/filter-tags.dto';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { ITag } from '@shared/models';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { ArticleTagDto } from '../dto/article-tag.dto';
@@ -74,8 +74,8 @@ export const TagsStore = signalStore(
               patchState(store, { isLoading: false });
               onSuccess(data);
             }),
-            catchError(() => {
-              _toast.showError("Échec de l'ajout du tag");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Échec de l'ajout du tag"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -87,7 +87,7 @@ export const TagsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ id, payload, onSuccess }) =>
-          _http.patch<{ data: ITag }>(`tags/${id}`, payload).pipe(
+          _http.patch<{ data: ITag }>(`tags/id/${id}`, payload).pipe(
             map(({ data }) => {
               const [tags, count] = store.tags();
               const updated = tags.map((t) => (t.id === data.id ? data : t));
@@ -96,8 +96,8 @@ export const TagsStore = signalStore(
               patchState(store, { isLoading: false });
               onSuccess();
             }),
-            catchError(() => {
-              _toast.showError('Échec de la mise à jour');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la mise à jour'));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -109,7 +109,7 @@ export const TagsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ id }) =>
-          _http.delete<void>(`tags/${id}`).pipe(
+          _http.delete<void>(`tags/id/${id}`).pipe(
             map(() => {
               const [tags, count] = store.tags();
               const filtered = tags.filter((tag) => tag.id !== id);
@@ -117,9 +117,9 @@ export const TagsStore = signalStore(
               patchState(store, { isLoading: false });
               _toast.showSuccess('Tag supprimée avec succès');
             }),
-            catchError(() => {
+            catchError((error) => {
               patchState(store, { isLoading: false });
-              _toast.showError('Échec de la suppression du tag');
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la suppression du tag'));
               return of(null);
             })
           )

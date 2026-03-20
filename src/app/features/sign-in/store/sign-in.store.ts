@@ -8,6 +8,7 @@ import { IUser } from '@shared/models';
 import { AuthStore } from '@core/auth/auth.store';
 import { SignInDto } from '../dto/sign-in.dto';
 import { Router } from '@angular/router';
+import { extractApiErrorMessage } from '@shared/helpers';
 
 interface ISignInStore {
   isLoading: boolean;
@@ -44,7 +45,7 @@ export const SignInStore = signalStore(
             }),
             catchError((err) => {
               patchState(store, { isLoading: false });
-              toast.showError(err.error['message'] || 'Erreur de connexion');
+              toast.showError(extractApiErrorMessage(err, 'Erreur de connexion'));
               return of(null);
             })
           );

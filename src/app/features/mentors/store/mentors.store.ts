@@ -3,7 +3,7 @@ import { computed, inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IMentorProfile } from '@shared/models';
 import { FilterMentorsProfileDto } from '../dto/mentors/filter-mentors-profiles.dto';
 import { ToastrService } from '@shared/services/toast/toastr.service';
@@ -62,7 +62,7 @@ export const MentorsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          http.get<{ data: IMentorProfile }>(`mentors/${id}`).pipe(
+          http.get<{ data: IMentorProfile }>(`mentors/id/${id}`).pipe(
             map(({ data }) => {
               patchState(store, { isLoading: false, mentor: data });
             }),
@@ -103,15 +103,15 @@ export const MentorsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          http.patch<{ data: IMentorProfile }>(`mentors/${id}/approve`, {}).pipe(
+          http.patch<{ data: IMentorProfile }>(`mentors/id/${id}/approve`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.mentors();
               const updated = list.map((m) => (m.id === data.id ? data : m));
               toast.showSuccess('Profil mentor approuvé');
               patchState(store, { isLoading: false, mentors: [updated, count], mentor: data });
             }),
-            catchError(() => {
-              toast.showError("Erreur lors de l'approbation");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Erreur lors de l'approbation"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -123,15 +123,15 @@ export const MentorsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          http.patch<{ data: IMentorProfile }>(`mentors/${id}/reject`, {}).pipe(
+          http.patch<{ data: IMentorProfile }>(`mentors/id/${id}/reject`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.mentors();
               const updated = list.map((m) => (m.id === data.id ? data : m));
               toast.showSuccess('Profil mentor rejeté');
               patchState(store, { isLoading: false, mentors: [updated, count], mentor: data });
             }),
-            catchError(() => {
-              toast.showError('Erreur lors du rejet');
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, 'Erreur lors du rejet'));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -149,8 +149,8 @@ export const MentorsStore = signalStore(
               patchState(store, { isSaving: false, mentor: data });
               router.navigate(['/mentors']);
             }),
-            catchError(() => {
-              toast.showError('Erreur lors de la création du mentor');
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, 'Erreur lors de la création du mentor'));
               patchState(store, { isSaving: false });
               return of(null);
             })
@@ -162,7 +162,7 @@ export const MentorsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isSaving: true })),
         switchMap(({ id, dto }) =>
-          http.patch<{ data: IMentorProfile }>(`mentors/${id}`, dto).pipe(
+          http.patch<{ data: IMentorProfile }>(`mentors/applications/${id}`, dto).pipe(
             map(({ data }) => {
               const [list, count] = store.mentors();
               const updated = list.map((mentor) => (mentor.id === data.id ? data : mentor));
@@ -170,8 +170,8 @@ export const MentorsStore = signalStore(
               patchState(store, { isSaving: false, mentors: [updated, count], mentor: data });
               router.navigate(['/mentors']);
             }),
-            catchError(() => {
-              toast.showError('Erreur lors de la mise à jour du mentor');
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, 'Erreur lors de la mise à jour du mentor'));
               patchState(store, { isSaving: false });
               return of(null);
             })

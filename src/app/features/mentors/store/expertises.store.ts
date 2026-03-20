@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IExpertise } from '@shared/models';
 import { FilterExpertisesDto } from '../dto/expertises/filter-expertises.dto';
@@ -78,8 +78,8 @@ export const ExpertisesStore = signalStore(
               _toast.showSuccess('Expertise ajoutée avec succès');
               onSuccess(data);
             }),
-            catchError(() => {
-              _toast.showError("Échec de l'ajout de l'expertise");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Échec de l'ajout de l'expertise"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -91,7 +91,7 @@ export const ExpertisesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ id, payload, onSuccess }) =>
-          _http.patch<{ data: IExpertise }>(`expertises/${id}`, payload).pipe(
+          _http.patch<{ data: IExpertise }>(`expertises/id/${id}`, payload).pipe(
             map(({ data }) => {
               _toast.showSuccess('Expertise mise à jour');
               const [list, count] = store.expertises();
@@ -102,8 +102,8 @@ export const ExpertisesStore = signalStore(
               patchState(store, { isLoading: false, expertises: [updated, count], allExpertises });
               onSuccess();
             }),
-            catchError(() => {
-              _toast.showError('Échec de la mise à jour');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Échec de la mise à jour'));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -115,7 +115,7 @@ export const ExpertisesStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(({ id }) =>
-          _http.delete<void>(`expertises/${id}`).pipe(
+          _http.delete<void>(`expertises/id/${id}`).pipe(
             map(() => {
               const [list, count] = store.expertises();
               const filtered = list.filter((e) => e.id !== id);
@@ -124,8 +124,8 @@ export const ExpertisesStore = signalStore(
               _toast.showSuccess('Expertise supprimée avec succès');
               patchState(store, { isLoading: false });
             }),
-            catchError(() => {
-              _toast.showError("Échec de la suppression de l'expertise");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Échec de la suppression de l'expertise"));
               patchState(store, { isLoading: false });
               return of(null);
             })

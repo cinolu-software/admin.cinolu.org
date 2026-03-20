@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IEvent } from '@shared/models';
 import { FilterEventCategoriesDto } from '../dto/categories/filter-categories.dto';
 import { ToastrService } from '@shared/services/toast/toastr.service';
@@ -71,8 +71,8 @@ export const EventsStore = signalStore(
               _router.navigate(['/events']);
               patchState(store, { isLoading: false, event: data });
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -84,7 +84,7 @@ export const EventsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((payload) =>
-          _http.patch<{ data: IEvent }>(`events/${payload.id}`, payload).pipe(
+          _http.patch<{ data: IEvent }>(`events/id/${payload.id}`, payload).pipe(
             map(({ data }) => {
               _toast.showSuccess("L'événement a été mis à jour avec succès");
               _router.navigate(['/events']);
@@ -92,8 +92,8 @@ export const EventsStore = signalStore(
               const updated = list.map((e) => (e.id === data.id ? data : e));
               patchState(store, { isLoading: false, event: data, events: [updated, count] });
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors de la mise à jour");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la mise à jour"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -105,15 +105,15 @@ export const EventsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.delete<void>(`events/${id}`).pipe(
+          _http.delete<void>(`events/id/${id}`).pipe(
             map(() => {
               const [list, count] = store.events();
               const filtered = list.filter((e) => e.id !== id);
               _toast.showSuccess("L'événement a été supprimé avec succès");
               patchState(store, { isLoading: false, events: [filtered, Math.max(0, count - 1)] });
             }),
-            catchError(() => {
-              _toast.showError("Une erreur s'est produite lors de la suppression");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la suppression"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -125,7 +125,7 @@ export const EventsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: IEvent }>(`events/${id}/publish`, {}).pipe(
+          _http.patch<{ data: IEvent }>(`events/id/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.events();
               const updated = list.map((e) => (e.id === data.id ? data : e));
@@ -143,7 +143,7 @@ export const EventsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) =>
-          _http.patch<{ data: IEvent }>(`events/${id}/highlight`, {}).pipe(
+          _http.patch<{ data: IEvent }>(`events/id/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.events();
               const updated = list.map((e) => (e.id === data.id ? data : e));
@@ -152,8 +152,8 @@ export const EventsStore = signalStore(
               );
               patchState(store, { isLoading: false, events: [updated, count], event: data });
             }),
-            catchError(() => {
-              _toast.showError("Erreur lors de la mise en avant de l'Evénement");
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, "Erreur lors de la mise en avant de l'Evénement"));
               patchState(store, { isLoading: false });
               return of(null);
             })

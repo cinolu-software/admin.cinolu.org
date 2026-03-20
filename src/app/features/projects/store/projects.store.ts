@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastrService } from '@shared/services/toast/toastr.service';
 import { IProject } from '@shared/models';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { ProjectDto } from '../dto/projects/project.dto';
 import { FilterProjectsDto } from '../dto/projects/filter-projects.dto';
 
@@ -68,8 +68,8 @@ export const ProjectsStore = signalStore(
               router.navigate(['/projects']);
               patchState(store, { isLoading: false, project: data });
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de l'ajout du projet");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de l'ajout du projet"));
               patchState(store, { isLoading: false, project: null });
               return of(null);
             })
@@ -81,7 +81,7 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((project) => {
-          return http.patch<{ data: IProject }>(`projects/${project.id}`, project).pipe(
+          return http.patch<{ data: IProject }>(`projects/id/${project.id}`, project).pipe(
             map(({ data }) => {
               toast.showSuccess('Le projet a été mis à jour avec succès');
               router.navigate(['/projects']);
@@ -89,8 +89,8 @@ export const ProjectsStore = signalStore(
               const updated = list.map((p) => (p.id === data.id ? data : p));
               patchState(store, { isLoading: false, project: data, projects: [updated, count] });
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de la mise à jour");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la mise à jour"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -102,7 +102,7 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => {
-          return http.patch<{ data: IProject }>(`projects/${id}/publish`, {}).pipe(
+          return http.patch<{ data: IProject }>(`projects/id/${id}/publish`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.projects();
               const updated = list.map((p) => (p.id === data.id ? data : p));
@@ -120,15 +120,15 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => {
-          return http.patch<{ data: IProject }>(`projects/${id}/highlight`, {}).pipe(
+          return http.patch<{ data: IProject }>(`projects/id/${id}/highlight`, {}).pipe(
             map(({ data }) => {
               const [list, count] = store.projects();
               const updated = list.map((p) => (p.id === data.id ? data : p));
               toast.showSuccess('Projet mis en avant avec succès');
               patchState(store, { isLoading: false, projects: [updated, count], project: data });
             }),
-            catchError(() => {
-              toast.showError('Erreur lors de la mise en avant du projet');
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, 'Erreur lors de la mise en avant du projet'));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -140,15 +140,15 @@ export const ProjectsStore = signalStore(
       pipe(
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => {
-          return http.delete<{ data: IProject }>(`projects/${id}`).pipe(
+          return http.delete<{ data: IProject }>(`projects/id/${id}`).pipe(
             tap(() => {
               const [list, count] = store.projects();
               const filtered = list.filter((p) => p.id !== id);
               toast.showSuccess('Le projet a été supprimé avec succès');
               patchState(store, { isLoading: false, projects: [filtered, Math.max(0, count - 1)], project: null });
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de la suppression");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de la suppression"));
               patchState(store, { isLoading: false });
               return of(null);
             })
@@ -162,14 +162,14 @@ export const ProjectsStore = signalStore(
         switchMap(({ projectId, file, onSuccess }) => {
           const formData = new FormData();
           formData.append('file', file);
-          return http.post<unknown>(`projects/${projectId}/participants/import-csv`, formData).pipe(
+          return http.post<unknown>(`projects/id/${projectId}/participants/import-csv`, formData).pipe(
             map(() => {
               toast.showSuccess('Les participants ont été importés avec succès');
               patchState(store, { isImportingCsv: false });
               onSuccess();
             }),
-            catchError(() => {
-              toast.showError("Une erreur s'est produite lors de l'import des participants");
+            catchError((error) => {
+              toast.showError(extractApiErrorMessage(error, "Une erreur s'est produite lors de l'import des participants"));
               patchState(store, { isImportingCsv: false });
               return of(null);
             })

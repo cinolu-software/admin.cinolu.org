@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { buildQueryParams } from '@shared/helpers';
+import { buildQueryParams, extractApiErrorMessage } from '@shared/helpers';
 import { IVenture } from '@shared/models';
 import { FilterVenturesDto } from '../dto/filter-ventures.dto';
 import { ToastrService } from '@shared/services/toast/toastr.service';
@@ -69,8 +69,8 @@ export const VenturesStore = signalStore(
               _toast.showSuccess(data.is_published ? 'Venture publiée avec succès' : 'Venture dépubliée avec succès');
               patchState(store, { isLoading: false, ventures: [updated, count], venture: data });
             }),
-            catchError(() => {
-              _toast.showError('Erreur lors de la modification du statut de publication');
+            catchError((error) => {
+              _toast.showError(extractApiErrorMessage(error, 'Erreur lors de la modification du statut de publication'));
               patchState(store, { isLoading: false });
               return of(null);
             })
