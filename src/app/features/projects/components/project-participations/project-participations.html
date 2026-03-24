@@ -15,67 +15,64 @@
     class="sr-only"
     [disabled]="isImportingCsv"
     (change)="onCsvFileSelected($event)" />
-
-  <div class="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-      <div class="flex flex-wrap items-center gap-3">
-        <app-ui-badge [label]="totalCount.toString() + ' Participations'" />
-        @if (selectedCount > 0) {
-          <app-ui-badge [label]="selectedCount.toString() + ' sélectionnées'" [variant]="'info'" />
-        }
-      </div>
-      <div class="flex flex-wrap items-center gap-2">
-        <app-ui-button
-          variant="primary"
-          [outlined]="true"
-          size="small"
-          [loading]="isImportingCsv"
-          [disabled]="isImportingCsv"
-          (clicked)="triggerCsvFileSelect()">
-          @if (!isImportingCsv) {
-            <i-lucide [name]="icons.Upload" class="size-4" />
-          }
-          Importer CSV
-        </app-ui-button>
-        <app-ui-button
-          variant="secondary"
-          [outlined]="true"
-          size="small"
-          [disabled]="isLoading"
-          (clicked)="reloadCurrentData()">
-          <i-lucide [name]="icons.RefreshCcw" class="size-4" />
-          Actualiser
-        </app-ui-button>
-      </div>
-    </div>
-
-    <form
-      [formGroup]="filtersForm"
-      class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,1.5fr)]">
-      <app-ui-select
-        [id]="'participation-phase-filter'"
-        label="Phase"
-        [options]="phaseOptions()"
-        [invalid]="false"
-        placeholder="Toutes les phases"
-        formControlName="phaseId" />
-      <div class="flex items-end gap-2">
-        <app-ui-select
-          class="flex-1"
-          [id]="'participation-status-filter'"
-          label="Statut"
-          [options]="statusOptions"
-          [invalid]="false"
-          placeholder="Tous les statuts"
-          formControlName="status" />
-        <app-ui-button type="button" variant="secondary" [outlined]="true" size="small" (clicked)="onResetFilters()">
-          Réinitialiser
-        </app-ui-button>
-      </div>
-    </form>
-  </div>
-
   @if (!selectedParticipationId()) {
+    <div class="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex flex-wrap items-center gap-3">
+          <app-ui-badge [label]="totalCount.toString() + ' Participations'" />
+          @if (selectedCount > 0) {
+            <app-ui-badge [label]="selectedCount.toString() + ' sélectionnées'" [variant]="'info'" />
+          }
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <app-ui-button
+            variant="primary"
+            [outlined]="true"
+            size="small"
+            [loading]="isImportingCsv"
+            [disabled]="isImportingCsv"
+            (clicked)="triggerCsvFileSelect()">
+            @if (!isImportingCsv) {
+              <i-lucide [name]="icons.Upload" class="size-4" />
+            }
+            Importer CSV
+          </app-ui-button>
+          <app-ui-button
+            variant="secondary"
+            [outlined]="true"
+            size="small"
+            [disabled]="isLoading"
+            (clicked)="reloadCurrentData()">
+            <i-lucide [name]="icons.RefreshCcw" class="size-4" />
+            Actualiser
+          </app-ui-button>
+        </div>
+      </div>
+      <form
+        [formGroup]="filtersForm"
+        class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,1.5fr)]">
+        <app-ui-select
+          [id]="'participation-phase-filter'"
+          label="Phase"
+          [options]="phaseOptions()"
+          [invalid]="false"
+          placeholder="Toutes les phases"
+          formControlName="phaseId" />
+        <div class="flex items-end gap-2">
+          <app-ui-select
+            class="flex-1"
+            [id]="'participation-status-filter'"
+            label="Statut"
+            [options]="statusOptions"
+            [invalid]="false"
+            placeholder="Tous les statuts"
+            formControlName="status" />
+          <app-ui-button type="button" variant="secondary" [outlined]="true" size="small" (clicked)="onResetFilters()">
+            Réinitialiser
+          </app-ui-button>
+        </div>
+      </form>
+    </div>
     <div class="flex flex-col gap-4">
       <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
         <form
@@ -109,7 +106,6 @@
           </app-ui-button>
         </form>
       </div>
-
       <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
         @if (isLoading && totalCount === 0) {
           <div class="p-5">
@@ -124,7 +120,7 @@
                     <app-ui-checkbox
                       [id]="'participations-select-all'"
                       [value]="allSelectedOnPage()"
-                      (ngModelChange)="toggleAll($event)" />
+                      (valueChange)="toggleAll($event)" />
                   </th>
                   <th class="ui-table-header">Participant</th>
                   <th class="ui-table-header">Phases</th>
@@ -140,7 +136,7 @@
                       <app-ui-checkbox
                         [id]="'participation-select-' + item.id"
                         [value]="isSelected(item.id)"
-                        (ngModelChange)="toggleSelection(item.id, $event)" />
+                        (valueChange)="toggleSelection(item.id, $event)" />
                     </td>
                     <td class="ui-table-cell">
                       <button
@@ -202,13 +198,15 @@
     </div>
   } @else {
     <section class="flex flex-col gap-6">
-      <div class="rounded-lg border border-gray-200 bg-primary-50/40 p-6 shadow-sm">
+      <div class="inline-flex justify-end">
+        <app-ui-button type="button" variant="secondary" [outlined]="true" size="small" (clicked)="closeDetails()">
+          <i-lucide [name]="icons.ArrowLeft" class="size-4" />
+          Retour à la liste
+        </app-ui-button>
+      </div>
+      <div class="rounded-lg border border-gray-200 bg-gray-50/30 p-6 shadow-sm">
         <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div class="flex items-start gap-4">
-            <app-ui-button type="button" variant="secondary" [outlined]="true" size="small" (clicked)="closeDetails()">
-              <i-lucide [name]="icons.ArrowLeft" class="size-4" />
-              Retour à la liste
-            </app-ui-button>
             @if (participationDetail && !isDetailLoading) {
               <div class="flex items-center gap-4 rounded-lg">
                 <app-ui-avatar [image]="detailImage() | apiIMG: 'user'" [label]="participationDetail.user.name" />
@@ -242,32 +240,10 @@
       } @else if (participationDetail) {
         <div class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)]">
           <div class="flex flex-col gap-6">
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Projet</p>
-                <p class="mt-2 text-lg font-semibold text-gray-900">{{ participationDetail.project.name }}</p>
-                <p class="mt-1 text-sm text-gray-500">
-                  Participation créée le {{ participationDetail.created_at | date: 'dd MMM yyyy' }}
-                </p>
-              </div>
-              <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Dernière revue</p>
-                <p class="mt-2 text-base font-medium text-gray-900">{{ detailReviewerLabel() }}</p>
-                @if (participationDetail.reviewed_at) {
-                  <p class="mt-1 text-sm text-gray-500">
-                    {{ participationDetail.reviewed_at | date: 'dd MMM yyyy, HH:mm' }}
-                  </p>
-                } @else {
-                  <p class="mt-1 text-sm text-gray-500">Aucune revue enregistrée pour le moment.</p>
-                }
-              </div>
-            </div>
-
             <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
               <div class="flex items-center justify-between gap-3">
                 <div>
                   <h4 class="text-lg font-semibold text-gray-900">Progression dans le projet</h4>
-                  <p class="text-sm text-gray-500">Visualisez rapidement les phases déjà atteintes.</p>
                 </div>
                 <app-ui-badge
                   [label]="
@@ -300,7 +276,6 @@
                 }
               </div>
             </div>
-
             @if (participationDetail.review_message) {
               <div class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">Dernier message de revue</p>
@@ -311,7 +286,6 @@
             }
           </div>
           <aside class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h4 class="text-lg font-semibold text-gray-900">Revue administrative</h4>
             <div class="mb-5 grid grid-cols-1 gap-3">
               <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Statut actuel</p>

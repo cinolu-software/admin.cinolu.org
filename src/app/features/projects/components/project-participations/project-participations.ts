@@ -33,6 +33,7 @@ import { SelectOption, UiAvatar, UiBadge, UiButton, UiCheckbox, UiPagination, Ui
 import { ParticipationsStore } from '@features/projects/store/participations.store';
 import { ProjectsStore } from '@features/projects/store/projects.store';
 import { toPageQueryValue, toSearchQueryValue } from '@shared/helpers';
+import { FilterParticipationsDto } from '@features/projects/dto/phases/filter-participations.dto';
 
 @Component({
   selector: 'app-project-participations',
@@ -55,58 +56,45 @@ import { toPageQueryValue, toSearchQueryValue } from '@shared/helpers';
   ]
 })
 export class ProjectParticipations {
-  readonly project = input.required<IProject>();
-  readonly #fb = inject(FormBuilder);
-  readonly #destroyRef = inject(DestroyRef);
-  readonly #toast = inject(ToastrService);
-  readonly projectStore = inject(ProjectsStore);
-  readonly store = inject(ParticipationsStore);
-  readonly csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
-
-  readonly queryParams = signal<{
-    page: number | null;
-    q: string | null;
-    phaseId: string | null;
-    status: ParticipationStatus | null;
-  }>({
-    page: null,
-    q: null,
-    phaseId: null,
-    status: null
-  });
-  readonly selectedIds = signal<string[]>([]);
-  readonly selectedParticipationId = signal<string | null>(null);
-
-  readonly filtersForm = this.#fb.group({
-    q: [''],
+  project = input.required<IProject>();
+  #fb = inject(FormBuilder);
+  #destroyRef = inject(DestroyRef);
+  #toast = inject(ToastrService);
+  projectStore = inject(ProjectsStore);
+  store = inject(ParticipationsStore);
+  csvFileInput = viewChild<ElementRef<HTMLInputElement>>('csvFileInput');
+  queryParams = signal<FilterParticipationsDto>({ page: null, phaseId: null, status: null });
+  selectedIds = signal<string[]>([]);
+  selectedParticipationId = signal<string | null>(null);
+  filtersForm = this.#fb.group({
     phaseId: [''],
     status: ['']
   });
-  readonly batchForm = this.#fb.group({
+  batchForm = this.#fb.group({
     phaseId: ['', Validators.required]
   });
-  readonly reviewForm = this.#fb.group({
+  reviewForm = this.#fb.group({
     status: ['pending' as ParticipationStatus, Validators.required],
     review_message: ['']
   });
 
-  readonly itemsPerPage = 20;
-  readonly icons = { Search, Upload, Download, ArrowRight, ArrowLeft, X, CheckCheck, RefreshCcw };
-  readonly statusOptions: SelectOption[] = [
+  itemsPerPage = 20;
+  icons = { Search, Upload, Download, ArrowRight, ArrowLeft, X, CheckCheck, RefreshCcw };
+  statusOptions: SelectOption[] = [
     { label: 'En attente', value: 'pending' },
     { label: 'En revue', value: 'in_review' },
     { label: 'Qualifié', value: 'qualified' },
     { label: 'Disqualifié', value: 'disqualified' },
     { label: 'Informations demandées', value: 'info_requested' }
   ];
-  readonly currentPage = computed(() => this.queryParams().page || 1);
-  readonly list = computed(() => this.store.list());
-  readonly total = computed(() => this.store.total());
-  readonly allSelectedOnPage = computed(() => {
+  currentPage = computed(() => this.queryParams().page || 1);
+  list = computed(() => this.store.list());
+  total = computed(() => this.store.total());
+  allSelectedOnPage = computed(() => {
     const ids = this.list().map((participation) => participation.id);
     return ids.length > 0 && ids.every((id) => this.selectedIds().includes(id));
   });
-  readonly phaseOptions = computed<SelectOption[]>(() =>
+  phaseOptions = computed<SelectOption[]>(() =>
     [...this.project().phases]
       .sort((a, b) => new Date(a.started_at).getTime() - new Date(b.started_at).getTime())
       .map((phase) => ({ label: phase.name, value: phase.id }))
@@ -224,8 +212,8 @@ export class ProjectParticipations {
   }
 
   onResetFilters(): void {
-    this.filtersForm.patchValue({ q: '', phaseId: '', status: '' }, { emitEvent: false });
-    this.queryParams.set({ page: null, q: null, phaseId: null, status: null });
+    this.filtersForm.patchValue({ phaseId: '', status: '' }, { emitEvent: false });
+    this.queryParams.set({ page: null, phaseId: null, status: null });
   }
 
   onSelectParticipation(id: string): void {

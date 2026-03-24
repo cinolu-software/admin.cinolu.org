@@ -1,4 +1,4 @@
-import { Component, input, forwardRef, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, input, forwardRef, ChangeDetectionStrategy, Input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { signal } from '@angular/core';
@@ -18,10 +18,11 @@ export class UiCheckbox implements ControlValueAccessor {
   name = input<string>('');
   invalid = input<boolean>(false);
   @Input() value!: boolean;
+  valueChange = output<boolean>();
   isControlDisabled = signal(false);
 
-  onChange!: (value: boolean) => void;
-  onTouched!: () => void;
+  onChange: (value: boolean) => void = () => undefined;
+  onTouched: () => void = () => undefined;
 
   writeValue(value: boolean): void {
     this.value = !!value;
@@ -43,6 +44,7 @@ export class UiCheckbox implements ControlValueAccessor {
     const target = event.target as HTMLInputElement;
     this.value = target.checked;
     this.onChange(this.value);
+    this.valueChange.emit(this.value);
     this.onTouched();
   }
 
